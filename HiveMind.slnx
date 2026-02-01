@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="hivemind.client/hivemind.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="HiveMind.Server/HiveMind.Server.csproj" />
+</Solution>

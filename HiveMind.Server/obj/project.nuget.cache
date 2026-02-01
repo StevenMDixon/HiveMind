@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "NdF/8VpUtF0=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Helreizer55\\Documents\\GitHub\\HiveMind\\HiveMind.Server\\HiveMind.Server.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Helreizer55\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.2\\microsoft.aspnetcore.openapi.10.0.2.nupkg.sha512",
+    "C:\\Users\\Helreizer55\\.nuget\\packages\\microsoft.aspnetcore.spaproxy\\10.0.2\\microsoft.aspnetcore.spaproxy.10.0.2.nupkg.sha512",
+    "C:\\Users\\Helreizer55\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512",
+    "C:\\Users\\Helreizer55\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.23.0\\microsoft.visualstudio.azure.containers.tools.targets.1.23.0.nupkg.sha512"
+  ],
+  "logs": []
+}

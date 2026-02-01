@@ -1,0 +1,10 @@
+{
+"SpaProxyServer": {
+"ServerUrl": "https://localhost:51463",
+"RedirectUrl": "",
+"LaunchCommand": "npm run dev",
+"WorkingDirectory": "C:\\Users\\Helreizer55\\Documents\\GitHub\\HiveMind\\HiveMind.Server\\..\\hivemind.client",
+"MaxTimeoutInSeconds": "120",
+"KeepRunning": "false"
+}
+}
