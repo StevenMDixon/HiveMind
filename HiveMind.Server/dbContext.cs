@@ -33,10 +33,14 @@ public class sqliteDBContext: DbContext
     public static string GetDataBaseConnectionString()
     {
         //check if config folder is mounted
-        var configFolder = Directory.Exists("/config") ? "/config/" : "";
+        var configFolder = Directory.Exists("/config") ? "/config" : "";
+        
+        var path = System.IO.Path.Combine(configFolder, "HiveMind.db");
 
-        Console.WriteLine($"Using database folder: {configFolder}");
+        Console.WriteLine($"Using database folder: {path}");
 
-        return $"Data Source={configFolder}HiveMind.db";
+        Console.WriteLine(System.IO.File.Exists(path));
+
+        return $"Data Source={path}";
     }
 }
