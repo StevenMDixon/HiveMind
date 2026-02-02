@@ -15,6 +15,17 @@ builder.Services.AddTransient<ChannelService>();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<sqliteDBContext>();
+    if (context.Database.GetPendingMigrations().Any())
+    {
+        context.Database.Migrate();
+    }
+}
+
 app.UseDefaultFiles();
 app.MapStaticAssets();
 
