@@ -8,11 +8,19 @@ interface Forecast {
     summary: string;
 }
 
+interface Channel {
+    channelID: number;
+    channelName: string;
+}
+
 function App() {
     const [forecasts, setForecasts] = useState<Forecast[]>();
 
+    const [channels, setChannels] = useState<Channel[]>();
+
     useEffect(() => {
         populateWeatherData();
+        populateChannels();
     }, []);
 
     const contents = forecasts === undefined
@@ -38,11 +46,22 @@ function App() {
             </tbody>
         </table>;
 
+    const ChannelsContent = channels === undefined ? <p><em>Loading channels...</em></p> :
+        <div>
+            <h2>Channels</h2>
+            <ul>
+                {channels.map(channel =>
+                    <li key={channel.channelID}>{channel.channelName}</li>
+                )}
+            </ul>
+        </div>;
+
     return (
         <div>
             <h1 id="tableLabel">Weather forecast</h1>
             <p>This component demonstrates fetching data from the server.</p>
             {contents}
+            {ChannelsContent }
         </div>
     );
 
@@ -53,6 +72,15 @@ function App() {
             setForecasts(data);
         }
     }
+
+    async function populateChannels() {
+        const response = await fetch('channels');
+        if (response.ok) {
+            const data = await response.json();
+            setChannels(data);
+        }
+    }
+
 }
 
 export default App;

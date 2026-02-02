@@ -1,8 +1,17 @@
+using HiveMind.Server;
+using HiveMind.Server.Services;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Register the DbContext service
+builder.Services.AddDbContext<sqliteDBContext>(options => options.UseSqlite(sqliteDBContext.GetDataBaseConnectionString()));
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+builder.Services.AddTransient<ChannelService>();
 
 var app = builder.Build();
 
@@ -30,9 +39,19 @@ app.MapGet("/weatherforecast", () =>
             summaries[Random.Shared.Next(summaries.Length)]
         ))
         .ToArray();
+
+    //foreach (string file in Directory.EnumerateFiles("", "*.txt"))
+    //{
+        
+    //}
+
     return forecast;
 })
 .WithName("GetWeatherForecast");
+
+
+app.MapGet("/channels", (ChannelService channelService) => { return channelService.GetAllChannels(); });
+
 
 app.MapFallbackToFile("/index.html");
 

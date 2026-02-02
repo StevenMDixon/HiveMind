@@ -35,7 +35,7 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
 }
 
 const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
-    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'http://localhost:32773';
+    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'http://localhost:32775';
 
 
 console.log(target);
@@ -51,6 +51,10 @@ export default defineConfig({
     server: {
         proxy: {
             '^/weatherforecast': {
+                target,
+                secure: false
+            },
+            '^/channels': {
                 target,
                 secure: false
             }
