@@ -33,7 +33,7 @@ public class sqliteDBContext: DbContext
     public static string GetDataBaseConnectionString()
     {
         //check if config folder is mounted
-        var configFolder = Directory.Exists("config/") ? "config/" : "";
+        var configFolder = Directory.Exists("/config") ? "/config/" : "";
 
         Console.WriteLine($"Using database folder: {configFolder}");
 
