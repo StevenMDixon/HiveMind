@@ -3,14 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HiveMind.Server.Services;
 
-public class ChannelService
+public class ChannelService: BaseService
 {
-    private readonly sqliteDBContext _context;
-
-    public ChannelService(sqliteDBContext context)
-    {
-        _context = context;
-    }
+    public ChannelService(sqliteDBContext context) : base(context) { }
 
     public IEnumerable<Channel> GetAllChannels()
     {
@@ -32,5 +27,15 @@ public class ChannelService
     {
         _context.Channels.Update(channel);
         _context.SaveChanges();
+    }
+
+    public void Delete(int id)
+    {
+        var channel = _context.Channels.Find(id);
+        if (channel != null)
+        {
+            _context.Channels.Remove(channel);
+            _context.SaveChanges();
+        }
     }
 }
