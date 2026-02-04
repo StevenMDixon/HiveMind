@@ -77,7 +77,7 @@ function App() {
         const response = await fetch('channels');
         if (response.ok) {
             const data = await response.json();
-            setChannels(data);
+            setChannels(data.channels);
         }
     }
 
