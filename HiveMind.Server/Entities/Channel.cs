@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace HiveMind.Server.Entities;
+﻿namespace HiveMind.Server.Entities;
 
 public class Channel
 {

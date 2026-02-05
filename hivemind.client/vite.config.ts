@@ -35,7 +35,7 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
 }
 
 const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
-    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'http://localhost:32779';
+    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'http://localhost:32780';
 
 
 console.log(target);
@@ -55,6 +55,22 @@ export default defineConfig({
                 secure: false
             },
             '^/channels': {
+                target,
+                secure: false
+            },
+            '^/schedules': {
+                target,
+                secure: false
+            },
+            '^/scheduleitems': {
+                target,
+                secure: false
+            },
+            '^/schedulecollectionitems': {
+                target,
+                secure: false
+            },
+            '^/collections': {
                 target,
                 secure: false
             }

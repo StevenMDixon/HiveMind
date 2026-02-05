@@ -1,86 +1,34 @@
-import { useEffect, useState } from 'react';
+import { Route, Routes, HashRouter } from 'react-router';
 import './App.css';
+import DashboardLayout from './Dashboard/layout';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 
-interface Forecast {
-    date: string;
-    temperatureC: number;
-    temperatureF: number;
-    summary: string;
-}
+import ChannelPage from './pages/Channels';
 
-interface Channel {
-    channelID: number;
-    channelName: string;
-}
+const darkTheme = createTheme({
+    palette: {
+        mode: 'dark',
+    },
+});
 
-function App() {
-    const [forecasts, setForecasts] = useState<Forecast[]>();
-
-    const [channels, setChannels] = useState<Channel[]>();
-
-    useEffect(() => {
-        populateWeatherData();
-        populateChannels();
-    }, []);
-
-    const contents = forecasts === undefined
-        ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
-        : <table className="table table-striped" aria-labelledby="tableLabel">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Temp. (C)</th>
-                    <th>Temp. (F)</th>
-                    <th>Summary</th>
-                </tr>
-            </thead>
-            <tbody>
-                {forecasts.map(forecast =>
-                    <tr key={forecast.date}>
-                        <td>{forecast.date}</td>
-                        <td>{forecast.temperatureC}</td>
-                        <td>{forecast.temperatureF}</td>
-                        <td>{forecast.summary}</td>
-                    </tr>
-                )}
-            </tbody>
-        </table>;
-
-    const ChannelsContent = channels === undefined ? <p><em>Loading channels...</em></p> :
-        <div>
-            <h2>Channels</h2>
-            <ul>
-                {channels.map(channel =>
-                    <li key={channel.channelID}>{channel.channelName}</li>
-                )}
-            </ul>
-        </div>;
-
+const App = () => {
     return (
-        <div>
-            <h1 id="tableLabel">Weather forecast</h1>
-            <p>This component demonstrates fetching data from the server.</p>
-            {contents}
-            {ChannelsContent }
-        </div>
-    );
-
-    async function populateWeatherData() {
-        const response = await fetch('weatherforecast');
-        if (response.ok) {
-            const data = await response.json();
-            setForecasts(data);
-        }
-    }
-
-    async function populateChannels() {
-        const response = await fetch('channels');
-        if (response.ok) {
-            const data = await response.json();
-            setChannels(data.channels);
-        }
-    }
-
+        <ThemeProvider theme={darkTheme}>
+            <CssBaseline />
+            <HashRouter>
+            <Routes>
+                <Route path="/" element={<DashboardLayout />}>
+                    <Route index element={<div>HiveMind Client</div>} />
+                        <Route path="channels" element={<ChannelPage />} />
+                        <Route path="schedules" element={<div>HiveMind Client: Schedules</div>} />
+                        <Route path="collections" element={<div>HiveMind Client: Schedules</div>} />
+                        <Route path="libraries" element={<div>HiveMind Client: Schedules</div>} />
+                    </Route>
+            </Routes>
+            </HashRouter>
+        </ThemeProvider>
+    )
 }
 
 export default App;
