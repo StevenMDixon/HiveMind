@@ -4,7 +4,7 @@ import DashboardLayout from './Dashboard/layout';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
-import ChannelPage from './pages/Channels';
+import ChannelPage from './Pages/Channels';
 
 const darkTheme = createTheme({
     palette: {

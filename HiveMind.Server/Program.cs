@@ -1,8 +1,9 @@
+using FluentValidation;
 using HiveMind.Server;
 using HiveMind.Server.Endpoints;
+using HiveMind.Server.HostedServices;
 using HiveMind.Server.Services;
 using Microsoft.EntityFrameworkCore;
-using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddTransient<ChannelService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
+//builder.Services.AddHostedService<TimedHostedService>();
+//builder.Services.AddHostedService<SchedulingBackgroundService>();
 
 var app = builder.Build();
 

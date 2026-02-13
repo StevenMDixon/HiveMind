@@ -46,7 +46,7 @@ const Sidebar: React.FC = () => {
                 <List>
                     { navElements.map( element => (
                         <ListItem key={element.key} disablePadding>
-                            <ListItemButton component={Link} to={element.route} key={element.route} selected={ element.route == location.pathname}>
+                            <ListItemButton component={Link} to={element.route} key={element.route} selected={ element.route === location.pathname}>
                             <ListItemIcon>
                                     {<element.icon />}
                             </ListItemIcon>
