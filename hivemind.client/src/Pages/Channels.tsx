@@ -61,7 +61,7 @@ const ChannelPage = () => {
                         </Button>
                     </CardActions>
                 </Card>
-            )) : <p>Loading</p>}
+            )) : <p>Loading</p>} 
             {/*</Paper>*/}
         </Container>
     )
