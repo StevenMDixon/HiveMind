@@ -23,7 +23,6 @@ COPY ["hivemind.client/hivemind.client.esproj", "hivemind.client/"]
 RUN dotnet restore "./HiveMind.Server/HiveMind.Server.csproj"
 COPY . .
 WORKDIR "/src/HiveMind.Server"
-RUN dotnet dev-certs https --trust
 RUN dotnet build "./HiveMind.Server.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
