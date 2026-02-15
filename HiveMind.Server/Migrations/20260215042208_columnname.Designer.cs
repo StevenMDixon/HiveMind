@@ -3,6 +3,7 @@ using System;
 using HiveMind.Server;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HiveMind.Server.Migrations
 {
     [DbContext(typeof(sqliteDBContext))]
-    partial class sqliteDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260215042208_columnname")]
+    partial class columnname
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.2");
@@ -109,21 +112,6 @@ namespace HiveMind.Server.Migrations
                     b.HasIndex("ScheduleItemId");
 
                     b.ToTable("CollectionScheduleItems");
-                });
-
-            modelBuilder.Entity("HiveMind.Server.Entities.Library", b =>
-                {
-                    b.Property<int>("LibraryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("LibraryName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("LibraryId");
-
-                    b.ToTable("Libraries");
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.Schedule", b =>

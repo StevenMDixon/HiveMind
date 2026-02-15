@@ -1,5 +1,4 @@
-﻿using HiveMind.Server.Endpoints.Channels;
-
+﻿
 namespace HiveMind.Server.Endpoints.Collections;
 
 public static class Endpoints

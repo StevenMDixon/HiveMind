@@ -15,6 +15,7 @@ builder.Services.AddDbContext<sqliteDBContext>(options => options.UseSqlite(sqli
 builder.Services.AddOpenApi();
 
 builder.Services.AddTransient<ChannelService>();
+builder.Services.AddTransient<LibraryService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 

@@ -20,13 +20,12 @@ import { useEffect, useState } from 'react';
 
 import { useGlobalNotification } from '../Dashboard/useGlobalNotification';
 
-interface Channel {
-    channelID: number;
-    channelName: string;
-    channelNumber: number;
+interface Library {
+    libraryId: number;
+    libraryName: string;
 }
 
-const ChannelPage = () => {
+const LibraryPage = () => {
 
     const [createModalState, setCreateModalState] = useState<boolean>(false);
     const handleModalOpen = () => setCreateModalState(true);
@@ -34,55 +33,54 @@ const ChannelPage = () => {
 
     const { showNotification } = useGlobalNotification();
 
-    const [channels, setChannels] = useState<Channel[]>([]);
+    const [libraries, setLibraries] = useState<Library[]>([]);
 
-    const [channelName, setChannelName] = useState<string>('');
-    const [channelNumber, setChannelNumber] = useState<number>(0);
+    const [libraryName, setLibraryName] = useState<string>('');
 
-    const createChannel = async () => {
-        const response = await fetch('/channels', {
+    const createLibrary = async () => {
+        const response = await fetch('/libraries', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ChannelName: channelName }),
+            body: JSON.stringify({ LibraryName: libraryName }),
         });
 
         if (response.ok) {
-            setChannelName('');
-            showNotification("Channel Created", "success");
+            setLibraryName('');
+            showNotification("Library Created", "success");
         } else {
-            showNotification("Failed to create channel", "error");
+            showNotification("Failed to create library", "error");
         }
-        
+
         handleModalClose();
-        fetchChannels();
+        fetchLibraries();
     };
 
-    const deleteChannel = async (channelId: number) => {
-        const response =  await fetch(`/channels/${channelId}`, {
+    const deleteLibrary = async (libraryId: number) => {
+        console.log(libraryId)
+        const response = await fetch(`/libraries/${libraryId}`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' }
         });
 
         if (response.ok) {
-            showNotification("Channel deleted", "success")
+            showNotification("Library deleted", "success")
         } else {
-            showNotification("Failed to delete channel", "error");
+            showNotification("Failed to delete library", "error");
         }
 
-        fetchChannels();
+        fetchLibraries();
     };
 
-    const fetchChannels = async () => {
-        const response = await fetch('/channels');
-
+    const fetchLibraries = async () => {
+        const response = await fetch('/libraries'); 
         if (response.ok) {
             const data = await response.json();
-            setChannels(data.channels);
+            setLibraries(data.libraries);
         }
     };
 
     useEffect(() => {
-        fetchChannels();
+        fetchLibraries();
     }, []);
 
     return (
@@ -90,26 +88,23 @@ const ChannelPage = () => {
             <AppBar position="static" color="secondary">
                 <Toolbar>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        Channels
+                        Libraries
                     </Typography>
-                    <Button onClick={handleModalOpen}>Add Channel</Button>
+                    <Button onClick={handleModalOpen}>Add Library</Button>
                 </Toolbar>
             </AppBar>
-            {channels.length > 0 ? channels.map(channel => (
-                <Card key={channel.channelID} sx={{ m: 2 }}>
+            {libraries.length > 0 ? libraries.map(library => (
+                <Card key={library.libraryId} sx={{ m: 2 }}>
                     <CardContent>
                         <Typography gutterBottom sx={{ color: 'text.primary', fontSize: 14 }}>
-                            {channel.channelID}
-                        </Typography>
-                        <Typography gutterBottom sx={{ color: 'text.primary', fontSize: 14 }}>
-                            {channel.channelNumber}
+                            {library.libraryId}
                         </Typography>
                         <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
-                            {channel.channelName}
+                            {library.libraryName}
                         </Typography>
                     </CardContent>
                     <CardActions sx={{ justifyContent: 'flex-end' }}>
-                        <Button size="small" color="primary" onClick={() => deleteChannel(channel.channelID)}>
+                        <Button size="small" color="primary" onClick={() => deleteLibrary(library.libraryId)}>
                             Delete
                         </Button>
                         <Button size="small" color="primary">
@@ -120,31 +115,23 @@ const ChannelPage = () => {
             )) : <RoundedLoadingFiller size={7} />
             }
             <Dialog onClose={handleModalClose} open={createModalState}>
-                <DialogTitle>Create Channel</DialogTitle>
+                <DialogTitle>Create Library</DialogTitle>
                 <DialogContent>
                     <TextField
                         required
                         id="outlined-required"
-                        label="Channel Name"
-                        value={channelName}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => setChannelName(event.target.value)}
-                        sx={{ m: 1 }}
-                    />
-                    <TextField
-                        required
-                        id="outlined-required"
-                        label="Channel Number"
-                        value={channelNumber}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => setChannelNumber(Number(event.target.value))}
+                        label="Library Name"
+                        value={libraryName}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => setLibraryName(event.target.value)}
                         sx={{ m: 1 }}
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={createChannel}>Create</Button>
+                    <Button onClick={createLibrary}>Create</Button>
                 </DialogActions>
             </Dialog>
         </Container>
     )
 }
 
-export default ChannelPage;
+export default LibraryPage;

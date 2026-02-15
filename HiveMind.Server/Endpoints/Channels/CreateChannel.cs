@@ -1,5 +1,4 @@
-﻿using System.Reflection.Metadata;
-using HiveMind.Server.Services;
+﻿using HiveMind.Server.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,14 +11,15 @@ public class CreateChannel
         app.MapPost("/", Handle).WithName("CreateChannel");
     }
 
-    public record ChannelRequest(string ChannelName);
+    public record ChannelRequest(string ChannelName, int ChannelNumber);
 
     public static Results<Ok, NoContent> Handle(ChannelService channelService, [FromBody] ChannelRequest request)
     {
 
         var newChannel = new Entities.Channel
         {
-            ChannelName = request.ChannelName
+            ChannelName = request.ChannelName,
+            ChannelNumber = request.ChannelNumber
         };
 
         channelService.AddChannel(newChannel);

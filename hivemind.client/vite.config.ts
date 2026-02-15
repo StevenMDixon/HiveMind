@@ -71,6 +71,11 @@ export default defineConfig({
                 target,
                 secure: false
             }
+            ,
+            '^/libraries': {
+                target,
+                secure: false
+            }
         },
         port: parseInt(env.DEV_SERVER_PORT || '51463'),
         https: {

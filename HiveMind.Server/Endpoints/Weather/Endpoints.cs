@@ -1,6 +1,6 @@
 ﻿namespace HiveMind.Server.Endpoints.Weather;
 
-public class Endpoints
+public class EndPoints
 {
     public static void Map(IEndpointRouteBuilder app)
     {

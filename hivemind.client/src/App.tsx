@@ -5,6 +5,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
 import ChannelPage from './Pages/Channels';
+import LibaryPage from './Pages/Library';
 
 const darkTheme = createTheme({
     palette: {
@@ -23,7 +24,7 @@ const App = () => {
                         <Route path="channels" element={<ChannelPage />} />
                         <Route path="schedules" element={<div>HiveMind Client: Schedules</div>} />
                         <Route path="collections" element={<div>HiveMind Client: Schedules</div>} />
-                        <Route path="libraries" element={<div>HiveMind Client: Schedules</div>} />
+                        <Route path="libraries" element={<LibaryPage />} />
                     </Route>
             </Routes>
             </HashRouter>

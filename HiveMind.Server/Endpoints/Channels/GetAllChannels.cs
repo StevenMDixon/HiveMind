@@ -10,13 +10,13 @@ public static class GetAllChannels
         app.MapGet("/", Handle);
     }
     
-    public record Channel(int ChannelID, string ChannelName);
+    public record Channel(int ChannelID, string ChannelName, int ChannelNumber);
     public record GetAllChannelsResponse(List<Channel> Channels);
 
     public static Results<Ok<GetAllChannelsResponse>, NotFound> Handle(ChannelService channelService)
     {
         var channels = channelService.GetAllChannels();
 
-        return TypedResults.Ok(new GetAllChannelsResponse(channels.Select(x => new Channel(x.ChannelId, x.ChannelName)).ToList()));
+        return TypedResults.Ok(new GetAllChannelsResponse(channels.Select(x => new Channel(x.ChannelId, x.ChannelName, x.ChannelNumber)).ToList()));
     }
 }

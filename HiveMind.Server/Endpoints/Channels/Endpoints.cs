@@ -1,6 +1,6 @@
 ﻿namespace HiveMind.Server.Endpoints.Channels;
 
-public static class Endpoints
+public static class EndPoints
 {
     public static void Map(IEndpointRouteBuilder app)
     {
