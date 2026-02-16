@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using HiveMind.Server.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,13 +25,10 @@ public class SchedulingBackgroundService : BackgroundService
             // Create a new scope for database operations
             using (var scope = _serviceProvider.CreateScope())
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<sqliteDBContext>();
+                var channelService = scope.ServiceProvider.GetRequiredService<ChannelService>();
 
-                // Perform database operations (e.g., logging, data processing)
-                await dbContext.Database.EnsureCreatedAsync(stoppingToken);
-                // ... further database logic
                 _logger.LogInformation("SchedulingBackgroundService is running at: {time}", DateTimeOffset.Now);
-                _logger.LogInformation("Found {Count} Channels", dbContext.Channels.Include(c => c.Schedule).Count());
+                _logger.LogInformation("Found {Count} Channels", channelService.GetAllChannels().Count());
             }
 
             await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken); // Example delay

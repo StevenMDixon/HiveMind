@@ -23,6 +23,7 @@ import { useGlobalNotification } from '../Dashboard/useGlobalNotification';
 interface Library {
     libraryId: number;
     libraryName: string;
+    libraryPath: string;
 }
 
 const LibraryPage = () => {
@@ -41,7 +42,7 @@ const LibraryPage = () => {
         const response = await fetch('/libraries', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ LibraryName: libraryName }),
+            body: JSON.stringify({ LibraryName: libraryName, LibraryPath: "" }),
         });
 
         if (response.ok) {

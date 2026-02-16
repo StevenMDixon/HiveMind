@@ -14,13 +14,14 @@ public class CreateLibrary
     }
 
 
-    public record LibraryRequest(string LibraryName);
+    public record LibraryRequest(string LibraryName, string LibraryPath);
 
     public static Results<Ok, NoContent, ValidationProblem> Handle(LibraryService libraryService, [FromBody] LibraryRequest request)
     {
         var newLibrary = new Entities.Library
         {
-            LibraryName = request.LibraryName
+            LibraryName = request.LibraryName,
+            LibraryPath = request.LibraryPath
         };
 
         libraryService.AddLibrary(newLibrary);

@@ -16,6 +16,11 @@ public class LibraryService
         return _context.Libraries;
     }
 
+    public IEnumerable<Library> GetUnprocessedLibraries()
+    {
+        return _context.Libraries.Where(l => l.IsProcessed == false);
+    }
+
     public void AddLibrary(Library library)
     {
         _context.Libraries.Add(library);
@@ -29,6 +34,13 @@ public class LibraryService
 
     public void Update(Library library)
     {
+        _context.Libraries.Update(library);
+        _context.SaveChanges();
+    }
+
+    public void MarkLibraryAsProcessed(Library library)
+    {
+        library.IsProcessed = true;
         _context.Libraries.Update(library);
         _context.SaveChanges();
     }
