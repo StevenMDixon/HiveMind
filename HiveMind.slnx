@@ -4,4 +4,5 @@
     <Deploy />
   </Project>
   <Project Path="HiveMind.Server/HiveMind.Server.csproj" />
+  <Project Path="HiveMind.Tests/HiveMind.Tests.csproj" Id="77f4e0db-a7f5-4c10-bcfd-89a26e61ad97" />
 </Solution>

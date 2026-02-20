@@ -128,9 +128,75 @@ namespace HiveMind.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("LibraryType")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("LibraryId");
 
                     b.ToTable("Libraries");
+                });
+
+            modelBuilder.Entity("HiveMind.Server.Entities.MediaItem", b =>
+                {
+                    b.Property<int>("MediaItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Duration")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("EpisodeNumber")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Height")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("LibraryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("MediaItemShowId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Resolution")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("SeasonNumber")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Width")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("MediaItemId");
+
+                    b.HasIndex("LibraryId");
+
+                    b.HasIndex("MediaItemShowId");
+
+                    b.ToTable("MediaItems");
+                });
+
+            modelBuilder.Entity("HiveMind.Server.Entities.MediaItemShow", b =>
+                {
+                    b.Property<int>("MediaItemShowId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("MediaItemShowTitle")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("MediaItemShowId");
+
+                    b.ToTable("MediaItemShows");
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.Schedule", b =>
@@ -189,6 +255,39 @@ namespace HiveMind.Server.Migrations
                     b.ToTable("ScheduleItems");
                 });
 
+            modelBuilder.Entity("HiveMind.Server.Entities.Tags", b =>
+                {
+                    b.Property<int>("TagId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("TagName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("TagId");
+
+                    b.HasIndex("TagName")
+                        .IsUnique();
+
+                    b.ToTable("Tags");
+                });
+
+            modelBuilder.Entity("MediaItemTags", b =>
+                {
+                    b.Property<int>("MediaItemId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TagsTagId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("MediaItemId", "TagsTagId");
+
+                    b.HasIndex("TagsTagId");
+
+                    b.ToTable("MediaItemTags");
+                });
+
             modelBuilder.Entity("HiveMind.Server.Entities.CollectionScheduleItem", b =>
                 {
                     b.HasOne("HiveMind.Server.Entities.ScheduleItem", null)
@@ -196,6 +295,21 @@ namespace HiveMind.Server.Migrations
                         .HasForeignKey("ScheduleItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("HiveMind.Server.Entities.MediaItem", b =>
+                {
+                    b.HasOne("HiveMind.Server.Entities.Library", null)
+                        .WithMany("MediaItems")
+                        .HasForeignKey("LibraryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HiveMind.Server.Entities.MediaItemShow", "Show")
+                        .WithMany()
+                        .HasForeignKey("MediaItemShowId");
+
+                    b.Navigation("Show");
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.Schedule", b =>
@@ -220,9 +334,29 @@ namespace HiveMind.Server.Migrations
                     b.Navigation("Schedule");
                 });
 
+            modelBuilder.Entity("MediaItemTags", b =>
+                {
+                    b.HasOne("HiveMind.Server.Entities.MediaItem", null)
+                        .WithMany()
+                        .HasForeignKey("MediaItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HiveMind.Server.Entities.Tags", null)
+                        .WithMany()
+                        .HasForeignKey("TagsTagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("HiveMind.Server.Entities.Channel", b =>
                 {
                     b.Navigation("Schedule");
+                });
+
+            modelBuilder.Entity("HiveMind.Server.Entities.Library", b =>
+                {
+                    b.Navigation("MediaItems");
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.Schedule", b =>

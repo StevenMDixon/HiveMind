@@ -16,6 +16,9 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddTransient<ChannelService>();
 builder.Services.AddTransient<LibraryService>();
+builder.Services.AddTransient<MediaItemService>();
+builder.Services.AddTransient<MediaItemShowService>();
+builder.Services.AddTransient<TagsService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 

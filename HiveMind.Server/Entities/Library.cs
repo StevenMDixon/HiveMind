@@ -1,10 +1,13 @@
-﻿namespace HiveMind.Server.Entities;
+﻿using HiveMind.Server.Domain.Enums;
+
+namespace HiveMind.Server.Entities;
 
 public class Library
 {
     public int LibraryId { get; set; }
     public string LibraryName { get; set; } = string.Empty;
     public string LibraryPath { get; set; } = string.Empty;
+    public LibraryType LibraryType { get; set; } = LibraryType.Other;
     public bool IsProcessed { get; set; } = false;
-    //public ICollection<MediaItem> MediaItems { get; set; } = new List<MediaItem>();
+    public ICollection<MediaItem> MediaItems { get; set; } = new List<MediaItem>();
 }
