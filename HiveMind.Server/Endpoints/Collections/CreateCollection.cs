@@ -10,7 +10,7 @@ public class CreateCollection
     public static void Map(IEndpointRouteBuilder app)
     {
         app.MapPost("/", Handle)
-            .WithRequestValidation<Validator>()
+            .WithRequestValidation<CollectionRequest>()
             .WithName("CreateCollection")
             .ProducesValidationProblem();
     }
@@ -19,17 +19,16 @@ public class CreateCollection
     {
         public Validator()
         {
-            RuleFor(x => x.Query).NotEmpty();
+            RuleFor(x => x.CollectionName).NotEmpty();
         }
     }
 
-    public record CollectionRequest(string Query);
-
+    public record CollectionRequest(string CollectionName);
     public static Results<Ok, NoContent, ValidationProblem> Handle(CollectionService collectionService, [FromBody] CollectionRequest request)
     {
         var newCollection = new Entities.Collection
         {
-            Query = request.Query
+            Name = request.CollectionName
         };
 
         collectionService.AddCollection(newCollection);

@@ -60,6 +60,7 @@ public static class MediaQueryBuilder
                     comparison = filter.Operator switch
                     {
                         "equals" => Expression.Equal(property, constant),
+                        "matchesany" when property.Type == typeof(string) => BuildInFilter(property, filter),
                         "contains" when property.Type == typeof(string) =>
                             Expression.Call(
                                 property,
@@ -93,6 +94,31 @@ public static class MediaQueryBuilder
             .Take(request.PageSize);
     }
 
+    private static Expression BuildInFilter(MemberExpression property, FilterRule filter)
+    {
+        //var property = Expression.Property(parameter, filter.Field);
+        var values = filter.Value?.Split(',').Select(v => v.Trim()).ToArray() ?? Array.Empty<string>();
+        
+        if (values.Length == 0)
+            return Expression.Constant(false); // No values means nothing matches
+        
+        Expression? combined = null;
+        var stringContainsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) })!;
+        
+        // Build: property.Contains(value1) OR property.Contains(value2) OR ...
+        foreach (var value in values)
+        {
+            var constant = Expression.Constant(value);
+            var containsCall = Expression.Call(property, stringContainsMethod, constant);
+            
+            combined = combined == null
+                ? containsCall
+                : Expression.OrElse(combined, containsCall);
+        }
+        
+        return combined ?? Expression.Constant(false);
+    }
+
     private static Expression BuildTagFilter(ParameterExpression parameter, FilterRule filter)
     {
         // Get the Tags collection property
@@ -106,6 +132,7 @@ public static class MediaQueryBuilder
         Expression tagComparison = filter.Operator switch
         {
             "equals" => Expression.Equal(tagNameProperty, constant),
+            "matchesany" when tagNameProperty.Type == typeof(string) => BuildInFilter(tagNameProperty, filter),
             "contains" => Expression.Call(
                 tagNameProperty,
                 typeof(string).GetMethod("Contains", new[] { typeof(string) })!,

@@ -567,6 +567,27 @@ public class MediaQueryBuilderTests : IDisposable
     }
 
     [Fact]
+    public void Apply_WithTitleInFilter_FiltersCorrectly()
+    {
+        // Arrange
+        var query = _context.MediaItems.Include(m => m.Tags).AsQueryable();
+        var request = new QueryRequest
+        {
+            Filters = new List<FilterRule>
+        {
+            new() { Field = "Title", Operator = "matchesany", Value = "A,B" }, // Matches "Movie A" and "Movie B"
+        },
+            PageSize = 100
+        };
+
+        // Act
+        var result = MediaQueryBuilder.Apply(query, request).ToList();
+
+        // Assert
+        Assert.Equal(2, result.Count); // Movie B, Show Episode 2
+    }
+
+    [Fact]
     public void Apply_WithMultipleTagFilters_CombinesWithAnd()
     {
         // Arrange
@@ -609,6 +630,28 @@ public class MediaQueryBuilderTests : IDisposable
 
         // Assert
         Assert.Equal(2, result.Count); // Show Episode 1 and Show Episode 2
+    }
+
+    [Fact]
+    public void Apply_WithTagMatchesAnyFilter_FiltersCorrectly()
+    {
+        // Arrange
+        var query = _context.MediaItems.Include(m => m.Tags).AsQueryable();
+        var request = new QueryRequest
+        {
+            Filters = new List<FilterRule>
+        {
+            new() { Field = "Tag", Operator = "matchesany", Value = "Action,Comedy" },
+            
+        },
+            PageSize = 100
+        };
+
+        // Act
+        var result = MediaQueryBuilder.Apply(query, request).ToList();
+
+        // Assert
+        Assert.Equal(4, result.Count); // Show Episode 1 and Show Episode 2
     }
 
     #endregion

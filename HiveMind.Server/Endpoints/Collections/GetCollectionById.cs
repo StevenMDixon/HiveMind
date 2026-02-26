@@ -19,7 +19,7 @@ public static class GetCollectionById
 
         if (collection is not null)
         {
-            return TypedResults.Ok(new Collection(collection.CollectionId, collection.Query));
+            return TypedResults.Ok(new Collection(collection.CollectionId, collection.Name));
         }
 
         return TypedResults.NotFound($"A collection with the ID: {id} was not found.");

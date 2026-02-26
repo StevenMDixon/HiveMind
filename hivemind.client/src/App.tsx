@@ -6,6 +6,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 
 import ChannelPage from './Pages/Channels';
 import LibaryPage from './Pages/Library';
+import CollectionPage from './Pages/Collections'
+import MediaPage from './Pages/Media/MediaView'
 
 const darkTheme = createTheme({
     palette: {
@@ -23,8 +25,9 @@ const App = () => {
                     <Route index element={<div>HiveMind Client</div>} />
                         <Route path="channels" element={<ChannelPage />} />
                         <Route path="schedules" element={<div>HiveMind Client: Schedules</div>} />
-                        <Route path="collections" element={<div>HiveMind Client: Schedules</div>} />
+                        <Route path="collections" element={<CollectionPage />} />
                         <Route path="libraries" element={<LibaryPage />} />
+                        <Route path="media" element={<MediaPage />} />
                     </Route>
             </Routes>
             </HashRouter>

@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using HiveMind.Server.Entities;
+﻿using HiveMind.Server.Entities;
 
 namespace HiveMind.Server.Services;
 

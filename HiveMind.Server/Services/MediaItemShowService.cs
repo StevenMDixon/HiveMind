@@ -11,7 +11,6 @@ public class MediaItemShowService:BaseService
         return _context.MediaItemShows;
     }
 
-
     public int AddMediaItemShow(MediaItemShow mediaItemShow)
     {
         _context.MediaItemShows.Add(mediaItemShow);

@@ -9,6 +9,7 @@ public class MediaItem
     public string Title { get; set; } = "";
     public double Duration { get; set; } // Duration in milliseconds
     public int LibraryId { get; set; }
+    public Library? Library { get; set; }
     public string FilePath { get; set; } = string.Empty;
     public int Width { get; set; }
     public int Height { get; set; }

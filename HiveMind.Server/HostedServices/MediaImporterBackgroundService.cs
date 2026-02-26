@@ -30,11 +30,11 @@ public class MediaImporterBackgroundService : BackgroundService
             using (var scope = _serviceProvider.CreateScope())
             {
                 var libraryService = scope.ServiceProvider.GetRequiredService<LibraryService>();
-                var mediaItemService = scope.ServiceProvider.GetRequiredService<MediaItemService>();
-                var mediaItemShowService = scope.ServiceProvider.GetRequiredService<MediaItemShowService>();
+                var mediaItemService = scope.ServiceProvider.GetRequiredService<Services.MediaItemService>();
+                var mediaItemShowService = scope.ServiceProvider.GetRequiredService<Services.MediaItemShowService>();
                 var tagService = scope.ServiceProvider.GetRequiredService<TagsService>();
 
-                var unprocessedLibraries = libraryService.GetAllLibraries();
+                var unprocessedLibraries = libraryService.GetUnprocessedLibraries();
                 _logger.LogInformation("MediaImporterBackgroundService is running at: {time}", DateTimeOffset.Now);
                 _logger.LogInformation("Found {Count} Unprocessed Libraries", unprocessedLibraries.Count());
 
@@ -43,7 +43,7 @@ public class MediaImporterBackgroundService : BackgroundService
                 var tagDict = tagService.GetAllTags().ToDictionary(t => t.TagName, t => t);
 
                 var mediaItems = new List<VideoMeta>();
-                var mediaItemsToDelete = new List<MediaItem>();
+                var mediaItemsToDelete = new List<Entities.MediaItem>();
 
                 if (targetLibary != null && !targetLibary.IsProcessed)
                 {
@@ -60,7 +60,7 @@ public class MediaImporterBackgroundService : BackgroundService
 
                         mediaItemsToDelete = currentMediaItems.ExceptBy(files, x => x.FilePath).ToList();
 
-                        var showCache = new Dictionary<string, MediaItemShow>();
+                        var showCache = new Dictionary<string, Entities.MediaItemShow>();
 
                         foreach (string file in files)
                         {
@@ -118,7 +118,7 @@ public class MediaImporterBackgroundService : BackgroundService
                                     }
                                     else
                                     {
-                                        var newShow = new MediaItemShow { MediaItemShowTitle = formattedShowName };
+                                        var newShow = new Entities.MediaItemShow { MediaItemShowTitle = formattedShowName };
                                         showId = mediaItemShowService.AddMediaItemShow(newShow);
                                         showCache[formattedShowName] = newShow;
                                     }
@@ -175,9 +175,9 @@ public class MediaImporterBackgroundService : BackgroundService
         }
     }
 
-    private MediaItem ConvertMetaToMediaItem(VideoMeta meta, int libraryId)
+    private Entities.MediaItem ConvertMetaToMediaItem(VideoMeta meta, int libraryId)
     {
-        return new MediaItem
+        return new Entities.MediaItem
         {
             Title = meta.name,
             Duration = meta.duration,

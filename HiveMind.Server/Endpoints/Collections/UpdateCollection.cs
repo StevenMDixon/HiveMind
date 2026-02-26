@@ -19,11 +19,11 @@ public class UpdateCollection
     {
         public Validator()
         {
-            RuleFor(x => x.Query).NotEmpty();
+            RuleFor(x => x.Name).NotEmpty();
         }
     }
 
-    public record CollectionRequest(string Query);
+    public record CollectionRequest(string Name);
 
     public static Results<Ok, NotFound<string>, ValidationProblem> Handle(CollectionService collectionService, [FromRoute] int id, [FromBody] CollectionRequest request)
     {
@@ -31,7 +31,7 @@ public class UpdateCollection
 
         if (collection is not null)
         {
-            collection.Query = request.Query;
+            collection.Name = request.Name;
             collectionService.Update(collection);
             return TypedResults.Ok();
         }

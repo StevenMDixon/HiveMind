@@ -12,6 +12,7 @@ import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import TvIcon from '@mui/icons-material/Tv';
 import HiveIcon from '@mui/icons-material/Hive';
 import { Link, useLocation } from 'react-router-dom';
+import MovieIcon from '@mui/icons-material/Movie';
 
 
 const Sidebar: React.FC = () => {
@@ -22,6 +23,7 @@ const Sidebar: React.FC = () => {
         { key: "Collections", route: "/collections", icon: LibraryBooksIcon },
         { key: "Libraries", route: "/libraries", icon: VideoLibraryIcon },
         { key: "Schedules", route: "/schedules", icon: EventNoteIcon },
+        { key: "Media", route: "/media", icon: MovieIcon }
     ];
 
     return (

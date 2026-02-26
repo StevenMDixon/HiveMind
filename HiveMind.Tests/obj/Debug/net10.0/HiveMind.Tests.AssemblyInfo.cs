@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HiveMind.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c938b1553d2bc4615ca58098e653e33a6943c58c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4b23d3f78a3ee299984c92487b4df8e3b8cefb05")]
 [assembly: System.Reflection.AssemblyProductAttribute("HiveMind.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HiveMind.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

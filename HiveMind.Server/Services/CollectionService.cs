@@ -1,4 +1,5 @@
 ﻿using HiveMind.Server.Entities;
+using Microsoft.EntityFrameworkCore;
 namespace HiveMind.Server.Services;
 
 public class CollectionService: BaseService
@@ -7,7 +8,7 @@ public class CollectionService: BaseService
 
     public IEnumerable<Collection> GetAllCollections()
     {
-        return _context.Collections;
+        return _context.Collections.Include(c => c.Queries);
     }
 
     public void AddCollection(Collection collection)

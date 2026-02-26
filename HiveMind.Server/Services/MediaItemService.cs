@@ -1,4 +1,5 @@
 ﻿using HiveMind.Server.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace HiveMind.Server.Services;
 
@@ -6,9 +7,9 @@ public class MediaItemService: BaseService
 {
     public MediaItemService(sqliteDBContext context) : base(context) { }
 
-    public IEnumerable<MediaItem> GetAllSMediaItems()
+    public IEnumerable<MediaItem> GetAllMediaItems()
     {
-        return _context.MediaItems;
+        return _context.MediaItems.Include(media => media.Library).Include(media => media.Show).Include(media => media.Tags);
     }
 
     public void AddMediaItem(MediaItem mediaItem)

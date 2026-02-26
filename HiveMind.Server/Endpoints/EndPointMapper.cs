@@ -7,5 +7,7 @@ public static class EndPointMapper
         Channels.EndPoints.Map(builder);
         Libraries.EndPoints.Map(builder);
         Weather.EndPoints.Map(builder);
+        Collections.Endpoints.Map(builder);
+        MediaItems.EndPoints.Map(builder);
     }
 }
