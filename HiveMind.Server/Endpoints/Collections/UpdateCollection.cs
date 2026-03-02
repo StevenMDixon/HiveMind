@@ -10,7 +10,7 @@ public class UpdateCollection
     public static void Map(IEndpointRouteBuilder app)
     {
         app.MapPut("/{id:int}", Handle)
-            .WithRequestValidation<Validator>()
+            .WithRequestValidation<CollectionRequest>()
             .WithName("UpdateCollection")
             .ProducesValidationProblem();
     }
@@ -19,11 +19,11 @@ public class UpdateCollection
     {
         public Validator()
         {
-            RuleFor(x => x.Name).NotEmpty();
+            RuleFor(x => x.CollectionName).NotEmpty();
         }
     }
 
-    public record CollectionRequest(string Name);
+    public record CollectionRequest(string CollectionName);
 
     public static Results<Ok, NotFound<string>, ValidationProblem> Handle(CollectionService collectionService, [FromRoute] int id, [FromBody] CollectionRequest request)
     {
@@ -31,7 +31,7 @@ public class UpdateCollection
 
         if (collection is not null)
         {
-            collection.Name = request.Name;
+            collection.Name = request.CollectionName;
             collectionService.Update(collection);
             return TypedResults.Ok();
         }

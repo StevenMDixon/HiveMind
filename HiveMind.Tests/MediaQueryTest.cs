@@ -146,7 +146,7 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
             {
-                new() { Field = "Title", Operator = "contains", Value = "Show" }
+                new() { Field = "Title", Operator = "Contains", Value = "Show" }
             },
             PageSize = 100
         };
@@ -168,8 +168,8 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
             {
-                new() { Field = "Title", Operator = "contains", Value = "Show" },
-                new() { Field = "Title", Operator = "contains", Value = "Episode 1" }
+                new() { Field = "Title", Operator = "Contains", Value = "Show" },
+                new() { Field = "Title", Operator = "Contains", Value = "Episode 1" }
             },
             PageSize = 100
         };
@@ -210,7 +210,7 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
             {
-                new() { Field = "Title", Operator = "invalid", Value = "test" }
+                new() { Field = "Title", Operator = "Invalid", Value = "test" }
             }
         };
 
@@ -442,7 +442,7 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
             {
-                new() { Field = "Title", Operator = "contains", Value = "Movie" }
+                new() { Field = "Title", Operator = "Contains", Value = "Movie" }
             },
             SortBy = "Title",
             SortDescending = false,
@@ -468,7 +468,7 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
             {
-                new() { Field = "Title", Operator = "contains", Value = "Show" }
+                new() { Field = "Title", Operator = "Contains", Value = "Show" }
             },
             SortBy = "Title",
             SortDescending = true,
@@ -531,7 +531,7 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
         {
-            new() { Field = "Tag", Operator = "equals", Value = "Action" }
+            new() { Field = "Tag", Operator = "Equals", Value = "Action" }
         },
             PageSize = 100
         };
@@ -554,7 +554,7 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
         {
-            new() { Field = "Tag", Operator = "contains", Value = "edy" } // Matches "Comedy"
+            new() { Field = "Tag", Operator = "Contains", Value = "edy" } // Matches "Comedy"
         },
             PageSize = 100
         };
@@ -575,7 +575,7 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
         {
-            new() { Field = "Title", Operator = "matchesany", Value = "A,B" }, // Matches "Movie A" and "Movie B"
+            new() { Field = "Title", Operator = "MatchesAny", Value = "A,B" }, // Matches "Movie A" and "Movie B"
         },
             PageSize = 100
         };
@@ -596,8 +596,8 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
         {
-            new() { Field = "Tag", Operator = "equals", Value = "Action" },
-            new() { Field = "Tag", Operator = "equals", Value = "Drama" }
+            new() { Field = "Tag", Operator = "Equals", Value = "Action" },
+            new() { Field = "Tag", Operator = "Equals", Value = "Drama" }
         },
             PageSize = 100
         };
@@ -619,8 +619,8 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
         {
-            new() { Field = "Tag", Operator = "equals", Value = "Action" },
-            new() { Field = "Title", Operator = "contains", Value = "Show" }
+            new() { Field = "Tag", Operator = "Equals", Value = "Action" },
+            new() { Field = "Title", Operator = "Contains", Value = "Show" }
         },
             PageSize = 100
         };
@@ -641,7 +641,7 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
         {
-            new() { Field = "Tag", Operator = "matchesany", Value = "Action,Comedy" },
+            new() { Field = "Tag", Operator = "MatchesAny", Value = "Action,Comedy" },
             
         },
             PageSize = 100

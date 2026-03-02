@@ -14,11 +14,13 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import TextField from '@mui/material/TextField';
 
-import RoundedLoadingFiller from './Components/RoundedLoadingFiller';
+import RoundedLoadingFiller from '../Components/RoundedLoadingFiller';
 
 import { useEffect, useState } from 'react';
 
-import { useGlobalNotification } from '../Dashboard/useGlobalNotification';
+import { useGlobalNotification } from '../../Dashboard/useGlobalNotification';
+
+import { Link } from "react-router-dom";
 
 interface Collection {
     collectionID: number;
@@ -108,7 +110,7 @@ const CollectionPage = () => {
                             Delete
                         </Button>
                         <Button size="small" color="primary">
-                            Edit
+                            <Link to={`/Collection/${collection.collectionID}`}>Edit</Link>
                         </Button>
                     </CardActions>
                 </Card>

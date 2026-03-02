@@ -9,8 +9,8 @@ public class QueryFilters
     public string Field { get; set; } = string.Empty;
     public string Operator { get; set; } = string.Empty;
     public string Value { get; set; } = string.Empty;
-    public int QueryId { get; set; }
-    public Query? Query { get; set; }
+    public int CollectionId { get; set; }
+    public Collection? Collection { get; set; }
 }
 
 //library_id:9 AND(title:199? or title:200?) AND NOT tag:holidays

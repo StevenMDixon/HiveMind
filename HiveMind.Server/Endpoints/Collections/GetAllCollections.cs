@@ -11,13 +11,13 @@ public static class GetAllCollections
         app.MapGet("/", Handle);
     }
 
-    public record Collection(int CollectionID, string CollectionName, ICollection<Query>? Queries);
+    public record Collection(int CollectionID, string CollectionName);
     public record GetAllCollectionsResponse(List<Collection> Collections);
 
     public static Results<Ok<GetAllCollectionsResponse>, NotFound> Handle(CollectionService collectionService)
     {
         var collections = collectionService.GetAllCollections();
 
-        return TypedResults.Ok(new GetAllCollectionsResponse(collections.Select(x => new Collection(x.CollectionId, x.Name, x.Queries)).ToList()));
+        return TypedResults.Ok(new GetAllCollectionsResponse(collections.Select(x => new Collection(x.CollectionId, x.Name)).ToList()));
     }
 }

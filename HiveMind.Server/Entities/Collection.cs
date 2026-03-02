@@ -4,5 +4,5 @@ public class Collection
 {
     public int CollectionId { get; set; }
     public string Name { get; set; } = string.Empty;
-    public ICollection<Query>? Queries { get; set; }
+    public ICollection<QueryFilters>? Filters { get; set; }
 }

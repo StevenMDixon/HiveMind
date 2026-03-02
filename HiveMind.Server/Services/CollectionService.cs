@@ -8,7 +8,7 @@ public class CollectionService: BaseService
 
     public IEnumerable<Collection> GetAllCollections()
     {
-        return _context.Collections.Include(c => c.Queries);
+        return _context.Collections.Include(c => c.Filters);
     }
 
     public void AddCollection(Collection collection)
@@ -19,7 +19,7 @@ public class CollectionService: BaseService
 
     public Collection? GetCollectionByID(int id)
     {
-        return _context.Collections.Find(id);
+        return _context.Collections.Include(x => x.Filters).FirstOrDefault(x => x.CollectionId == id);
     }
 
     public void Update(Collection collection)

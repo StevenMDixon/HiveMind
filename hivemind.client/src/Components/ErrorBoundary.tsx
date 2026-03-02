@@ -1,9 +1,9 @@
-import { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, type ErrorInfo, type ReactElement } from 'react';
 import { Alert, Button, Box } from '@mui/material';
 
 interface Props {
-    children: ReactNode;
-    fallback?: (error: Error, reset: () => void) => ReactNode;
+    children: ReactElement;
+    fallback?: (error: Error, reset: () => void) => ReactElement;
 }
 
 interface State {

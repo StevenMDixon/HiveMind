@@ -9,8 +9,6 @@ public class sqliteDBContext: DbContext
 {
     public DbSet<Channel> Channels { get; set; }
     public DbSet<Collection> Collections { get; set; }
-
-    public DbSet<Query> Query { get; set; }
     public DbSet<QueryFilters> QueryFilters { get; set; }
     public DbSet<CollectionScheduleItem> CollectionScheduleItems { get; set; }
     public DbSet<Library> Libraries { get; set; }

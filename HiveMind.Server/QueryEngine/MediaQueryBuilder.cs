@@ -1,4 +1,6 @@
-﻿using System.Linq.Expressions;
+﻿using System.Drawing;
+using System.Linq.Expressions;
+using HiveMind.Server.Domain.Enums;
 using HiveMind.Server.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,14 +24,6 @@ public class FilterRule
 
 public static class MediaQueryBuilder
 {
-    private static readonly HashSet<string> AllowedFields =
-    [
-        "Title",
-        "Duration",
-        "Width",
-        "Height",
-        "LibraryId"
-    ];
 
     public static IQueryable<MediaItem> Apply(
         IQueryable<MediaItem> query,
@@ -42,6 +36,9 @@ public static class MediaQueryBuilder
 
             foreach (var filter in request.Filters)
             {
+                if (!Enum.IsDefined(typeof(QueryEnums.QueryAllowedFields), filter.Field))
+                    throw new InvalidOperationException("Invalid field");
+
                 Expression comparison;
 
                 // Special handling for tag filtering
@@ -51,21 +48,23 @@ public static class MediaQueryBuilder
                 }
                 else
                 {
-                    if (!AllowedFields.Contains(filter.Field))
-                        throw new InvalidOperationException("Invalid field");
-
                     var property = Expression.Property(parameter, filter.Field);
                     var constant = Expression.Constant(filter.Value);
 
-                    comparison = filter.Operator switch
+                    if (!Enum.TryParse(filter.Operator, out QueryEnums.QueryAllowedOperators operatorValue)) throw new NotSupportedException("Operator not supported");
+
+                    comparison = operatorValue switch
                     {
-                        "equals" => Expression.Equal(property, constant),
-                        "matchesany" when property.Type == typeof(string) => BuildInFilter(property, filter),
-                        "contains" when property.Type == typeof(string) =>
+                        QueryEnums.QueryAllowedOperators.Equals => Expression.Equal(property, constant),
+                        QueryEnums.QueryAllowedOperators.NotEquals => Expression.NotEqual(property, constant),
+                        QueryEnums.QueryAllowedOperators.GreaterThan => Expression.GreaterThan(property, constant),
+                        QueryEnums.QueryAllowedOperators.LessThan => Expression.LessThan(property, constant),
+                        QueryEnums.QueryAllowedOperators.Contains when property.Type == typeof(string) =>
                             Expression.Call(
                                 property,
                                 typeof(string).GetMethod("Contains", new[] { typeof(string) })!,
                                 constant),
+                        QueryEnums.QueryAllowedOperators.MatchesAny when property.Type == typeof(string) => BuildInFilter(property, filter),
                         _ => throw new NotSupportedException("Operator not supported")
                     };
                 }
@@ -129,11 +128,13 @@ public static class MediaQueryBuilder
         var tagNameProperty = Expression.Property(tagParam, "TagName");
         var constant = Expression.Constant(filter.Value);
 
-        Expression tagComparison = filter.Operator switch
+        Enum.TryParse(filter.Operator, out QueryEnums.QueryAllowedOperators operatorValue);
+
+        Expression tagComparison = operatorValue switch
         {
-            "equals" => Expression.Equal(tagNameProperty, constant),
-            "matchesany" when tagNameProperty.Type == typeof(string) => BuildInFilter(tagNameProperty, filter),
-            "contains" => Expression.Call(
+            QueryEnums.QueryAllowedOperators.Equals => Expression.Equal(tagNameProperty, constant),
+            QueryEnums.QueryAllowedOperators.MatchesAny when tagNameProperty.Type == typeof(string) => BuildInFilter(tagNameProperty, filter),
+            QueryEnums.QueryAllowedOperators.Contains => Expression.Call(
                 tagNameProperty,
                 typeof(string).GetMethod("Contains", new[] { typeof(string) })!,
                 constant),
