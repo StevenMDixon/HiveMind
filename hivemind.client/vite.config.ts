@@ -35,7 +35,7 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
 }
 
 const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
-    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'http://localhost:32770';
+    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'http://localhost:32771';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -70,8 +70,7 @@ export default defineConfig({
             '^/collections': {
                 target,
                 secure: false
-            }
-            ,
+            },
             '^/libraries': {
                 target,
                 secure: false

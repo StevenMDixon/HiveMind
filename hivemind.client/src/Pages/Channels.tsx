@@ -5,14 +5,14 @@ import Typography from '@mui/material/Typography';
 import CardActions from '@mui/material/CardActions';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
-import Toolbar from '@mui/material/Toolbar';
-import AppBar from '@mui/material/AppBar';
 
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import TextField from '@mui/material/TextField';
+
+import Header from './Components/Header';
 
 import RoundedLoadingFiller from './Components/RoundedLoadingFiller';
 
@@ -43,7 +43,7 @@ const ChannelPage = () => {
         const response = await fetch('/channels', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ChannelName: channelName }),
+            body: JSON.stringify({ ChannelName: channelName, ChannelNumber: channelNumber }),
         });
 
         if (response.ok) {
@@ -87,14 +87,9 @@ const ChannelPage = () => {
 
     return (
         <Container disableGutters maxWidth={false}>
-            <AppBar position="static" color="secondary">
-                <Toolbar>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        Channels
-                    </Typography>
-                    <Button onClick={handleModalOpen}>Add Channel</Button>
-                </Toolbar>
-            </AppBar>
+            <Header Title="Channels">
+                <Button onClick={handleModalOpen}>Add Channel</Button>
+            </Header>
             {channels.length > 0 ? channels.map(channel => (
                 <Card key={channel.channelID} sx={{ m: 2 }}>
                     <CardContent>

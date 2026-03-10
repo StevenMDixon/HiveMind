@@ -19,6 +19,7 @@ import RoundedLoadingFiller from './Components/RoundedLoadingFiller';
 import { useEffect, useState } from 'react';
 
 import { useGlobalNotification } from '../Dashboard/useGlobalNotification';
+import Header from './Components/Header';
 
 interface Library {
     libraryId: number;
@@ -86,14 +87,9 @@ const LibraryPage = () => {
 
     return (
         <Container disableGutters maxWidth={false}>
-            <AppBar position="static" color="secondary">
-                <Toolbar>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        Libraries
-                    </Typography>
-                    <Button onClick={handleModalOpen}>Add Library</Button>
-                </Toolbar>
-            </AppBar>
+            <Header Title="Libraries">
+                <Button onClick={handleModalOpen}>Add Library</Button>
+            </Header>
             {libraries.length > 0 ? libraries.map(library => (
                 <Card key={library.libraryId} sx={{ m: 2 }}>
                     <CardContent>

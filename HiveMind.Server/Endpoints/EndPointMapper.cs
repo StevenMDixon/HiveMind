@@ -9,6 +9,7 @@ public static class EndPointMapper
         Weather.EndPoints.Map(builder);
         Collections.Endpoints.Map(builder);
         MediaItems.EndPoints.Map(builder);
+        Schedules.EndPoints.Map(builder);
         QuerySettings.Map(builder);
     }
 }

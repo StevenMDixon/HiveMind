@@ -9,6 +9,7 @@ import LibaryPage from './Pages/Library';
 import CollectionPage from './Pages/Collections/Collections'
 import MediaPage from './Pages/Media/MediaView'
 import CollectionDetail from './Pages/Collections/CollectionDetail'
+import Schedules from './Pages/Schedules/Schedules'
 
 const darkTheme = createTheme({
     palette: {
@@ -25,11 +26,12 @@ const App = () => {
                 <Route path="/" element={<DashboardLayout />}>
                     <Route index element={<div>HiveMind Client</div>} />
                         <Route path="channels" element={<ChannelPage />} />
-                        <Route path="schedules" element={<div>HiveMind Client: Schedules</div>} />
+                        <Route path="schedules" element={<Schedules />} />
                         <Route path="collections" element={<CollectionPage />} />
                         <Route path="collection/:id" element={<CollectionDetail />} />
                         <Route path="libraries" element={<LibaryPage />} />
                         <Route path="media" element={<MediaPage />} />
+                        <Route path="media/manage/:id" element={<p>Hello!</p>} />
                     </Route>
             </Routes>
             </HashRouter>

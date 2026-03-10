@@ -1,4 +1,5 @@
 using FluentValidation;
+using HiveMind.Server.Entities;
 using HiveMind.Server.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +24,8 @@ public class UpdateCollection
         }
     }
 
-    public record CollectionRequest(string CollectionName);
+
+    public record CollectionRequest(string CollectionName, ICollection<QueryFilters> Filters);
 
     public static Results<Ok, NotFound<string>, ValidationProblem> Handle(CollectionService collectionService, [FromRoute] int id, [FromBody] CollectionRequest request)
     {
@@ -32,6 +34,11 @@ public class UpdateCollection
         if (collection is not null)
         {
             collection.Name = request.CollectionName;
+            collection.Filters = request.Filters;
+            foreach (var item in collection.Filters)
+            {
+                if (item.QueryFilterId < 0) item.QueryFilterId = 0;
+            }
             collectionService.Update(collection);
             return TypedResults.Ok();
         }

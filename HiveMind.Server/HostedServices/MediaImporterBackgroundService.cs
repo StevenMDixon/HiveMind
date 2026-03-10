@@ -50,7 +50,7 @@ public class MediaImporterBackgroundService : BackgroundService
                     // Get current media items so we can filter out any that have already been added to the database. We can use the file path to check if it has already been added.
                     var currentMediaItems = mediaItemService.GetMediaItemLibraryID(targetLibary.LibraryId);
 
-                    if (targetLibary.LibraryPath != null)
+                    if (targetLibary.LibraryPath != null && targetLibary.LibraryPath != string.Empty)
                     {
                         _logger.LogInformation("Processing Library: {LibraryName}", targetLibary.LibraryName);
 

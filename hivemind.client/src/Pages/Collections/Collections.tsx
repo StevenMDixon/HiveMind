@@ -21,6 +21,7 @@ import { useEffect, useState } from 'react';
 import { useGlobalNotification } from '../../Dashboard/useGlobalNotification';
 
 import { Link } from "react-router-dom";
+import Header from '../Components/Header';
 
 interface Collection {
     collectionID: number;
@@ -87,14 +88,9 @@ const CollectionPage = () => {
 
     return (
         <Container disableGutters maxWidth={false}>
-            <AppBar position="static" color="secondary">
-                <Toolbar>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        Collections
-                    </Typography>
-                    <Button onClick={handleModalOpen}>Add Collection</Button>
-                </Toolbar>
-            </AppBar>
+            <Header Title="Collections">
+                <Button onClick={handleModalOpen}>Add Collection</Button>
+            </Header>
             {collections.length > 0 ? collections.map(collection => (
                 <Card key={collection.collectionID} sx={{ m: 2 }}>
                     <CardContent>

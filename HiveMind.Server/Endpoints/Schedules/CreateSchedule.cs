@@ -10,7 +10,7 @@ public class CreateSchedule
     public static void Map(IEndpointRouteBuilder app)
     {
         app.MapPost("/", Handle)
-            .WithRequestValidation<Validator>()
+            .WithRequestValidation<ScheduleRequest>()
             .WithName("CreateSchedule")
             .ProducesValidationProblem();
     }

@@ -10,7 +10,7 @@ public class UpdateSchedule
     public static void Map(IEndpointRouteBuilder app)
     {
         app.MapPut("/{id:int}", Handle)
-            .WithRequestValidation<Validator>()
+            .WithRequestValidation<ScheduleRequest>()
             .WithName("UpdateSchedule")
             .ProducesValidationProblem();
     }
