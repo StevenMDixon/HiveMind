@@ -13,7 +13,7 @@ import TvIcon from '@mui/icons-material/Tv';
 import HiveIcon from '@mui/icons-material/Hive';
 import { Link, useLocation } from 'react-router-dom';
 import MovieIcon from '@mui/icons-material/Movie';
-
+import Typography from '@mui/material/Typography'
 
 const Sidebar: React.FC = () => {
     const location = useLocation();
@@ -41,8 +41,8 @@ const Sidebar: React.FC = () => {
                 anchor="left"
             >
                 <Toolbar>
-                <HiveIcon />
-                <p>HiveMind</p>
+                    <HiveIcon fontSize="large" color="secondary"/>
+                    <Typography sx={{ml: 1} }>HiveMind</Typography>
             </Toolbar>
             <Divider />
                 <List>

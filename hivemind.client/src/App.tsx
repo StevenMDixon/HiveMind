@@ -5,16 +5,22 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
 import ChannelPage from './Pages/Channels';
-import LibaryPage from './Pages/Library';
+import LibaryPage from './Pages/Libraries/Library';
 import CollectionPage from './Pages/Collections/Collections'
 import MediaPage from './Pages/Media/MediaView'
 import CollectionDetail from './Pages/Collections/CollectionDetail'
 import Schedules from './Pages/Schedules/Schedules'
+import ScheduleEdit from './Pages/Schedules/ScheduleEdit'
 
 const darkTheme = createTheme({
     palette: {
         mode: 'dark',
+        secondary: {
+            main: '#ffc400',
+            dark: '#ffc400',
+        }
     },
+
 });
 
 const App = () => {
@@ -27,6 +33,7 @@ const App = () => {
                     <Route index element={<div>HiveMind Client</div>} />
                         <Route path="channels" element={<ChannelPage />} />
                         <Route path="schedules" element={<Schedules />} />
+                        <Route path="schedules/:id" element={<ScheduleEdit />} />
                         <Route path="collections" element={<CollectionPage />} />
                         <Route path="collection/:id" element={<CollectionDetail />} />
                         <Route path="libraries" element={<LibaryPage />} />

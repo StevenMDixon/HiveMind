@@ -11,10 +11,11 @@ public class CollectionService: BaseService
         return _context.Collections.Include(c => c.Filters);
     }
 
-    public void AddCollection(Collection collection)
+    public Collection AddCollection(Collection collection)
     {
         _context.Collections.Add(collection);
         _context.SaveChanges();
+        return collection;
     }
 
     public Collection? GetCollectionByID(int id)

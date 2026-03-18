@@ -1,14 +1,19 @@
-import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Typography, Button } from "@mui/material";
+import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Typography, Button } from "@mui/material";
 import { use, Suspense } from "react";
 import ErrorBoundary from "../../Components/ErrorBoundary";
-import { /*useNavigate*/ } from "react-router-dom";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from "@mui/material/IconButton";
+
+import RoundedLoadingFiller from './RoundedLoadingFiller';
 
 export interface CellData {
     key: string,
     name: string
     align?: "left" | "right" | "center";
     format?: <T,>(item: T) => string;
-    action?: <T,>(item: T) => void;
+    action?: <T, >(item: T) => void;
+    icon?: "Edit" | "Delete";
 }
 
 interface CustomTableProps<T> {
@@ -30,11 +35,29 @@ const CustomTableBody = <T,>({ dataPromise, columns, actionColumns}: CustomTable
     )
 }
 
+const CustomIcon = (iconName: string) => {
+    switch (iconName) {
+        case 'Edit': return <EditIcon />
+        case 'Delete': return <DeleteIcon />
+    }
+}
+
 const CustomTableRow = <T,>({ item, columns, actionColumns }: { item: T, columns: CellData[], actionColumns?: CellData[]}) => {
     return (
         <TableRow>
             {columns.map(column => <CustomTableCell key={column.key} item={item} column={column} />)}
-            {actionColumns?.map(ac => <TableCell key={ac.key}><Button fullWidth  onClick={() => ac.action?.(item)}>Test</Button></TableCell>) }
+
+            {actionColumns &&
+                <TableCell align={'right'} >
+                    {actionColumns?.map(ac =>
+                        ac.icon ? 
+                            <IconButton key={ac.key} onClick={() => ac.action?.(item)}>
+                                {CustomIcon(ac.icon)}
+                            </IconButton>
+                        : <Button key={ac.key} onClick={() => ac.action?.(item)}>{ac.name}</Button>)
+                    }
+                </TableCell>
+            }
         </TableRow>
     )
 }
@@ -52,15 +75,13 @@ const CustomTableCell = <T,>({ item, column }: { item: T, column: CellData }) =>
 }
 
 const CustomTable = <T,>({ dataPromise, columns, actionColumns, handleRetry }: CustomTableProps<T>) => {
-    
-
     return (
-        <TableContainer component={Paper} >
-            <Table sx={{ minWidth: 650 }} size="small" aria-label="a">
+        <TableContainer  sx={{mt: 2, p: 2}} >
+            <Table>
                 <TableHead>
                     <TableRow>
-                        {[...columns, ...actionColumns ?? []].map(column => (<TableCell key={column.key} align={column.align}>{column.name}</TableCell>))}
-                       
+                        {[...columns].map(column => (<TableCell key={column.key} align={column.align}>{column.name}</TableCell>))}
+                        {actionColumns && <TableCell key={'action-column'} align={'right'}>{'Action'}</TableCell>}
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -79,9 +100,7 @@ const CustomTable = <T,>({ dataPromise, columns, actionColumns, handleRetry }: C
                         )}
                     >
                         <Suspense fallback={
-                            <TableRow>
-                                <TableCell colSpan={10} align="center">Loading...</TableCell>
-                            </TableRow>
+                            <RoundedLoadingFiller size={10} width={columns.length + (actionColumns ? 1 : 0)}></RoundedLoadingFiller>
                         }>
                             <CustomTableBody dataPromise={dataPromise} columns={columns} actionColumns={actionColumns} handleRetry={handleRetry}/>
                         </Suspense>

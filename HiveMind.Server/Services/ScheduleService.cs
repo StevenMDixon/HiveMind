@@ -1,4 +1,5 @@
 ﻿using HiveMind.Server.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace HiveMind.Server.Services;
 
@@ -19,7 +20,9 @@ public class ScheduleService:BaseService
 
     public Schedule? GetScheduleByID(int id)
     {
-        return _context.Schedules.Find(id);
+        return _context.Schedules
+            .Include(c => c.ScheduleItems)
+            .FirstOrDefault(x => x.ScheduleId == id);
     }
 
     public void Update(Schedule schedule)

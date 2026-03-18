@@ -1,8 +1,3 @@
-
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import CardActions from '@mui/material/CardActions';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 
@@ -14,17 +9,28 @@ import TextField from '@mui/material/TextField';
 
 import Header from './Components/Header';
 
-import RoundedLoadingFiller from './Components/RoundedLoadingFiller';
-
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { useGlobalNotification } from '../Dashboard/useGlobalNotification';
+
+import CustomTable, { type CellData } from './Components/Table';
+import { useNavigate } from "react-router-dom";
 
 interface Channel {
     channelID: number;
     channelName: string;
     channelNumber: number;
 }
+
+const fetchChannels = async () => {
+    const response = await fetch('/channels');
+
+    if (response.ok) {
+        const data = await response.json();
+        return data.channels;
+    }
+};
+
 
 const ChannelPage = () => {
 
@@ -34,27 +40,32 @@ const ChannelPage = () => {
 
     const { showNotification } = useGlobalNotification();
 
-    const [channels, setChannels] = useState<Channel[]>([]);
+    const channelInputDefault = { channelID: 0, channelName: "", channelNumber: 0 }
 
-    const [channelName, setChannelName] = useState<string>('');
-    const [channelNumber, setChannelNumber] = useState<number>(0);
+    const [channelInputs, setChannelInputs] = useState<Channel>(channelInputDefault)
+
+    const updateChannelInputs = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const name = event.target.name;
+        const value = event.target.value;
+        setChannelInputs(values => ({ ...values, [name]: value }))
+    }
 
     const createChannel = async () => {
         const response = await fetch('/channels', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ChannelName: channelName, ChannelNumber: channelNumber }),
+            body: JSON.stringify({ ChannelName: channelInputs.channelName, ChannelNumber: channelInputs.channelNumber }),
         });
 
         if (response.ok) {
-            setChannelName('');
+            setChannelInputs(channelInputDefault);
             showNotification("Channel Created", "success");
         } else {
             showNotification("Failed to create channel", "error");
         }
         
         handleModalClose();
-        fetchChannels();
+        setChannelPromise(fetchChannels());
     };
 
     const deleteChannel = async (channelId: number) => {
@@ -69,68 +80,51 @@ const ChannelPage = () => {
             showNotification("Failed to delete channel", "error");
         }
 
-        fetchChannels();
+        setChannelPromise(fetchChannels());
     };
 
-    const fetchChannels = async () => {
-        const response = await fetch('/channels');
+    const [channelPromise, setChannelPromise] = useState(() => fetchChannels());
+    const navigate = useNavigate();
 
-        if (response.ok) {
-            const data = await response.json();
-            setChannels(data.channels);
-        }
+    const columns = [
+        { key: 'channelID', name: 'ID', align: 'left' },
+        { key: 'channelName', name: 'Channel Name', align: 'left' },
+        { key: 'channelNumber', name: 'Assigned Channel ID', align: 'left' }
+    ] as CellData[];
+
+    const actionColumns = [
+        { key: 'a1', name: "Edit", action: (e: Channel) => navigate("/channels/" + e.channelID), icon: "Edit" },
+        { key: 'a2', name: "Delete", action: (e: Channel) => deleteChannel(e.channelID), icon: "Delete" }
+    ] as CellData[];
+
+    const handleRetry = () => {
+        setChannelPromise(fetchChannels());
     };
-
-    useEffect(() => {
-        fetchChannels();
-    }, []);
 
     return (
         <Container disableGutters maxWidth={false}>
             <Header Title="Channels">
                 <Button onClick={handleModalOpen}>Add Channel</Button>
             </Header>
-            {channels.length > 0 ? channels.map(channel => (
-                <Card key={channel.channelID} sx={{ m: 2 }}>
-                    <CardContent>
-                        <Typography gutterBottom sx={{ color: 'text.primary', fontSize: 14 }}>
-                            {channel.channelID}
-                        </Typography>
-                        <Typography gutterBottom sx={{ color: 'text.primary', fontSize: 14 }}>
-                            {channel.channelNumber}
-                        </Typography>
-                        <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
-                            {channel.channelName}
-                        </Typography>
-                    </CardContent>
-                    <CardActions sx={{ justifyContent: 'flex-end' }}>
-                        <Button size="small" color="primary" onClick={() => deleteChannel(channel.channelID)}>
-                            Delete
-                        </Button>
-                        <Button size="small" color="primary">
-                            Edit
-                        </Button>
-                    </CardActions>
-                </Card>
-            )) : <RoundedLoadingFiller size={7} />
-            }
+            <CustomTable dataPromise={channelPromise} handleRetry={handleRetry} columns={columns} actionColumns={actionColumns} />
+
             <Dialog onClose={handleModalClose} open={createModalState}>
                 <DialogTitle>Create Channel</DialogTitle>
                 <DialogContent>
                     <TextField
                         required
-                        id="outlined-required"
+                        name="channelName"
                         label="Channel Name"
-                        value={channelName}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => setChannelName(event.target.value)}
+                        value={channelInputs.channelName}
+                        onChange={updateChannelInputs}
                         sx={{ m: 1 }}
                     />
                     <TextField
                         required
-                        id="outlined-required"
+                        name="channelNumber"
                         label="Channel Number"
-                        value={channelNumber}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => setChannelNumber(Number(event.target.value))}
+                        value={channelInputs.channelNumber}
+                        onChange={updateChannelInputs}
                         sx={{ m: 1 }}
                     />
                 </DialogContent>

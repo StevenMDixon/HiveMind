@@ -11,11 +11,9 @@ import type { Collection, Filter } from './types';
 import { CollectionInfo } from './CollectionInfo';
 import { CollectionFiltersLayout } from './CollectionFiltersLayout';
 
-const dataPromise = fetch('/querysettings').then(res => res.json());
-
-export const CollectionLayout = ({ promise, save }: { promise: Promise<Collection>, save: (c: Collection) => Promise<void> }) => {
+export const CollectionLayout = ({ promise, options, save }: { promise: Promise<Collection>, options: Promise<unknown>, save: (c: Collection) => Promise<void> }) => {
     const collection = use(promise);
-    const queryOptions = use(dataPromise);
+    const queryOptions = use(options);
 
     const [collectionData, setCollectionData] = useState<Collection>();
     const [filterData, setFilterData] = useState<Filter[]>([]);

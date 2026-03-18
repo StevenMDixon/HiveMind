@@ -11,7 +11,11 @@ public static class GetScheduleById
         app.MapGet("/{id:int}", Handle).WithName("GetScheduleById");
     }
 
-    public record Schedule(int ScheduleId, string ScheduleName, int ChannelId, TimeOnly StartTime);
+    public record Collection(int CollectionId, string Name);
+
+    public record ScheduleItem(int ScheduleItemId, int Index, string Type, string Name);
+
+    public record Schedule(int ScheduleId, string ScheduleName, int ChannelId, TimeOnly StartTime, ICollection<ScheduleItem> ScheduleItems);
 
     public static Results<Ok<Schedule>, NotFound<string>> Handle(ScheduleService scheduleService, [FromRoute] int id)
     {
@@ -19,7 +23,12 @@ public static class GetScheduleById
 
         if (schedule is not null)
         {
-            return TypedResults.Ok(new Schedule(schedule.ScheduleId, schedule.ScheduleName, schedule.ChannelId, schedule.StartTime));
+            return TypedResults.Ok(new Schedule(
+                schedule.ScheduleId, 
+                schedule.ScheduleName, 
+                schedule.ChannelId, 
+                schedule.StartTime, 
+                schedule.ScheduleItems?.Select(item => new ScheduleItem(item.ScheduleItemId, item.Index, item.Type, item.Name)).ToList() ?? []));
         }
 
         return TypedResults.NotFound($"A schedule with the ID: {id} was not found.");

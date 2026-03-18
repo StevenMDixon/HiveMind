@@ -23,16 +23,18 @@ public class CreateCollection
         }
     }
 
+    public record Response(int CollectionId);
+
     public record CollectionRequest(string CollectionName);
-    public static Results<Ok, NoContent, ValidationProblem> Handle(CollectionService collectionService, [FromBody] CollectionRequest request)
+    public static Results<Ok<Response>, NoContent, ValidationProblem> Handle(CollectionService collectionService, [FromBody] CollectionRequest request)
     {
         var newCollection = new Entities.Collection
         {
             Name = request.CollectionName
         };
 
-        collectionService.AddCollection(newCollection);
+        newCollection = collectionService.AddCollection(newCollection);
 
-        return TypedResults.NoContent();
+        return TypedResults.Ok(new Response(newCollection.CollectionId));
     }
 }

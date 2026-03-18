@@ -146,11 +146,3 @@ C:\Users\Helreizer55\Documents\GitHub\HiveMind\HiveMind.Tests\obj\Debug\net10.0\
 C:\Users\Helreizer55\Documents\GitHub\HiveMind\HiveMind.Tests\obj\Debug\net10.0\HiveMind.Tests.genruntimeconfig.cache
 C:\Users\Helreizer55\Documents\GitHub\HiveMind\HiveMind.Tests\obj\Debug\net10.0\ref\HiveMind.Tests.dll
 C:\Users\Helreizer55\Documents\GitHub\HiveMind\HiveMind.Tests\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.InMemory.dll
-C:\Users\Helreizer55\Documents\GitHub\HiveMind\HiveMind.Tests\bin\Debug\net10.0\Microsoft.Extensions.Caching.Abstractions.dll
-C:\Users\Helreizer55\Documents\GitHub\HiveMind\HiveMind.Tests\bin\Debug\net10.0\Microsoft.Extensions.Caching.Memory.dll
-C:\Users\Helreizer55\Documents\GitHub\HiveMind\HiveMind.Tests\bin\Debug\net10.0\Microsoft.Extensions.DependencyInjection.dll
-C:\Users\Helreizer55\Documents\GitHub\HiveMind\HiveMind.Tests\bin\Debug\net10.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
-C:\Users\Helreizer55\Documents\GitHub\HiveMind\HiveMind.Tests\bin\Debug\net10.0\Microsoft.Extensions.Logging.dll
-C:\Users\Helreizer55\Documents\GitHub\HiveMind\HiveMind.Tests\bin\Debug\net10.0\Microsoft.Extensions.Logging.Abstractions.dll
-C:\Users\Helreizer55\Documents\GitHub\HiveMind\HiveMind.Tests\bin\Debug\net10.0\Microsoft.Extensions.Options.dll
-C:\Users\Helreizer55\Documents\GitHub\HiveMind\HiveMind.Tests\bin\Debug\net10.0\Microsoft.Extensions.Primitives.dll

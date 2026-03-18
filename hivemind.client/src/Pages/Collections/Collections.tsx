@@ -1,8 +1,3 @@
-
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import CardActions from '@mui/material/CardActions';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 
@@ -12,19 +7,30 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import TextField from '@mui/material/TextField';
 
-import RoundedLoadingFiller from '../Components/RoundedLoadingFiller';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { useGlobalNotification } from '../../Dashboard/useGlobalNotification';
 
-import { Link } from "react-router-dom";
+import CustomTable, { type CellData } from '../Components/Table';
+
 import Header from '../Components/Header';
+
+import { useNavigate } from "react-router-dom";
 
 interface Collection {
     collectionID: number;
     collectionName: string;
 }
+
+const fetchCollections = async () => {
+    const response = await fetch('/collections');
+
+    if (response.ok) {
+        const data = await response.json();
+        return data.collections;
+    }
+};
 
 const CollectionPage = () => {
 
@@ -34,9 +40,11 @@ const CollectionPage = () => {
 
     const { showNotification } = useGlobalNotification();
 
-    const [collections, setCollections] = useState<Collection[]>([]);
+    const [collectionPromise, setCollectionPromise] = useState(() => fetchCollections());
 
     const [collectionName, setCollectionName] = useState<string>('');
+
+    const navigate = useNavigate();
 
     const createCollection = async () => {
         const response = await fetch('/collections', {
@@ -46,14 +54,15 @@ const CollectionPage = () => {
         });
 
         if (response.ok) {
-            setCollectionName('');
-            showNotification("Cpllection Created", "success");
+            showNotification("Collection Created", "success");
+            const data = await response.json();
+            navigate("/collection/" + data.collectionId)
         } else {
             showNotification("Failed to create collection", "error");
         }
 
-        handleModalClose();
-        fetchCollections();
+    //    navigate("/collections/" + response.)
+    //    setCollectionPromise(fetchCollections());
     };
 
     const deleteCollection = async (collectionId: number) => {
@@ -68,48 +77,32 @@ const CollectionPage = () => {
             showNotification("Failed to delete collection", "error");
         }
 
-        fetchCollections();
+        setCollectionPromise(fetchCollections());
     };
 
-    const fetchCollections = async () => {
-        const response = await fetch('/collections');
 
-        if (response.ok) {
-            const data = await response.json();
-            setCollections(data.collections);
-        }
+    const columns = [
+        { key: 'collectionID', name: 'ID', align: 'left' },
+        { key: 'collectionName', name: 'Collection Name', align: 'left' }
+    ] as CellData[];
+
+    const actionColumns = [
+        { key: 'a1', name: "Edit", action: (e: Collection) => navigate("/collection/" + e.collectionID), icon: "Edit" },
+        { key: 'a2', name: "Delete", action: (e: Collection) => deleteCollection(e.collectionID), icon: "Delete" }
+    ] as CellData[];
+
+    const handleRetry = () => {
+        setCollectionPromise(fetchCollections());
     };
 
-    useEffect(() => {
-        fetchCollections();
-    }, []);
 
     return (
         <Container disableGutters maxWidth={false}>
             <Header Title="Collections">
                 <Button onClick={handleModalOpen}>Add Collection</Button>
             </Header>
-            {collections.length > 0 ? collections.map(collection => (
-                <Card key={collection.collectionID} sx={{ m: 2 }}>
-                    <CardContent>
-                        <Typography gutterBottom sx={{ color: 'text.primary', fontSize: 14 }}>
-                            {collection.collectionID}
-                        </Typography>
-                        <Typography gutterBottom sx={{ color: 'text.primary', fontSize: 14 }}>
-                            {collection.collectionName}
-                        </Typography>
-                    </CardContent>
-                    <CardActions sx={{ justifyContent: 'flex-end' }}>
-                        <Button size="small" color="primary" onClick={() => deleteCollection(collection.collectionID)}>
-                            Delete
-                        </Button>
-                        <Button size="small" color="primary">
-                            <Link to={`/Collection/${collection.collectionID}`}>Edit</Link>
-                        </Button>
-                    </CardActions>
-                </Card>
-            )) : <RoundedLoadingFiller size={7} />
-            }
+            <CustomTable dataPromise={collectionPromise} columns={columns} actionColumns={actionColumns} handleRetry={handleRetry} />
+           
             <Dialog onClose={handleModalClose} open={createModalState}>
                 <DialogTitle>Create Collection</DialogTitle>
                 <DialogContent>

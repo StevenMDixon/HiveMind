@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 interface Schedule {
     scheduleId: number;
     scheduleName: string;
+    ChannelId: number;
 }
 
 // Function that creates a new promise with error handling
@@ -27,11 +28,12 @@ const Schedules = () => {
 
     const columns = [
         { key: 'scheduleId', name: 'ID', align: 'left' },
-        { key: 'scheduleName', name: 'Name', align: 'left' }
+        { key: 'scheduleName', name: 'Name', align: 'left' },
+        { key: 'channelId', name: 'Assigned Channel ID', align: 'left' }
     ] as CellData[];
 
     const actionColumns = [
-        { key: 'a1', name: "Action", align: 'center', action: (e: Schedule) => navigate("/schedules/" + e.scheduleId)}
+        { key: 'a1', name: "Edit", align: 'center', action: (e: Schedule) => navigate("/schedules/" + e.scheduleId), icon:"Edit"}
     ] as CellData[];
 
     const handleRetry = () => {

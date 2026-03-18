@@ -54,7 +54,16 @@ public class MediaImporterBackgroundService : BackgroundService
                     {
                         _logger.LogInformation("Processing Library: {LibraryName}", targetLibary.LibraryName);
 
-                        var files = Directory.GetFiles(targetLibary.LibraryPath, "*.*", SearchOption.AllDirectories).Where(x => Regex.IsMatch(x, $".*[.]({fileFormats})$"));
+                        var files = new List<string>();
+
+                        try
+                        {
+                            files.AddRange(Directory.GetFiles(targetLibary.LibraryPath, "*.*", SearchOption.AllDirectories).Where(x => Regex.IsMatch(x, $".*[.]({fileFormats})$")));
+                        }
+                        catch
+                        {
+
+                        }
 
                         _logger.LogInformation("Found files: {Count}", files.Count());
 
@@ -171,7 +180,7 @@ public class MediaImporterBackgroundService : BackgroundService
                 }
             }
 
-            await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken); // Example delay
+            await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken); // Example delay
         }
     }
 

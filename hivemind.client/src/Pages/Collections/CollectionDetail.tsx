@@ -30,6 +30,8 @@ const CollectionDetail = () => {
 
     const [collectionPromise, setCollectionPromise] = useState(() => fetchCollection(Number(id)));
 
+    const [optionPromise] = useState(() => fetch('/querysettings').then(res => res.json()))
+
     const saveCollection = async (collection: Collection): Promise<void> => {
         const result = await fetch('/collections/'+ id, {
             method: 'PUT',
@@ -57,7 +59,7 @@ const CollectionDetail = () => {
                     <p>{error.message}</p>
                 )}>
                 <Suspense fallback={<p> Loading </p>}>
-                    <CollectionLayout promise={collectionPromise} save={saveCollection} />        
+                    <CollectionLayout promise={collectionPromise} options={optionPromise}  save={saveCollection} />        
                 </Suspense>
             </ErrorBoundary>
         </Container>

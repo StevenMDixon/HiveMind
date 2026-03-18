@@ -1,16 +1,23 @@
+import { TableRow, TableCell } from '@mui/material';
 import Skeleton from '@mui/material/Skeleton';
-import Stack from '@mui/material/Stack';
 
 interface RoundedLoadingFillerProps {
-    size: number
+    size: number;
+    width: number;
 }
 
-const RoundedLoadingFiller = ({ size } : RoundedLoadingFillerProps) => (
-    <Stack spacing={2} sx={{ m: 2 }}>
-        {
-            [...new Array(size)].map((_, i) => <Skeleton variant="rounded" height={60} key={i} />)
-        }
-    </Stack>
-);
+const RoundedLoadingFiller = ({ size, width }: RoundedLoadingFillerProps) => {
+    return [...new Array(size)].map((_, i) => (
+        <TableRow key={i}>
+            {
+                [...Array(width)].map((_, index) => ( 
+                    <TableCell component="th" scope="row" key={index}>
+                        <Skeleton animation="wave" variant="text" />
+                    </TableCell>
+                ))
+            }
+        </TableRow>
+    ))
+};
 
-export default  RoundedLoadingFiller;
+export default RoundedLoadingFiller;
