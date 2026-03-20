@@ -31,6 +31,7 @@ export const CollectionFilter = ({ filters, options, change, remove }: Collectio
                         <FormControl sx={{ minWidth: 200, mr: 1, mb: 1 }}>
                             <InputLabel>Field</InputLabel>
                             <Select
+                                variant="filled"
                                 name={x.queryFilterID + " field"}
                                 value={x.field}
                                 onChange={(e: SelectChangeEvent) => change(x.queryFilterID, "field", e.target.value)}
@@ -47,6 +48,7 @@ export const CollectionFilter = ({ filters, options, change, remove }: Collectio
                         <FormControl sx={{ minWidth: 200, mr: 1 }}>
                             <InputLabel>Operator</InputLabel>
                             <Select
+                                variant="filled"
                                 name={x.queryFilterID + " operator"}
                                 value={x.operator}
                                 onChange={(e: SelectChangeEvent) => change(x.queryFilterID, "operator", e.target.value)}
@@ -57,7 +59,7 @@ export const CollectionFilter = ({ filters, options, change, remove }: Collectio
                             </Select>
                         </FormControl>
                         <FormControl sx={{ minWidth: 350 }} >
-                            <TextField name={x.queryFilterID + " value"} label="Value" variant="outlined" value={x.value} onChange={(e) => change(x.queryFilterID, "value", e.target.value)} />
+                            <TextField name={x.queryFilterID + " value"} label="Value" variant="filled" value={x.value} onChange={(e) => change(x.queryFilterID, "value", e.target.value)} />
                         </FormControl>
                         <FormControl >
                             <IconButton aria-label="delete" onClick={() => remove(x.queryFilterID)}>

@@ -9,8 +9,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button'
 
 import { CollectionLayout } from './CollectionLayout'
-import type { Collection } from './types'
-
+import type { Collection, QueryOption } from './types'
 
 const fetchCollection = async (collectionId: number): Promise<Collection> => {
     const response = await fetch('/collections/' + collectionId);
@@ -23,6 +22,17 @@ const fetchCollection = async (collectionId: number): Promise<Collection> => {
     return data;
 };
 
+const fetchOptions = async (): Promise<QueryOption[]> => {
+    const response = await fetch('/querysettings');
+
+    if (!response.ok) {
+        throw new Error(`Failed to query options: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.options;
+};
+
 const CollectionDetail = () => {
     const { id } = useParams();
 
@@ -30,7 +40,7 @@ const CollectionDetail = () => {
 
     const [collectionPromise, setCollectionPromise] = useState(() => fetchCollection(Number(id)));
 
-    const [optionPromise] = useState(() => fetch('/querysettings').then(res => res.json()))
+    const [optionPromise] = useState(() => fetchOptions());
 
     const saveCollection = async (collection: Collection): Promise<void> => {
         const result = await fetch('/collections/'+ id, {

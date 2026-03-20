@@ -7,19 +7,19 @@ import IconButton from "@mui/material/IconButton";
 
 import RoundedLoadingFiller from './RoundedLoadingFiller';
 
-export interface CellData {
+export interface CellData<T> {
     key: string,
     name: string
     align?: "left" | "right" | "center";
-    format?: <T,>(item: T) => string;
-    action?: <T, >(item: T) => void;
+    format?: (item: string) => string;
+    action?: (item: T) => void;
     icon?: "Edit" | "Delete";
 }
 
 interface CustomTableProps<T> {
     dataPromise: Promise<T[]>;
-    columns: CellData[];
-    actionColumns?: CellData[];
+    columns: CellData<T>[];
+    actionColumns?: CellData<T>[];
     handleRetry: () => void;
 }
 
@@ -42,7 +42,7 @@ const CustomIcon = (iconName: string) => {
     }
 }
 
-const CustomTableRow = <T,>({ item, columns, actionColumns }: { item: T, columns: CellData[], actionColumns?: CellData[]}) => {
+const CustomTableRow = <T,>({ item, columns, actionColumns }: { item: T, columns: CellData<T>[], actionColumns?: CellData<T>[]}) => {
     return (
         <TableRow>
             {columns.map(column => <CustomTableCell key={column.key} item={item} column={column} />)}
@@ -62,7 +62,7 @@ const CustomTableRow = <T,>({ item, columns, actionColumns }: { item: T, columns
     )
 }
 
-const CustomTableCell = <T,>({ item, column }: { item: T, column: CellData }) => {
+const CustomTableCell = <T,>({ item, column }: { item: T, column: CellData<T> }) => {
     const value = item[column.key as keyof T] as unknown as string;
 
     return (

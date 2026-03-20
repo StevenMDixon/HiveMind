@@ -1,21 +1,16 @@
 import { useState, use, useEffect } from 'react'
 
 import Container from '@mui/material/Container';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton'
-import SaveIcon from '@mui/icons-material/Save';
+import CustomEditForm, { type CustomFormField } from '../Components/EditCustomForm';
 
-import type { Collection, Filter } from './types';
+import type { Collection, Filter, QueryOption } from './types';
 
-import { CollectionInfo } from './CollectionInfo';
 import { CollectionFiltersLayout } from './CollectionFiltersLayout';
 
-export const CollectionLayout = ({ promise, options, save }: { promise: Promise<Collection>, options: Promise<unknown>, save: (c: Collection) => Promise<void> }) => {
+export const CollectionLayout = ({ promise, options, save }: { promise: Promise<Collection>, options: Promise<QueryOption[]>, save: (c: Collection) => Promise<void> }) => {
     const collection = use(promise);
     const queryOptions = use(options);
 
-    const [collectionData, setCollectionData] = useState<Collection>();
     const [filterData, setFilterData] = useState<Filter[]>([]);
 
     const handleFilterChange = (id: number, field: string, value: string) => {
@@ -32,12 +27,14 @@ export const CollectionLayout = ({ promise, options, save }: { promise: Promise<
         }
     }
 
-    const getUpdatedCollection = (): Collection => {
-        return {
-            collectionID: collectionData?.collectionID ?? 0,
-            collectionName: collectionData?.collectionName ?? "",
+    const handleSave = (e: Collection) => {
+        const newData = {
+            collectionID: e.collectionID,
+            collectionName: e.collectionName,
             filters: filterData
         }
+
+        save(newData);
     }
 
     const removeFilter = (id: number) => {
@@ -51,24 +48,18 @@ export const CollectionLayout = ({ promise, options, save }: { promise: Promise<
     }
 
     useEffect(() => {
-        setCollectionData(collection);
         setFilterData(collection.filters);
     }, [collection])
 
+    const fields = [
+        { name: 'collectionName', type: "Text", initialValue: collection.collectionName },
+    ] as CustomFormField[];
+
     return (
         <Container sx={{ mt: 5 }}>
-            <Paper>
-                <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', mx: 1}}>
-                    <IconButton onClick={() => save(getUpdatedCollection())}>
-                        <SaveIcon  />
-                    </IconButton>
-                </Box>
-                
-                <Box sx={{m: 2, pb: 2} }>
-                    <CollectionInfo collection={collectionData} />
-                    <CollectionFiltersLayout filters={filterData} options={queryOptions.options} filterChange={handleFilterChange} addFilter={addFilter} removeFilter={removeFilter} />
-                </Box>
-            </Paper>
+            <CustomEditForm title="Collection Info:" fields={fields} initialValue={collection} save={handleSave}>
+                <CollectionFiltersLayout filters={filterData} options={queryOptions} filterChange={handleFilterChange} addFilter={addFilter} removeFilter={removeFilter} />
+            </CustomEditForm>
         </Container>
     )
 }

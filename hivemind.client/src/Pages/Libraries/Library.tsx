@@ -149,12 +149,12 @@ const LibraryPage = () => {
         { key: 'libraryName', name: 'Name', align: 'left' },
         { key: 'libraryType', name: 'Type', align: 'left' },
         { key: 'libraryPath', name: 'Path', align: 'left' }
-    ] as CellData[];
+    ] as CellData<Library>[];
 
     const actionColumns = [
-        { key: 'a1', name: "Edit", align: 'center', action: (e: Library) => console.log(e), icon: "Edit"  },
-        { key: 'a2', name: "Delete", align: 'center', action: (e: Library) => deleteLibrary(e.libraryId), icon: "Delete" }
-    ] as CellData[];
+        { key: 'a1', name: "Edit", align: 'center', action: (e) => console.log(e), icon: "Edit"  },
+        { key: 'a2', name: "Delete", align: 'center', action: (e) => deleteLibrary(e.libraryId), icon: "Delete" }
+    ] as CellData<Library>[];
 
     const handleRetry = () => {
         setLibrariesPromise(fetchLibraries());

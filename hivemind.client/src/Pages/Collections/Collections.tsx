@@ -60,9 +60,6 @@ const CollectionPage = () => {
         } else {
             showNotification("Failed to create collection", "error");
         }
-
-    //    navigate("/collections/" + response.)
-    //    setCollectionPromise(fetchCollections());
     };
 
     const deleteCollection = async (collectionId: number) => {
@@ -84,12 +81,12 @@ const CollectionPage = () => {
     const columns = [
         { key: 'collectionID', name: 'ID', align: 'left' },
         { key: 'collectionName', name: 'Collection Name', align: 'left' }
-    ] as CellData[];
+    ] as CellData<Collection>[];
 
     const actionColumns = [
         { key: 'a1', name: "Edit", action: (e: Collection) => navigate("/collection/" + e.collectionID), icon: "Edit" },
         { key: 'a2', name: "Delete", action: (e: Collection) => deleteCollection(e.collectionID), icon: "Delete" }
-    ] as CellData[];
+    ] as CellData<Collection>[];
 
     const handleRetry = () => {
         setCollectionPromise(fetchCollections());

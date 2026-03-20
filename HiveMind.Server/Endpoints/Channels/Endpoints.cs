@@ -9,5 +9,6 @@ public static class EndPoints
         CreateChannel.Map(endpoints);
         UpdateChannel.Map(endpoints);
         DeleteChannel.Map(endpoints);
+        GetChannel.Map(endpoints);
     }
 }

@@ -52,7 +52,7 @@ const ScheduleEdit = () => {
                             {selectedScheduleItem &&
                                 <Paper style={{ padding: '1em', position: 'fixed', zIndex: 1000, minWidth: "50%" }} sx={{mt: "1em",} }>
                                     
-                                 <ScheduleItemEditor scheduleItem={selectedScheduleItem} save={null} />
+                                 <ScheduleItemEditor scheduleItem={selectedScheduleItem} save={() => null} />
                                 </Paper>
                             }
                         </Box>

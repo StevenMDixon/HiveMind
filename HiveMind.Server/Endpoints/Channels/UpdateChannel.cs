@@ -10,7 +10,7 @@ public class UpdateChannel
     public static void Map(IEndpointRouteBuilder app)
     {
         app.MapPut("/{id:int}", Handle)
-            .WithRequestValidation<Validator>()
+            .WithRequestValidation<ChannelRequest>()
             .WithName("UpdateChannel")
             .ProducesValidationProblem();
     }
@@ -20,7 +20,6 @@ public class UpdateChannel
         public Validator()
         {
             RuleFor(x => x.ChannelName).NotEmpty().MaximumLength(100);
-            RuleFor(x => x.ChannelNumber).GreaterThan(0);
         }
     }
 

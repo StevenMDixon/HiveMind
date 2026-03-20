@@ -4,13 +4,14 @@ import DashboardLayout from './Dashboard/layout';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
-import ChannelPage from './Pages/Channels';
+import ChannelPage from './Pages/Channels/Channels';
 import LibaryPage from './Pages/Libraries/Library';
 import CollectionPage from './Pages/Collections/Collections'
 import MediaPage from './Pages/Media/MediaView'
 import CollectionDetail from './Pages/Collections/CollectionDetail'
 import Schedules from './Pages/Schedules/Schedules'
 import ScheduleEdit from './Pages/Schedules/ScheduleEdit'
+import ChannelEdit from './Pages/Channels/ChannelEdit';
 
 const darkTheme = createTheme({
     palette: {
@@ -32,6 +33,7 @@ const App = () => {
                 <Route path="/" element={<DashboardLayout />}>
                     <Route index element={<div>HiveMind Client</div>} />
                         <Route path="channels" element={<ChannelPage />} />
+                        <Route path="channels/:id/" element={<ChannelEdit />} />
                         <Route path="schedules" element={<Schedules />} />
                         <Route path="schedules/:id" element={<ScheduleEdit />} />
                         <Route path="collections" element={<CollectionPage />} />

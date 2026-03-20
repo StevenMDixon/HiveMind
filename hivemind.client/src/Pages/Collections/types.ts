@@ -16,3 +16,9 @@ export interface Collection {
     collectionName: string;
     filters: Filter[];
 }
+
+export interface QueryOption {
+    name: string;
+    type: string;
+    options: string;
+}

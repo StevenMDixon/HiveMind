@@ -10,7 +10,6 @@ interface Schedule {
     ChannelId: number;
 }
 
-// Function that creates a new promise with error handling
 const fetchSchedules = async (): Promise<Schedule[]> => {
     const response = await fetch('/schedules');
 
@@ -30,11 +29,11 @@ const Schedules = () => {
         { key: 'scheduleId', name: 'ID', align: 'left' },
         { key: 'scheduleName', name: 'Name', align: 'left' },
         { key: 'channelId', name: 'Assigned Channel ID', align: 'left' }
-    ] as CellData[];
+    ] as CellData<Schedule>[];
 
     const actionColumns = [
         { key: 'a1', name: "Edit", align: 'center', action: (e: Schedule) => navigate("/schedules/" + e.scheduleId), icon:"Edit"}
-    ] as CellData[];
+    ] as CellData<Schedule>[];
 
     const handleRetry = () => {
         setSchedulePromise(fetchSchedules());

@@ -60,7 +60,7 @@ const MediaPage = () => {
         { key: 'show', name: 'Show', align: 'center', format: (show: Show) => (show?.name)},
         { key: 'episodeNumber', name: 'Episode', align: 'center' },
         { key: 'seasonNumber', name: 'Season', align: 'center' },
-    ] as CellData[];
+    ] as CellData<Media>[];
 
     return (
         <Container disableGutters maxWidth={false}>
