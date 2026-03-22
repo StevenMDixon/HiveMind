@@ -12,6 +12,7 @@ import CollectionDetail from './Pages/Collections/CollectionDetail'
 import Schedules from './Pages/Schedules/Schedules'
 import ScheduleEdit from './Pages/Schedules/ScheduleEdit'
 import ChannelEdit from './Pages/Channels/ChannelEdit';
+import LibraryEdit from './Pages/Libraries/LibraryEdit';
 
 const darkTheme = createTheme({
     palette: {
@@ -39,6 +40,7 @@ const App = () => {
                         <Route path="collections" element={<CollectionPage />} />
                         <Route path="collection/:id" element={<CollectionDetail />} />
                         <Route path="libraries" element={<LibaryPage />} />
+                        <Route path="libraries/:id" element={<LibraryEdit />} />
                         <Route path="media" element={<MediaPage />} />
                         <Route path="media/manage/:id" element={<p>Hello!</p>} />
                     </Route>

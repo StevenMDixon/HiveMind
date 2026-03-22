@@ -11,5 +11,6 @@ public class EndPoints
         DeleteLibrary.Map(endpoints);
         GetLibraryById.Map(endpoints);
         GetLibraryTypes.Map(endpoints);
+        UpdateLibrary.Map(endpoints);
     }
 }

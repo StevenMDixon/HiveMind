@@ -7,19 +7,15 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import TextField from '@mui/material/TextField';
 import { useState, use, Suspense } from 'react';
+import { useNavigate } from "react-router-dom";
 
 import { useGlobalNotification } from '../../Dashboard/useGlobalNotification';
 import Header from '../Components/Header';
 import CustomTable, { type CellData } from '../Components/Table';
-import { Select, MenuItem, FormControl } from '@mui/material';
+import { Select, MenuItem, FormControl, InputLabel, Stack } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material';
 
-interface Library {
-    libraryId: number;
-    libraryName: string;
-    libraryPath: string;
-    libraryType: string
-}
+import type { Library } from './types';
 
 const fetchLibraries = async () => {
     const response = await fetch('/libraries');
@@ -50,11 +46,11 @@ const NewLibraryForm = ({ handleModalClose, createModalState, createLibrary, lib
 
     const libaryTypes = use(libraryTypesPromise);
 
-    const librarylInputDefault = { libraryId: 0, libraryName: "", libraryPath: "", libraryType: "None" }
+    const librarylInputDefault = { libraryId: 0, libraryName: "", libraryPath: "", libraryType: 0 }
 
     const [libraryInputs, setLibraryInputs] = useState<Library>(librarylInputDefault)
 
-    const updateLibraryInputs = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
+    const updateLibraryInputs = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string> | SelectChangeEvent<number>) => {
         const { name, value } = event.target;
         setLibraryInputs(values => ({ ...values, [name]: value }))
     }
@@ -65,6 +61,7 @@ const NewLibraryForm = ({ handleModalClose, createModalState, createLibrary, lib
         <Dialog onClose={handleModalClose} open={createModalState}>
             <DialogTitle>Create Library</DialogTitle>
             <DialogContent>
+            <Stack>
                 <FormControl>
                 <TextField
                         required
@@ -73,7 +70,9 @@ const NewLibraryForm = ({ handleModalClose, createModalState, createLibrary, lib
                         value={libraryInputs.libraryName}
                         onChange={updateLibraryInputs}
                         sx={{m: 1}}
-                />
+                    />
+                </FormControl>
+                <FormControl>
                 <TextField
                     required
                     name="libraryPath"
@@ -81,18 +80,25 @@ const NewLibraryForm = ({ handleModalClose, createModalState, createLibrary, lib
                     value={libraryInputs.libraryPath}
                     onChange={updateLibraryInputs}
                     sx={{ m: 1 }}
-                />
+                    />
+                </FormControl>
+
+                    <FormControl>
+                    <InputLabel>Library Type</InputLabel>
+
                 <Select
                     name="libraryType"
-                    value={libraryInputs.libraryType}
+                        value={libraryInputs.libraryType}
+
                         label="Library Type"
                         labelId="demo-simple-select-label"
                         onChange={updateLibraryInputs}
-                        sx={{ m: 1 }}
+                            sx={{ m: 1 }}
                     >
                     {libaryTypes.map((type: string, index: number) => (<MenuItem value={index}>{type}</MenuItem>))}
                     </Select>
-                    </FormControl>
+                </FormControl>
+              </Stack>
             </DialogContent>
             <DialogActions>
                 <Button onClick={() => createLibrary(libraryInputs, clearForm)}>Create</Button>
@@ -110,6 +116,8 @@ const LibraryPage = () => {
 
     const [librariesPromise, setLibrariesPromise] = useState(() => fetchLibraries());
     const [libraryTypesPromise] = useState(() => fetchLibraryTypes());
+
+    const navigate = useNavigate();
     
     const createLibrary = async (libraryInputs : Library, clearForm: () => void)  => {
         const response = await fetch('/libraries', {
@@ -152,7 +160,7 @@ const LibraryPage = () => {
     ] as CellData<Library>[];
 
     const actionColumns = [
-        { key: 'a1', name: "Edit", align: 'center', action: (e) => console.log(e), icon: "Edit"  },
+        { key: 'a1', name: "Edit", align: 'center', action: (e) => navigate("/libraries/" + e.libraryId), icon: "Edit"  },
         { key: 'a2', name: "Delete", align: 'center', action: (e) => deleteLibrary(e.libraryId), icon: "Delete" }
     ] as CellData<Library>[];
 

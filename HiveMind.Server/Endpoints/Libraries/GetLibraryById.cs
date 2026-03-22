@@ -1,4 +1,5 @@
-﻿using HiveMind.Server.Services;
+﻿using HiveMind.Server.Domain.Enums;
+using HiveMind.Server.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,14 +12,14 @@ public class GetLibraryById
         app.MapGet("/{id:int}", Handle).WithName("GetLibraryById");
     }
 
-    public record Library(int LibraryId, string LibraryName);
+    public record Library(int LibraryId, string LibraryName, string LibraryPath, LibraryType LibraryType);
 
     public static Results<Ok<Library>, NotFound<string>> Handle(LibraryService libraryService, [FromRoute] int id)
     {
         var library = libraryService.GetLibraryByID(id);
         if (library is not null)
         {
-            return TypedResults.Ok(new Library(library.LibraryId, library.LibraryName));
+            return TypedResults.Ok(new Library(library.LibraryId, library.LibraryName, library.LibraryPath, library.LibraryType));
         }
 
         return TypedResults.NotFound($"A library with the ID: {id} was not found.");

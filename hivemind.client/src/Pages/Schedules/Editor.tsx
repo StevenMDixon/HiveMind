@@ -1,4 +1,4 @@
-import { Typography, TextField, FormControlLabel, Radio, RadioGroup, FormControl, FormLabel } from '@mui/material';
+import { Typography, TextField, FormControlLabel, Radio, RadioGroup, FormControl, FormLabel, Box, Button } from '@mui/material';
 import type { ScheduleItem } from './types';
 import { useState } from 'react'
 
@@ -20,10 +20,11 @@ const ScheduleItemEditor = ({ scheduleItem, save }: ScheduleItemEditorProps) => 
 
     console.log(scheduleItem)
     return (
-        <FormControl>
+        <Box>
             <Typography sx={{mb: 5}}>Editing Schedule Item</Typography>
             <TextField label="Name" name="name" value={inputs.name} onChange={changeInputs} />
             <FormLabel id="demo-row-radio-buttons-group-label">Schedule Type</FormLabel>
+        <FormControl>
             <RadioGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
@@ -33,9 +34,10 @@ const ScheduleItemEditor = ({ scheduleItem, save }: ScheduleItemEditorProps) => 
             >
                 <FormControlLabel value="Generic" control={<Radio />} label="Generic" />
                 <FormControlLabel value="Block" control={<Radio />} label="Block" />
-               
             </RadioGroup>
-        </FormControl>
+            </FormControl>
+            <Button variant="contained" onClick={save} sx={{ mt: 2 }}>Save</Button>
+        </Box>
     );
 }
 

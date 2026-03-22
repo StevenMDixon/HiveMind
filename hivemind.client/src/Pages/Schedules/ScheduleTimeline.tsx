@@ -106,10 +106,3 @@ const ScheduleTimeline = ({ selector, scheduleItemPromise }: ScheduleTimelinePro
 }
 
 export default ScheduleTimeline;
-
-
-//const ScheduleLayout = ({ data }: { data: Promise<Schedule> }) => {
-//    const schedule = use(data);
-//    console.log(schedule)
-    
-//}

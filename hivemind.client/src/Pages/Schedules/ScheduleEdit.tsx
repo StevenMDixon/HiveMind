@@ -64,14 +64,3 @@ const ScheduleEdit = () => {
 }
 
 export default ScheduleEdit;
-
-
-//sx = {{
-//    position: 'fixed',
-//        bottom: 0, // Positions the box at the bottom of the viewport
-//            right: 0, // Positions the box at the right of the viewport
-//                backgroundColor: 'primary.main',
-//                    color: 'white',
-//                        padding: 2, // Equivalent to theme.spacing(2)
-//                            zIndex: 1000, // Ensures the box is on top of other content
-//      }}
