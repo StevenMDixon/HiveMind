@@ -24,7 +24,7 @@ public class CreateSchedule
         }
     }
 
-    public record ScheduleRequest(string ScheduleName, int ChannelId, TimeOnly StartTime);
+    public record ScheduleRequest(string ScheduleName, int? ChannelId, TimeOnly StartTime);
 
     public static Results<Ok, NoContent, ValidationProblem> Handle(ScheduleService scheduleService, [FromBody] ScheduleRequest request)
     {

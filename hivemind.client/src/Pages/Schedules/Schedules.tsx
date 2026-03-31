@@ -3,11 +3,15 @@ import Header from "../Components/Header";
 import { useState} from "react";
 import CustomTable, { type CellData } from "../Components/Table";
 import { useNavigate } from "react-router-dom";
+import CustomDialog from '../Components/Dialog';
+import { useGlobalNotification } from '../../Dashboard/useGlobalNotification';
+import { type CustomFormField } from '../Components/FormFields';
 
 interface Schedule {
     scheduleId: number;
     scheduleName: string;
-    ChannelId: number;
+    channelId: number | null;
+    startTime: string;
 }
 
 const fetchSchedules = async (): Promise<Schedule[]> => {
@@ -21,9 +25,26 @@ const fetchSchedules = async (): Promise<Schedule[]> => {
     return data.schedules;
 };
 
+const createSchedule = async (schedule: Schedule) => {
+    return await fetch('/schedules', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ScheduleName: schedule.scheduleName, ChannelId: schedule.channelId }),
+    });
+}
+
+const deleteSchedule = async (schedule: Schedule) => {
+    return await fetch('/schedules/' + schedule.scheduleId, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+    });
+}
+
 const Schedules = () => {
     const [schedulePromise, setSchedulePromise] = useState(() => fetchSchedules());
     const navigate = useNavigate();
+
+    const { showNotification } = useGlobalNotification();
 
     const columns = [
         { key: 'scheduleId', name: 'ID', align: 'left' },
@@ -32,16 +53,49 @@ const Schedules = () => {
     ] as CellData<Schedule>[];
 
     const actionColumns = [
-        { key: 'a1', name: "Edit", align: 'center', action: (e: Schedule) => navigate("/schedules/" + e.scheduleId), icon:"Edit"}
+        { key: 'a1', name: "Edit", align: 'center', action: (e: Schedule) => navigate("/schedules/" + e.scheduleId), icon:"Edit"},
+        { key: 'a2', name: "Delete", align: 'center', action: (e: Schedule) => handleDelete(e), icon:"Delete"}
     ] as CellData<Schedule>[];
 
     const handleRetry = () => {
         setSchedulePromise(fetchSchedules());
     };
 
+    const scheduleDefault = { scheduleId: -1, scheduleName: "", channelId: null, "startTime": "00:00:00" } as Schedule; 
+
+    const handleDelete = async (schedule: Schedule) => {
+        const result = await deleteSchedule(schedule);
+        setSchedulePromise(fetchSchedules());
+
+        if (result.ok) {
+            showNotification("Schedule Deleted", "success");
+        } else {
+            showNotification("Failed to delete schedule", "error");
+        }
+    }
+
+    const handleCreate = async (schedule: Schedule) => {
+        const result = await createSchedule(schedule);
+
+        if (result.ok) {
+            showNotification("Schedule Created", "success");
+        } else {
+            showNotification("Failed to create schedule", "error");
+        }
+
+        setSchedulePromise(fetchSchedules());
+    }
+
+    const fields = [
+        { name: 'scheduleName', type: "Text", initialValue: scheduleDefault.scheduleName },
+        { name: 'channelId', type: "Text", initialValue: scheduleDefault.channelId },
+        { name: 'startTime', type: "Time", initialValue: scheduleDefault.startTime },
+    ] as CustomFormField[];
+
     return (
         <Container disableGutters maxWidth={false}>
             <Header Title="Schedules">
+                <CustomDialog buttonText="Add Schedule" title={"Create Schedule"} save={handleCreate} initialValue={scheduleDefault} fields={fields} />
             </Header>
             <CustomTable dataPromise={schedulePromise} columns={columns} actionColumns={actionColumns} handleRetry={handleRetry} />
         </Container>

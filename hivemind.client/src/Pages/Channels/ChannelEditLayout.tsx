@@ -3,8 +3,9 @@ import type { Channel } from './types';
 import { use } from 'react';
 import { useNavigate } from "react-router-dom";
 
+import CustomEditForm from '../Components/EditCustomForm';
 
-import CustomEditForm, { type CustomFormField } from '../Components/EditCustomForm';
+import { fields } from './fields';
 
 interface ChannelEditLayoutProps {
     channelPromise: Promise<Channel>
@@ -25,11 +26,6 @@ const ChannelEditLayout = ({ channelPromise }: ChannelEditLayoutProps) => {
 
         if (result.ok) navigate(-1);
     }
-
-    const fields = [
-        { name: 'channelName', type: "Text", initialValue: channel.channelName },
-        { name: 'channelNumber', type: "Text", initialValue: channel.channelNumber },
-    ] as CustomFormField[];
 
     return (
         <Container sx={{ mt: 5 }}>

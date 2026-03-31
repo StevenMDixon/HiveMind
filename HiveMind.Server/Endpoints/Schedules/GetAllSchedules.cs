@@ -10,7 +10,7 @@ public static class GetAllSchedules
         app.MapGet("/", Handle).WithName("GetAllSchedules");
     }
 
-    public record Schedule(int ScheduleId, string ScheduleName, int ChannelId, TimeOnly StartTime);
+    public record Schedule(int ScheduleId, string ScheduleName, int? ChannelId, TimeOnly StartTime);
     public record GetAllSchedulesResponse(List<Schedule> Schedules);
 
     public static Results<Ok<GetAllSchedulesResponse>, NotFound> Handle(ScheduleService scheduleService)

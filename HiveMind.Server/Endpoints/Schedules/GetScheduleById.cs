@@ -15,7 +15,7 @@ public static class GetScheduleById
 
     public record ScheduleItem(int ScheduleItemId, int Index, string Type, string Name);
 
-    public record Schedule(int ScheduleId, string ScheduleName, int ChannelId, TimeOnly StartTime, ICollection<ScheduleItem> ScheduleItems);
+    public record Schedule(int ScheduleId, string ScheduleName, int? ChannelId, TimeOnly StartTime, ICollection<ScheduleItem> ScheduleItems);
 
     public static Results<Ok<Schedule>, NotFound<string>> Handle(ScheduleService scheduleService, [FromRoute] int id)
     {
