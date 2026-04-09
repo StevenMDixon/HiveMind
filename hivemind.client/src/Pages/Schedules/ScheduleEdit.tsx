@@ -1,33 +1,106 @@
 import { Container, AppBar, Toolbar, Typography, Stack, Box, Paper } from "@mui/material";
 import { useParams } from "react-router-dom";
-import { useState, Suspense } from 'react'
+import { useState, Suspense, use } from 'react'
 import ErrorBoundary from "../../Components/ErrorBoundary";
 
-import ScheduleItemEditor from './Editor';
 import ScheduleTimeline from './ScheduleTimeline';
-import type { ScheduleItem } from './types';
+import type { ScheduleItem, Schedule, CollectionScheduleItem } from '../../Types/Schedule';
 
-const fetchScheduleData = async (id: number) => {
-    const response = await fetch('/schedules/' + id);
+import CustomForm from '../Components/CustomForm';
+import { type CustomFormField } from '../Components/FormFields';
 
-    if (!response.ok) {
-        throw new Error(`Failed to fetch schedule: ${response.status} ${response.statusText}`);
+import { fetchScheduleData, updateSchedule } from '../../Api/Schedules';
+
+
+const ScheduleDataWrapper = ({ schedulePromise }: { schedulePromise: Promise<Schedule> }) => {
+    const schedule = use(schedulePromise);
+
+    const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>(schedule.scheduleItems);
+
+    const [selectedScheduleItem, setSelectedScheduleItem] = useState<ScheduleItem | null>(null);
+
+    const setScheduleItemToEdit = (e: ScheduleItem) => {
+        setSelectedScheduleItem(e);
     }
 
-    const data = await response.json();
-    return data;
+    const updateScheduleItem = (scheduleItem: ScheduleItem) => {
+
+        const scheduleItemsUpdated = [...scheduleItems];
+
+        scheduleItemsUpdated.forEach(item => {
+            if (item.scheduleItemId == scheduleItem.scheduleItemId) {
+                item.name = scheduleItem.name;
+                item.index = scheduleItem.index;
+                item.type = scheduleItem.type;
+            }
+        });
+
+        setScheduleItems(scheduleItemsUpdated);
+
+        const newSchedule = {
+            scheduleName: schedule.scheduleName,
+            scheduleId: schedule.scheduleId,
+            scheduleItems: scheduleItemsUpdated
+        } as Schedule;
+
+        updateSchedule(newSchedule);
+    }
+
+    const AddScheduleItem = () => {
+        const currentIdx = scheduleItems.length + 1;
+        setScheduleItems([
+            ...scheduleItems,
+            {
+                scheduleId: schedule.scheduleId,
+                scheduleItemId: -currentIdx,
+                name: 'New ' + currentIdx,
+                index: currentIdx,
+                type: 'Generic',
+                collections: []
+            } as ScheduleItem
+        ])
+    }
+
+    const scheduleItemFields = [
+        { name: 'name', type: "Text", initialValue: "" },
+        { name: 'index', type: "Text", initialValue: 0 },
+        { name: 'type', type: "Radio", initialValue: "Generic", options: ["Generic", "Block"] }
+    ] as CustomFormField[];
+
+    return (
+            <Stack direction="row" spacing={2}>
+                <Box width="40%">
+                <ScheduleTimeline selector={setScheduleItemToEdit} add={AddScheduleItem} scheduleItems={scheduleItems} />
+                </Box>
+
+                <Box width="60%">
+                    {selectedScheduleItem &&
+                        <Paper style={{ padding: '1em', position: 'fixed', zIndex: 1000, minWidth: "50%" }} sx={{ mt: "1em", }}>
+                        <CustomForm title="Editing Schedule Item" save={updateScheduleItem} initialValue={selectedScheduleItem} fields={scheduleItemFields}>
+                            <ScheduleItemCollectionsEdit scheduleItemsCollections={selectedScheduleItem.collections} />
+                        </CustomForm>
+                        </Paper>
+                    }
+                </Box>
+            </Stack>
+      )
+}
+
+const ScheduleItemCollectionsEdit = ({ scheduleItemsCollections }: { scheduleItemsCollections: CollectionScheduleItem[] }) => {
+
+    return (
+        <div>
+        { scheduleItemsCollections.map((item, index) => (
+            <p key={index}>Collection Item ID: {item.collectionScheduleItemId}</p>
+        ))}
+        </div>
+      )
 }
 
 const ScheduleEdit = () => {
     const { id } = useParams();
 
     const [schedulePromise] = useState(() => fetchScheduleData(Number(id)))
-
-    const [selectedScheduleItem, setSelectedScheduleItem] = useState <ScheduleItem | null>(null);
-
-    const setScheduleItemToEdit = (e: ScheduleItem) => {
-        setSelectedScheduleItem(e);
-    }
 
     return (
         <Container disableGutters maxWidth={false}>
@@ -43,20 +116,7 @@ const ScheduleEdit = () => {
                     <p>{error.message}</p>
                 )}>
                 <Suspense fallback={<p> Loading </p>}>
-                    <Stack direction="row" spacing={2}>
-                        <Box width="40%">
-                            <ScheduleTimeline selector={setScheduleItemToEdit} scheduleItemPromise={schedulePromise} />
-                        </Box>
-                        
-                        <Box width="60%">
-                            {selectedScheduleItem &&
-                                <Paper style={{ padding: '1em', position: 'fixed', zIndex: 1000, minWidth: "50%" }} sx={{mt: "1em",} }>
-                                    
-                                 <ScheduleItemEditor scheduleItem={selectedScheduleItem} save={() => null} />
-                                </Paper>
-                            }
-                        </Box>
-                    </Stack>
+                    <ScheduleDataWrapper schedulePromise={schedulePromise} />
                 </Suspense>
             </ErrorBoundary>
         </Container>

@@ -1,11 +1,13 @@
 import { Container } from "@mui/material"
-import type { Channel } from './types';
+import type { Channel } from '../../Types/Channel';
 import { use } from 'react';
 import { useNavigate } from "react-router-dom";
 
-import CustomEditForm from '../Components/EditCustomForm';
+import CustomForm from '../Components/CustomForm';
 
 import { fields } from './fields';
+
+import { saveChannel } from '../../Api/Channel'; 
 
 interface ChannelEditLayoutProps {
     channelPromise: Promise<Channel>
@@ -17,19 +19,15 @@ const ChannelEditLayout = ({ channelPromise }: ChannelEditLayoutProps) => {
 
     const navigate = useNavigate();
 
-    const saveChannel = async (item: Channel) => {
-        const result = await fetch('/channels/' + item.channelID, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ChannelName: item.channelName, ChannelNumber: item.channelNumber}),
-        });
+    const handleSaveChannel = async (item: Channel) => {
+        const result = await saveChannel(item);
 
         if (result.ok) navigate(-1);
     }
 
     return (
         <Container sx={{ mt: 5 }}>
-            <CustomEditForm title="test" save={saveChannel} initialValue={channel} fields={fields} />
+            <CustomForm title="test" save={handleSaveChannel} initialValue={channel} fields={fields} />
         </Container>
     )
 }

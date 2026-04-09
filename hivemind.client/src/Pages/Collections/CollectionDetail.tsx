@@ -9,29 +9,9 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button'
 
 import { CollectionLayout } from './CollectionLayout'
-import type { Collection, QueryOption } from './types'
+import type { Collection } from '../../Types/Collections'
 
-const fetchCollection = async (collectionId: number): Promise<Collection> => {
-    const response = await fetch('/collections/' + collectionId);
-
-    if (!response.ok) {
-        throw new Error(`Failed to fetch media: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    return data;
-};
-
-const fetchOptions = async (): Promise<QueryOption[]> => {
-    const response = await fetch('/querysettings');
-
-    if (!response.ok) {
-        throw new Error(`Failed to query options: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    return data.options;
-};
+import { fetchCollection, fetchOptions } from '../../Api/Collections'; 
 
 const CollectionDetail = () => {
     const { id } = useParams();

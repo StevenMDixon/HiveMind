@@ -10,18 +10,11 @@ import { useNavigate } from "react-router-dom";
 
 import CustomDialog from '../Components/Dialog';
 
-import type { Channel } from './types'; 
+import type { Channel } from '../../Types/Channel';
 
 import {channelDefault, fields } from './fields'
 
-const fetchChannels = async () => {
-    const response = await fetch('/channels');
-    
-    if (response.ok) {
-        const data = await response.json();
-        return data.channels;
-    }
-};
+import { fetchChannels } from '../../Api/Channel'; 
 
 const ChannelPage = () => {
 

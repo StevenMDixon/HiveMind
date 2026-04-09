@@ -1,117 +1,43 @@
 import Container from '@mui/material/Container';
-import Button from '@mui/material/Button';
-
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Dialog from '@mui/material/Dialog';
-import TextField from '@mui/material/TextField';
 import { useState, use, Suspense } from 'react';
 import { useNavigate } from "react-router-dom";
 
 import { useGlobalNotification } from '../../Dashboard/useGlobalNotification';
 import Header from '../Components/Header';
 import CustomTable, { type CellData } from '../Components/Table';
-import { Select, MenuItem, FormControl, InputLabel, Stack } from '@mui/material';
-import type { SelectChangeEvent } from '@mui/material';
 
-import type { Library } from './types';
 
-const fetchLibraries = async () => {
-    const response = await fetch('/libraries');
-    if (response.ok) {
-        const data = await response.json();
-        return data.libraries
-    }
-    return [];
-};
+import type { Library } from '../../Types/Library';
+import { type CustomFormField } from '../Components/FormFields';
 
-const fetchLibraryTypes = async () => {
-    const response = await fetch('/libraries/types');
-    if (response.ok) {
-        const data = await response.json();
-        return data.types
-    }
-    return [];
-};
+import CustomDialog from '../Components/Dialog';
+
+import { fetchLibraries, fetchLibraryTypes, createLibrary, deleteLibrary } from '../../Api/Libraries';
 
 interface NewLibraryFormProps {
-    handleModalClose: () => void;
-    createModalState: boolean;
-    createLibrary: (a: Library, b: () => void ) => void;
-    libraryTypesPromise: Promise<string[]>
+    createLibrary: (a: Library) => void;
+    libraryTypesPromise: Promise<string[]>;
 }
 
-const NewLibraryForm = ({ handleModalClose, createModalState, createLibrary, libraryTypesPromise } : NewLibraryFormProps) => {
+const NewLibraryForm = ({createLibrary, libraryTypesPromise } : NewLibraryFormProps) => {
 
-    const libaryTypes = use(libraryTypesPromise);
+    const libraryTypes = use(libraryTypesPromise);
 
-    const librarylInputDefault = { libraryId: 0, libraryName: "", libraryPath: "", libraryType: 0 }
+    const libraryDefault = { libraryId: 0, libraryName: '', libraryPath: '', libraryType: 0 };
 
-    const [libraryInputs, setLibraryInputs] = useState<Library>(librarylInputDefault)
+    const fields = [
+        { name: 'libraryName', type: "Text", initialValue: libraryDefault.libraryName, validator: (libraryName: string) => libraryName != '', required: true },
+        { name: 'libraryPath', type: "Text", initialValue: libraryDefault.libraryPath, validator: (libraryPath: string) => libraryPath != '', required: true },
+        { name: 'libraryType', type: "Select", initialValue: libraryDefault.libraryType, required: true, options: libraryTypes }
 
-    const updateLibraryInputs = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string> | SelectChangeEvent<number>) => {
-        const { name, value } = event.target;
-        setLibraryInputs(values => ({ ...values, [name]: value }))
-    }
-
-    const clearForm = () => setLibraryInputs(librarylInputDefault);
+    ] as CustomFormField[];
 
     return (
-        <Dialog onClose={handleModalClose} open={createModalState}>
-            <DialogTitle>Create Library</DialogTitle>
-            <DialogContent>
-            <Stack>
-                <FormControl>
-                <TextField
-                        required
-                        name="libraryName"
-                        label="Library Name"
-                        value={libraryInputs.libraryName}
-                        onChange={updateLibraryInputs}
-                        sx={{m: 1}}
-                    />
-                </FormControl>
-                <FormControl>
-                <TextField
-                    required
-                    name="libraryPath"
-                    label="Library Path"
-                    value={libraryInputs.libraryPath}
-                    onChange={updateLibraryInputs}
-                    sx={{ m: 1 }}
-                    />
-                </FormControl>
-
-                    <FormControl>
-                    <InputLabel>Library Type</InputLabel>
-
-                <Select
-                    name="libraryType"
-                        value={libraryInputs.libraryType}
-
-                        label="Library Type"
-                        labelId="demo-simple-select-label"
-                        onChange={updateLibraryInputs}
-                            sx={{ m: 1 }}
-                    >
-                    {libaryTypes.map((type: string, index: number) => (<MenuItem value={index}>{type}</MenuItem>))}
-                    </Select>
-                </FormControl>
-              </Stack>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={() => createLibrary(libraryInputs, clearForm)}>Create</Button>
-            </DialogActions>
-        </Dialog>
+            <CustomDialog buttonText="Add Library" title="Create Library" save={createLibrary} fields={fields} initialValue={libraryDefault} />
     )
 }
 
 const LibraryPage = () => {
-    const [createModalState, setCreateModalState] = useState<boolean>(false);
-    const handleModalOpen = () => setCreateModalState(true);
-    const handleModalClose = () => setCreateModalState(false);
-
     const { showNotification } = useGlobalNotification();
 
     const [librariesPromise, setLibrariesPromise] = useState(() => fetchLibraries());
@@ -119,29 +45,20 @@ const LibraryPage = () => {
 
     const navigate = useNavigate();
     
-    const createLibrary = async (libraryInputs : Library, clearForm: () => void)  => {
-        const response = await fetch('/libraries', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ LibraryName: libraryInputs.libraryName, LibraryPath: libraryInputs.libraryPath, LibraryType: libraryInputs.libraryType }),
-        });
+    const handleCreateLibrary = async (libraryInputs : Library)  => {
+        const response = await createLibrary(libraryInputs);
 
         if (response.ok) {
-            clearForm();
             showNotification("Library Created", "success");
         } else {
             showNotification("Failed to create library", "error");
         }
 
-        handleModalClose();
         setLibrariesPromise(fetchLibraries());
     };
 
-    const deleteLibrary = async (libraryId: number) => {
-        const response = await fetch(`/libraries/${libraryId}`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' }
-        });
+    const handleDeleteLibrary = async (libraryId: number) => {
+        const response = await deleteLibrary(libraryId);
 
         if (response.ok) {
             showNotification("Library deleted", "success")
@@ -161,22 +78,23 @@ const LibraryPage = () => {
 
     const actionColumns = [
         { key: 'a1', name: "Edit", align: 'center', action: (e) => navigate("/libraries/" + e.libraryId), icon: "Edit"  },
-        { key: 'a2', name: "Delete", align: 'center', action: (e) => deleteLibrary(e.libraryId), icon: "Delete" }
+        { key: 'a2', name: "Delete", align: 'center', action: (e) => handleDeleteLibrary(e.libraryId), icon: "Delete" }
     ] as CellData<Library>[];
 
     const handleRetry = () => {
         setLibrariesPromise(fetchLibraries());
     };
 
+    
+
     return (
         <Container disableGutters maxWidth={false}>
             <Header Title="Libraries">
-                <Button onClick={handleModalOpen}>Add Library</Button>
+                <Suspense>
+                    <NewLibraryForm createLibrary={handleCreateLibrary} libraryTypesPromise={libraryTypesPromise} />
+                </Suspense>
             </Header>
             <CustomTable dataPromise={librariesPromise} columns={columns} actionColumns={actionColumns} handleRetry={handleRetry}></CustomTable>
-            <Suspense>
-                <NewLibraryForm createModalState={createModalState} handleModalClose={handleModalClose} createLibrary={createLibrary} libraryTypesPromise={libraryTypesPromise} />
-            </Suspense>
         </Container>
     )
 }

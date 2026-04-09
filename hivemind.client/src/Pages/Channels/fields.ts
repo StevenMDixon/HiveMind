@@ -1,4 +1,4 @@
-import { type Channel } from './types';
+import type { Channel } from '../../Types/Channel';
 import { type CustomFormField } from '../Components/FormFields';
 
 export const channelDefault = { channelID: 0, channelName: "", channelNumber: 1 } as Channel

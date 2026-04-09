@@ -1,10 +1,12 @@
 import { Container } from "@mui/material"
-import type { Library } from './types';
+import type { Library } from '../../Types/Library';
 import { use } from 'react';
 import { useNavigate } from "react-router-dom";
 
+import CustomForm from '../Components/CustomForm';
+import { type CustomFormField } from '../Components/FormFields';
 
-import CustomEditForm, { type CustomFormField } from '../Components/EditCustomForm';
+import { saveLibrary } from '../../Api/Libraries'; 
 
 interface LibraryEditLayoutProps {
     libraryPromise: Promise<Library>
@@ -18,14 +20,8 @@ const LibraryEditLayout = ({ libraryPromise, libraryTypesPromise }: LibraryEditL
 
     const navigate = useNavigate();
 
-    console.log(library.libraryType, libraryTypes)
-
-    const saveLibrary = async (item: Library) => {
-        const result = await fetch('/libraries/' + item.libraryId, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ LibraryName: item.libraryName, LibraryPath: item.libraryPath, LibraryType: item.libraryType }),
-        });
+    const handleSaveLibrary = async (item: Library) => {
+        const result = await saveLibrary(item);
 
         if (result.ok) navigate(-1);
     }
@@ -38,7 +34,7 @@ const LibraryEditLayout = ({ libraryPromise, libraryTypesPromise }: LibraryEditL
 
     return (
         <Container sx={{ mt: 5 }}>
-            <CustomEditForm title="test" save={saveLibrary} initialValue={library} fields={fields} />
+            <CustomForm title="test" save={handleSaveLibrary} initialValue={library} fields={fields} />
         </Container>
     )
 }

@@ -7,38 +7,9 @@ import CustomDialog from '../Components/Dialog';
 import { useGlobalNotification } from '../../Dashboard/useGlobalNotification';
 import { type CustomFormField } from '../Components/FormFields';
 
-interface Schedule {
-    scheduleId: number;
-    scheduleName: string;
-    channelId: number | null;
-    startTime: string;
-}
+import type { Schedule } from '../../Types/Schedule';
 
-const fetchSchedules = async (): Promise<Schedule[]> => {
-    const response = await fetch('/schedules');
-
-    if (!response.ok) {
-        throw new Error(`Failed to fetch schedules: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    return data.schedules;
-};
-
-const createSchedule = async (schedule: Schedule) => {
-    return await fetch('/schedules', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ScheduleName: schedule.scheduleName, ChannelId: schedule.channelId }),
-    });
-}
-
-const deleteSchedule = async (schedule: Schedule) => {
-    return await fetch('/schedules/' + schedule.scheduleId, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' }
-    });
-}
+import { fetchSchedules, createSchedule, deleteSchedule } from '../../Api/Schedules';
 
 const Schedules = () => {
     const [schedulePromise, setSchedulePromise] = useState(() => fetchSchedules());
@@ -88,7 +59,7 @@ const Schedules = () => {
 
     const fields = [
         { name: 'scheduleName', type: "Text", initialValue: scheduleDefault.scheduleName },
-        { name: 'channelId', type: "Text", initialValue: scheduleDefault.channelId },
+        { name: 'channelId', type: "Text", initialValue: scheduleDefault.channelId, required: false },
         { name: 'startTime', type: "Time", initialValue: scheduleDefault.startTime },
     ] as CustomFormField[];
 

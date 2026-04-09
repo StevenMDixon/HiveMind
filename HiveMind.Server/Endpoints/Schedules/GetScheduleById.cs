@@ -1,3 +1,4 @@
+using HiveMind.Server.Entities;
 using HiveMind.Server.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,7 @@ public static class GetScheduleById
 
     public record Collection(int CollectionId, string Name);
 
-    public record ScheduleItem(int ScheduleItemId, int Index, string Type, string Name);
+    public record ScheduleItem(int ScheduleItemId, int Index, string Type, string Name, int ScheduleId, ICollection<CollectionScheduleItem> Collections);
 
     public record Schedule(int ScheduleId, string ScheduleName, int? ChannelId, TimeOnly StartTime, ICollection<ScheduleItem> ScheduleItems);
 
@@ -28,7 +29,7 @@ public static class GetScheduleById
                 schedule.ScheduleName, 
                 schedule.ChannelId, 
                 schedule.StartTime, 
-                schedule.ScheduleItems?.Select(item => new ScheduleItem(item.ScheduleItemId, item.Index, item.Type, item.Name)).ToList() ?? []));
+                schedule.ScheduleItems?.Select(item => new ScheduleItem(item.ScheduleItemId, item.Index, item.Type, item.Name, item.ScheduleId, item.Collections ?? new List<CollectionScheduleItem>())).ToList() ?? []));
         }
 
         return TypedResults.NotFound($"A schedule with the ID: {id} was not found.");

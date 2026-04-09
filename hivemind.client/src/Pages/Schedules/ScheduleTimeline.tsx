@@ -6,10 +6,8 @@ import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineDot from '@mui/lab/TimelineDot';
 import TimelineOppositeContent from '@mui/lab/TimelineOppositeContent';
 import EditIcon from '@mui/icons-material/Edit';
-import { use, useState, useEffect } from 'react';
 import { Card, CardContent, IconButton, CardActions, Typography, Stack } from "@mui/material";
-import type { ScheduleItem } from './types';
-import type { Schedule } from './types';
+import type { ScheduleItem } from '../../Types/Schedule';
 import AddIcon from '@mui/icons-material/Add';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import MovieIcon from '@mui/icons-material/Movie';
@@ -18,10 +16,12 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 const ScheduleItemContainer = ({ scheduleItem, selectItem }: { scheduleItem: ScheduleItem, selectItem: (a: ScheduleItem) => void }) => {
 
+    const time = new Date(2024, 11, 25, 0, 0, 0);
+
     return (
         <TimelineItem key={scheduleItem.scheduleItemId}>
             <TimelineOppositeContent color="text.secondary" >
-                09: 30 am
+                {time.toLocaleTimeString()}
             </TimelineOppositeContent>
             < TimelineSeparator >
                 <TimelineDot />
@@ -59,44 +59,22 @@ const ScheduleItemContainer = ({ scheduleItem, selectItem }: { scheduleItem: Sch
                 </Card>
             </TimelineContent>
         </TimelineItem>
-
     )
 }
 
-
 interface ScheduleTimelineProps {
     selector: (a: ScheduleItem) => void;
-    scheduleItemPromise: Promise<Schedule>;
+    add: () => void;
+    scheduleItems: ScheduleItem[];
 }
 
-const ScheduleTimeline = ({ selector, scheduleItemPromise }: ScheduleTimelineProps) => {
-    const schedule = use(scheduleItemPromise);
-
-    const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([]);
-
-    useEffect(() => {
-        setScheduleItems(schedule.scheduleItems);
-    }, [schedule])
-
-    const AddScheduleItem = () => {
-        const currentIdx = scheduleItems.length + 1;
-        setScheduleItems([
-            ...scheduleItems,
-            {
-                scheduleItemId: -currentIdx,
-                name: 'New ' + currentIdx,
-                index: currentIdx,
-                type: 'General'
-            } as ScheduleItem
-        ])
-    }
-
+const ScheduleTimeline = ({ selector, add, scheduleItems }: ScheduleTimelineProps) => {
     return (
         <Timeline>
             {scheduleItems && scheduleItems.map((scheduleItem: ScheduleItem) => <ScheduleItemContainer key={scheduleItem.scheduleItemId} scheduleItem={scheduleItem} selectItem={selector} />)}
             <TimelineContent>
                 <TimelineSeparator >
-                    <IconButton onClick={AddScheduleItem}>
+                    <IconButton onClick={add}>
                         <AddIcon />
                     </IconButton>
             </TimelineSeparator >

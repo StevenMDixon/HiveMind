@@ -1,12 +1,4 @@
 import Container from '@mui/material/Container';
-import Button from '@mui/material/Button';
-
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Dialog from '@mui/material/Dialog';
-import TextField from '@mui/material/TextField';
-
 
 import { useState } from 'react';
 
@@ -15,43 +7,26 @@ import { useGlobalNotification } from '../../Dashboard/useGlobalNotification';
 import CustomTable, { type CellData } from '../Components/Table';
 
 import Header from '../Components/Header';
+import CustomDialog from '../Components/Dialog';
+import { type CustomFormField } from '../Components/FormFields';
 
 import { useNavigate } from "react-router-dom";
 
-interface Collection {
-    collectionID: number;
-    collectionName: string;
-}
+import type { Collection } from '../../Types/Collections'
 
-const fetchCollections = async () => {
-    const response = await fetch('/collections');
-
-    if (response.ok) {
-        const data = await response.json();
-        return data.collections;
-    }
-};
+import { fetchCollections, createCollection, deleteCollection } from '../../Api/Collections';
 
 const CollectionPage = () => {
-
-    const [createModalState, setCreateModalState] = useState<boolean>(false);
-    const handleModalOpen = () => setCreateModalState(true);
-    const handleModalClose = () => setCreateModalState(false);
-
     const { showNotification } = useGlobalNotification();
 
     const [collectionPromise, setCollectionPromise] = useState(() => fetchCollections());
 
-    const [collectionName, setCollectionName] = useState<string>('');
-
     const navigate = useNavigate();
 
-    const createCollection = async () => {
-        const response = await fetch('/collections', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ CollectionName: collectionName }),
-        });
+    const collectionDefault = {collectionName: ''} as Collection;
+
+    const handleCreateCollection = async (collection: Collection) => {
+        const response = await createCollection(collection);
 
         if (response.ok) {
             showNotification("Collection Created", "success");
@@ -62,11 +37,8 @@ const CollectionPage = () => {
         }
     };
 
-    const deleteCollection = async (collectionId: number) => {
-        const response = await fetch(`/collections/${collectionId}`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' }
-        });
+    const handleDeleteCollection = async (collectionId: number) => {
+        const response = await deleteCollection(collectionId);
 
         if (response.ok) {
             showNotification("Collection deleted", "success")
@@ -85,37 +57,24 @@ const CollectionPage = () => {
 
     const actionColumns = [
         { key: 'a1', name: "Edit", action: (e: Collection) => navigate("/collection/" + e.collectionID), icon: "Edit" },
-        { key: 'a2', name: "Delete", action: (e: Collection) => deleteCollection(e.collectionID), icon: "Delete" }
+        { key: 'a2', name: "Delete", action: (e: Collection) => handleDeleteCollection(e.collectionID), icon: "Delete" }
     ] as CellData<Collection>[];
 
     const handleRetry = () => {
         setCollectionPromise(fetchCollections());
     };
 
+    const fields = [
+        { name: 'collectionName', type: "Text", initialValue: collectionDefault.collectionName, validator: (collectionName: string) => collectionName != '', required: true },
+    ] as CustomFormField[];
+
 
     return (
         <Container disableGutters maxWidth={false}>
             <Header Title="Collections">
-                <Button onClick={handleModalOpen}>Add Collection</Button>
+                <CustomDialog buttonText="Add Collection" title="Create Collection" fields={fields} initialValue={collectionDefault} save={handleCreateCollection} />
             </Header>
             <CustomTable dataPromise={collectionPromise} columns={columns} actionColumns={actionColumns} handleRetry={handleRetry} />
-           
-            <Dialog onClose={handleModalClose} open={createModalState}>
-                <DialogTitle>Create Collection</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        required
-                        id="outlined-required"
-                        label="Collection Name"
-                        value={collectionName}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => setCollectionName(event.target.value)}
-                        sx={{ m: 1 }}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={createCollection}>Create</Button>
-                </DialogActions>
-            </Dialog>
         </Container>
     )
 }

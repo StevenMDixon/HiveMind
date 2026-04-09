@@ -7,7 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
-import type { Filter, Option } from './types';
+import type { Filter, Option } from '../../Types/Collections'
 
 interface CollectionFilterProps { filters: Filter[], options: Option[], change: (id: number, field: string, value: string) => void, remove: (a: number) => void }
 

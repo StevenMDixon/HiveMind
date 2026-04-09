@@ -1,4 +1,5 @@
 using FluentValidation;
+using HiveMind.Server.Entities;
 using HiveMind.Server.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +25,7 @@ public class UpdateSchedule
         }
     }
 
-    public record ScheduleRequest(string ScheduleName, int ChannelId, TimeOnly StartTime);
+    public record ScheduleRequest(string? ScheduleName, int? ChannelId, TimeOnly? StartTime, List<ScheduleItem>? ScheduleItems);
 
     public static Results<Ok, NotFound<string>, ValidationProblem> Handle(ScheduleService scheduleService, [FromRoute] int id, [FromBody] ScheduleRequest request)
     {
@@ -32,9 +33,16 @@ public class UpdateSchedule
 
         if (schedule is not null)
         {
-            schedule.ScheduleName = request.ScheduleName;
-            schedule.ChannelId = request.ChannelId;
-            schedule.StartTime = request.StartTime;
+            schedule.ScheduleName = request.ScheduleName ?? schedule.ScheduleName;
+            schedule.ChannelId = request.ChannelId ?? schedule.ChannelId;
+            schedule.StartTime = request.StartTime ?? schedule.StartTime;
+            schedule.ScheduleItems = request.ScheduleItems ?? schedule.ScheduleItems;
+
+            foreach (var item in schedule.ScheduleItems)
+            {
+                if (item.ScheduleItemId < 0) item.ScheduleItemId = 0;
+            }
+
             scheduleService.Update(schedule);
             return TypedResults.Ok();
         }

@@ -22,6 +22,7 @@ public class ScheduleService:BaseService
     {
         return _context.Schedules
             .Include(c => c.ScheduleItems)
+            .ThenInclude(s => s.Collections)
             .FirstOrDefault(x => x.ScheduleId == id);
     }
 

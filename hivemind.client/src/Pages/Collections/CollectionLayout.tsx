@@ -1,9 +1,10 @@
 import { useState, use, useEffect } from 'react'
 
 import Container from '@mui/material/Container';
-import CustomEditForm, { type CustomFormField } from '../Components/EditCustomForm';
+import CustomForm from '../Components/CustomForm';
+import { type CustomFormField } from '../Components/FormFields';
 
-import type { Collection, Filter, QueryOption } from './types';
+import type { Collection, Filter, QueryOption } from '../../Types/Collections'
 
 import { CollectionFiltersLayout } from './CollectionFiltersLayout';
 
@@ -57,9 +58,9 @@ export const CollectionLayout = ({ promise, options, save }: { promise: Promise<
 
     return (
         <Container sx={{ mt: 5 }}>
-            <CustomEditForm title="Collection Info:" fields={fields} initialValue={collection} save={handleSave}>
+            <CustomForm title="Collection Info:" fields={fields} initialValue={collection} save={handleSave}>
                 <CollectionFiltersLayout filters={filterData} options={queryOptions} filterChange={handleFilterChange} addFilter={addFilter} removeFilter={removeFilter} />
-            </CustomEditForm>
+            </CustomForm>
         </Container>
     )
 }

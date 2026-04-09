@@ -1,6 +1,5 @@
 import Container from '@mui/material/Container';
 
-//import RoundedLoadingFiller from './Components/RoundedLoadingFiller';
 import { useState} from 'react';
 
 import Header from '../Components/Header';
@@ -8,41 +7,9 @@ import Header from '../Components/Header';
 import CustomTable, { type CellData } from "../Components/Table";
 /*import { useGlobalNotification } from '../Dashboard/useGlobalNotification';*/
 
-interface Show {
-    showId: number;
-    name: string;
-}
-interface Tag {
-    tagId: number;
-    tagName: string;
-}
-interface Media {
-    mediaItemId: number;
-    title: string;
-    duration: number;
-    libraryId: number;
-    mediaType: string;
-    filePath: string;
-    width: string;
-    height: string;
-    resolution: string;
-    episodeNumber: number;
-    seasonNumber: number;
-    show: Show;
-    tags: Tag[];
-}
+import type { Media, Show } from '../../Types/Media';
 
-// Function that creates a new promise with error handling
-const fetchMedia = async (): Promise<Media[]> => {
-    const response = await fetch('/mediaitems');
-    
-    if (!response.ok) {
-        throw new Error(`Failed to fetch media: ${response.status} ${response.statusText}`);
-    }
-    
-    const data = await response.json();
-    return data.mediaItems;
-};
+import { fetchMedia } from '../../Api/Media'; 
 
 const MediaPage = () => {
     const [mediaPromise, setMediaPromise] = useState(() => fetchMedia());

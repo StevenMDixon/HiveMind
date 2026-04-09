@@ -25,7 +25,7 @@ public class UpdateScheduleItem
         }
     }
 
-    public record ScheduleItemRequest(int Index, string Type, int ScheduleId);
+    public record ScheduleItemRequest(string Name, int Index, string Type, int ScheduleId);
 
     public static Results<Ok, NotFound<string>, ValidationProblem> Handle(ScheduleItemService scheduleItemService, [FromRoute] int id, [FromBody] ScheduleItemRequest request)
     {
@@ -33,6 +33,7 @@ public class UpdateScheduleItem
 
         if (scheduleItem is not null)
         {
+            scheduleItem.Name = request.Name;
             scheduleItem.Index = request.Index;
             scheduleItem.Type = request.Type;
             scheduleItem.ScheduleId = request.ScheduleId;

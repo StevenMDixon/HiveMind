@@ -5,27 +5,8 @@ import ErrorBoundary from "../../Components/ErrorBoundary";
 import { useNavigate, useParams } from "react-router-dom";
 
 import LibraryEditLayout from './LibraryEditLayout';
-import type { Library } from './types';
 
-const fetchLibrary = async (id: string | undefined): Promise<Library> => {
-    const response = await fetch('/libraries/' + id);
-
-    if (!response.ok) {
-        throw new Error(`Failed to fetch library: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    return data;
-};
-
-const fetchLibraryTypes = async () => {
-    const response = await fetch('/libraries/types');
-    if (response.ok) {
-        const data = await response.json();
-        return data.types
-    }
-    return [];
-};
+import { fetchLibrary, fetchLibraryTypes } from '../../Api/Libraries';
 
 
 const LibraryEdit = () => {

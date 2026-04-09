@@ -5,19 +5,9 @@ import ErrorBoundary from "../../Components/ErrorBoundary";
 import { useNavigate, useParams } from "react-router-dom";
 
 import ChannelEditLayout from './ChannelEditLayout';
-import type { Channel } from './types';
 
-const fetchChannel = async (id: string | undefined): Promise<Channel>  => {
-    const response = await fetch('/channels/' + id);
+import { fetchChannel } from '../../Api/Channel'; 
 
-    if (!response.ok) {
-        throw new Error(`Failed to fetch channel: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    console.log(data);
-    return data.channel;
-};
 
 
 const ChannelEdit = () => {
@@ -43,6 +33,8 @@ const ChannelEdit = () => {
                 )}>
                 <Suspense fallback={<p> Loading </p>}>
                     <ChannelEditLayout channelPromise={channelPromise} />
+
+
                 </Suspense>
             </ErrorBoundary>
         </Container>
