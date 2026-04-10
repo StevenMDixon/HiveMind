@@ -1,3 +1,5 @@
+import type { Media } from '../Types/Media';
+
 export const fetchMedia = async (): Promise<Media[]> => {
     const response = await fetch('/mediaitems');
 
