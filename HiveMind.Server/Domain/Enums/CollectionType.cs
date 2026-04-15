@@ -2,6 +2,7 @@
 
 public enum CollectionType
 {
+    None,
     Opening,
     Closing,
     Commercials,

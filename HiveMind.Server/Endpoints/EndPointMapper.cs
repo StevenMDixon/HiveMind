@@ -10,6 +10,9 @@ public static class EndPointMapper
         Collections.Endpoints.Map(builder);
         MediaItems.EndPoints.Map(builder);
         Schedules.EndPoints.Map(builder);
+        ScheduleItems.EndPoints.Map(builder);
+        CollectionScheduleItems.Endpoints.Map(builder);
         QuerySettings.Map(builder);
+        GetPlayoutTypes.Map(builder);
     }
 }

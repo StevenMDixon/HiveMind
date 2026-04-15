@@ -1,4 +1,5 @@
 import type { Library } from '../Types/Library';
+import type { EnumOptionsObj } from '../Types/General';
 
 export const fetchLibraries = async () => {
     const response = await fetch('/libraries');
@@ -13,7 +14,7 @@ export const fetchLibraryTypes = async () => {
     const response = await fetch('/libraries/types');
     if (response.ok) {
         const data = await response.json();
-        return data.types
+        return data.types.reduce((acc: EnumOptionsObj, current: string, index: number) => { acc[index] = current;  return acc; }, {})
     }
     return [];
 };

@@ -27,7 +27,7 @@ const ChannelEditLayout = ({ channelPromise }: ChannelEditLayoutProps) => {
 
     return (
         <Container sx={{ mt: 5 }}>
-            <CustomForm title="test" save={handleSaveChannel} initialValue={channel} fields={fields} />
+            <CustomForm title={channel.channelName} save={handleSaveChannel} initialValue={channel} fields={fields} />
         </Container>
     )
 }

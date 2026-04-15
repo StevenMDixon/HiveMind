@@ -10,7 +10,7 @@ public class CreateScheduleItem
     public static void Map(IEndpointRouteBuilder app)
     {
         app.MapPost("/", Handle)
-            .WithRequestValidation<Validator>()
+            .WithRequestValidation<ScheduleItemRequest>()
             .WithName("CreateScheduleItem")
             .ProducesValidationProblem();
     }
@@ -25,19 +25,20 @@ public class CreateScheduleItem
         }
     }
 
-    public record ScheduleItemRequest(int Index, string Type, int ScheduleId);
+    public record ScheduleItemRequest(int Index, string Type, int ScheduleId, string Name);
 
-    public static Results<Ok, NoContent, ValidationProblem> Handle(ScheduleItemService scheduleItemService, [FromBody] ScheduleItemRequest request)
+    public static Results<Ok<int>, NoContent, ValidationProblem> Handle(ScheduleItemService scheduleItemService, [FromBody] ScheduleItemRequest request)
     {
         var newScheduleItem = new Entities.ScheduleItem
         {
+            Name = request.Name,
             Index = request.Index,
             Type = request.Type,
             ScheduleId = request.ScheduleId
         };
 
-        scheduleItemService.AddScheduleItem(newScheduleItem);
+        var result = scheduleItemService.AddScheduleItem(newScheduleItem);
 
-        return TypedResults.NoContent();
+        return TypedResults.Ok(result.ScheduleItemId);
     }
 }

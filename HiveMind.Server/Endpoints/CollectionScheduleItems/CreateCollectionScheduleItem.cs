@@ -11,7 +11,7 @@ public class CreateCollectionScheduleItem
     public static void Map(IEndpointRouteBuilder app)
     {
         app.MapPost("/", Handle)
-            .WithRequestValidation<Validator>()
+            .WithRequestValidation<CollectionScheduleItemRequest>()
             .WithName("CreateCollectionScheduleItem")
             .ProducesValidationProblem();
     }
@@ -20,33 +20,33 @@ public class CreateCollectionScheduleItem
     {
         public Validator()
         {
-            RuleFor(x => x.CollectionId).GreaterThan(0);
+            //RuleFor(x => x.CollectionId).GreaterThan(0);
             RuleFor(x => x.ScheduleItemId).GreaterThan(0);
             RuleFor(x => x.Duration).GreaterThanOrEqualTo(0);
+            RuleFor(x => x.Count).GreaterThanOrEqualTo(0);
             RuleFor(x => x.Index).GreaterThanOrEqualTo(0);
             RuleFor(x => x.CollectionType).IsInEnum();
             RuleFor(x => x.PlayoutType).IsInEnum();
         }
     }
 
-    public record CollectionScheduleItemRequest(int CollectionId, int ScheduleItemId, int Duration, CollectionType CollectionType, PlayoutType PlayoutType, int Index, bool DisableIntroBump, bool DisableInterStitials);
+    public record CollectionScheduleItemRequest(int CollectionId, int ScheduleItemId, int Duration, int Count, CollectionType CollectionType, PlayoutType PlayoutType, int Index);
 
-    public static Results<Ok, NoContent, ValidationProblem> Handle(CollectionSchedulteItemService scheduleItemService, [FromBody] CollectionScheduleItemRequest request)
+    public static Results<Ok<int>, NoContent, ValidationProblem> Handle(CollectionSchedulteItemService scheduleItemService, [FromBody] CollectionScheduleItemRequest request)
     {
         var newItem = new Entities.CollectionScheduleItem
         {
             CollectionId = request.CollectionId,
             ScheduleItemId = request.ScheduleItemId,
-            Duration = request.Duration,
+            PlayDuration = request.Duration,
+            PlayCount = request.Count,
             CollectionType = request.CollectionType,
             PlayoutType = request.PlayoutType,
-            Index = request.Index,
-            DisableIntroBump = request.DisableIntroBump,
-            DisableInterStitials = request.DisableInterStitials
+            Index = request.Index
         };
 
         scheduleItemService.AddCollectionScheduleItem(newItem);
 
-        return TypedResults.NoContent();
+        return TypedResults.Ok(newItem.CollectionScheduleItemId);
     }
 }

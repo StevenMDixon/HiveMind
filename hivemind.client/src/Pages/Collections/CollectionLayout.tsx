@@ -1,4 +1,4 @@
-import { useState, use, useEffect } from 'react'
+import { useState, use } from 'react'
 
 import Container from '@mui/material/Container';
 import CustomForm from '../Components/CustomForm';
@@ -12,7 +12,7 @@ export const CollectionLayout = ({ promise, options, save }: { promise: Promise<
     const collection = use(promise);
     const queryOptions = use(options);
 
-    const [filterData, setFilterData] = useState<Filter[]>([]);
+    const [filterData, setFilterData] = useState<Filter[]>(collection.filters);
 
     const handleFilterChange = (id: number, field: string, value: string) => {
         if (filterData) {
@@ -47,10 +47,6 @@ export const CollectionLayout = ({ promise, options, save }: { promise: Promise<
         const newFilterData = [...filterData, { queryFilterID: (filterData.length + 1) * -1, field: "", operator: "", value: "" } as Filter];
         setFilterData(newFilterData);
     }
-
-    useEffect(() => {
-        setFilterData(collection.filters);
-    }, [collection])
 
     const fields = [
         { name: 'collectionName', type: "Text", initialValue: collection.collectionName },

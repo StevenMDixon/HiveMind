@@ -11,10 +11,11 @@ namespace HiveMind.Server.Services
             return _context.ScheduleItems;
         }
         
-        public void AddScheduleItem(ScheduleItem scheduleItem)
+        public ScheduleItem AddScheduleItem(ScheduleItem scheduleItem)
         {
             _context.ScheduleItems.Add(scheduleItem);
             _context.SaveChanges();
+            return scheduleItem;
         }
         
         public ScheduleItem? GetScheduleItemByID(int id)

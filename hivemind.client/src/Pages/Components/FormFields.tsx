@@ -1,15 +1,20 @@
 import FormControl from '@mui/material/FormControl';
-import TextField from '@mui/material/TextField';
+import TextField, { type TextFieldVariants } from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
-import Stack from '@mui/material/Stack';
 import type { SelectChangeEvent } from '@mui/material/Select';
-import { useEffect, useState } from 'react';
 import { FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
+import type { JSX } from 'react';
 
+import type { EnumOptionsObj } from '../../Types/General';
 
 export type CustomFormFieldTypes = 'Text' | 'Number' | 'Date' | 'Select' | 'Time' | 'Radio';
+
+export interface Option  {
+    id: number,
+    value: string | number | boolean
+}
 
 export interface CustomFormField {
     name: string;
@@ -17,71 +22,68 @@ export interface CustomFormField {
     type: CustomFormFieldTypes;
     validator?: (x: string | number | boolean) => boolean;
     valid?: boolean;
-    options?: string[];
+    options?: EnumOptionsObj;
     required?: boolean;
 }
 
-const CreateFields = (field: CustomFormField, index: number, handle: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string> | SelectChangeEvent<number> | SelectChangeEvent<boolean>) => void) => {
+const CreateFields = (field: CustomFormField, index: number, disableLabels: boolean, variant: string, fullWidth: boolean, handle: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string> | SelectChangeEvent<number> | SelectChangeEvent<boolean>) => void) => {
     switch (field.type) {
         case 'Time': return (
-            <FormControl sx={{ m: 2, pb: 2 }} key={index} >
+            <FormControl key={index} >
 
             </FormControl>
         )
         case 'Text': return (
-            <FormControl sx={{ m: 2, pb: 2 }} key={index} >
-                <TextField
-                    error={!field.valid}
-                    required={field.required}
-                    variant="filled"
-                    name={field.name}
-                    label={field.name}
-                    value={field.initialValue}
-                    onChange={handle}
+            <TextField sx={{ m: 0, p: 0 }} key={index}
+                error={!field.valid}
+                label={!disableLabels ? field.name : ""}
+                required={field.required}
+                variant={variant as TextFieldVariants}
+                name={field.name}
+                value={field.initialValue}
+                onChange={handle}
+                fullWidth={fullWidth }
                 />
-            </FormControl>
         )
         case 'Number': return (
-            <FormControl sx={{ m: 2, pb: 2 }} key={index} >
-                <TextField
+                <TextField sx={{ m: 0, pb: 0 }} key={index}
                     error={!field.valid}
                     required={field.required}
                     type="number"
-                    variant="filled"
+                    variant={variant as TextFieldVariants}
                     name={field.name}
-                    label={field.name}
+                    label={!disableLabels ? field.name : ""}
                     value={field.initialValue}
                     onChange={handle}
+                    fullWidth={fullWidth}
                 />
-            </FormControl>
         )
         case 'Select': return (
-            <FormControl sx={{ m: 2, pb: 2, minWidth: 200 }} key={index} >
-                <InputLabel>{field.name}</InputLabel>
+            <FormControl sx={{ mr: 1, p: 0, minWidth: 100 }} key={index} >
+                {!disableLabels && <FormLabel>{field.name}</FormLabel>}
                 <Select
                     required={field.required}
-
-                    variant="filled"
+                    fullWidth={fullWidth}
+                    variant={variant as TextFieldVariants}
                     name={field.name}
-                    label={field.name}
                     value={field.initialValue}
                     onChange={handle}
                 >
-                    {field.options && field.options.map((type: string, index: number) => (<MenuItem value={index}>{type}</MenuItem>))}
-
+                    {field.options && Object.keys(field.options).map((key: string) => (<MenuItem value={Number(key)}>{field.options && field.options[Number(key)]}</MenuItem>))}
                 </Select>
             </FormControl>
         )
         case 'Radio': return (
-            <FormControl sx={{ m: 2, pb: 2, minWidth: 200 }} key={index} >
-                <FormLabel id="demo-radio-buttons-group-label">{field.name}</FormLabel>
+            <FormControl sx={{ m: 0, p: 0, minWidth: 100 }} key={index} >
+                {!disableLabels && <FormLabel>{field.name}</FormLabel>}
                 <RadioGroup
                     aria-labelledby="demo-radio-buttons-group-label"
                     value={field.initialValue}
                     name={field.name}
                     onChange={handle}
+                    row
                 >
-                    {field.options && field.options.map((fieldValue, index) => <FormControlLabel key={index} value={fieldValue} control={<Radio />} label={fieldValue} />) }
+                    {field.options && Object.keys(field.options).map((key: string) => <FormControlLabel key={Number(key)} value={field.options && field.options[Number(key)]} control={<Radio />} label={field.options && field.options[Number(key)]} />) }
                 </RadioGroup>
 
                 <InputLabel></InputLabel>
@@ -91,6 +93,8 @@ const CreateFields = (field: CustomFormField, index: number, handle: (event: Rea
     }
 }
 
+export { CreateFields };
+
 export interface FieldData {
     name: string,
     value: string | number | boolean
@@ -99,42 +103,44 @@ export interface FieldData {
 interface FormFieldsProps {
     fields: CustomFormField[];
     handleInputChanges: (data: FieldData) => void;
+    wrapper?: (field: JSX.Element, index: number) => JSX.Element;
+    disableLabels?: boolean
+    variant?: "standard" | "filled"
+    fullWidth?: boolean
 }
 
-const CustomFormFields = ({ fields, handleInputChanges }: FormFieldsProps) => {
+const CustomFormFields = ({ fields, handleInputChanges, wrapper, disableLabels, variant, fullWidth }: FormFieldsProps) => {
 
-    const [fieldsLocal, setFieldsLocal] = useState(fields);
-
-    useEffect(() => {
-        console.log(fields)
-        setFieldsLocal(fields);
-    }, [fields])
-
-    const handleFieldChanges = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string> | SelectChangeEvent<number> | SelectChangeEvent<boolean>) =>
-    {
+    const handleFieldChanges = (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> |
+            SelectChangeEvent<string> |
+            SelectChangeEvent<number> |
+            SelectChangeEvent<boolean>
+    ) => {
         const name = event.target.name;
         const value = event.target.value;
 
-        const updatedFields = fieldsLocal.map(field => {
-            if (field.name === name) {
-                return {
-                    ...field,
-                    valid: field.validator ? field.validator(value) : true
-                };
-            }
-            return field;
-        });
+        handleInputChanges({ name, value });
+    };
 
-        setFieldsLocal(updatedFields);
+    return fields.map((field, index) => {
+            const value = field.initialValue;
 
-        handleInputChanges({name, value})
-    }
+            const valid = field.validator
+                ? field.validator(value)
+                : true;
 
-    return (
-        <Stack direction="column" component="form">
-            {fieldsLocal && fieldsLocal.map((field, index) => CreateFields(field, index, handleFieldChanges))}
-        </Stack>
-    )
+            const fieldElement = CreateFields(
+                { ...field, valid },
+                index,
+                disableLabels ?? false,
+                variant ?? 'filled',
+                fullWidth ?? false,
+                handleFieldChanges
+            );
+
+            return wrapper ? wrapper(fieldElement, index) : fieldElement;
+        })
 }
 
 export default CustomFormFields;

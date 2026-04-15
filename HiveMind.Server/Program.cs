@@ -21,6 +21,8 @@ builder.Services.AddTransient<MediaItemShowService>();
 builder.Services.AddTransient<TagsService>();
 builder.Services.AddTransient<CollectionService>();
 builder.Services.AddTransient<ScheduleService>();
+builder.Services.AddTransient<ScheduleItemService>();
+builder.Services.AddTransient<CollectionSchedulteItemService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 

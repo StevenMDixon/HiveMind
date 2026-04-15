@@ -33,8 +33,6 @@ const ChannelEdit = () => {
                 )}>
                 <Suspense fallback={<p> Loading </p>}>
                     <ChannelEditLayout channelPromise={channelPromise} />
-
-
                 </Suspense>
             </ErrorBoundary>
         </Container>

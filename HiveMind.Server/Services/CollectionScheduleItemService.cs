@@ -34,10 +34,12 @@ public class CollectionSchedulteItemService : BaseService
         return _context.CollectionScheduleItems.Find(id);
     }
 
-    public void Update(CollectionScheduleItem collectionScheduleItem)
+    public CollectionScheduleItem Update(CollectionScheduleItem collectionScheduleItem)
     {
         _context.CollectionScheduleItems.Update(collectionScheduleItem);
         _context.SaveChanges();
+
+        return collectionScheduleItem;
     }
 
     public void Delete(int id)

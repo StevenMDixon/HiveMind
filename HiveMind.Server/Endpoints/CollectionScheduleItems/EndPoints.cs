@@ -7,7 +7,7 @@ public static class Endpoints
         var endpoints = app.MapGroup("CollectionScheduleItems");
         GetAllCollectionScheduleItems.Map(endpoints);
         GetCollectionScheduleItemById.Map(endpoints);
-        GetItemsByScheduleID.Map(endpoints);
+        GetItemsByScheduleItemID.Map(endpoints);
         CreateCollectionScheduleItem.Map(endpoints);
         UpdateCollectionScheduleItem.Map(endpoints);
         DeleteCollectionScheduleItem.Map(endpoints);

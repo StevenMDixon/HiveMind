@@ -1,3 +1,4 @@
+using HiveMind.Server.Domain.Enums;
 using HiveMind.Server.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,7 @@ public static class GetCollectionScheduleItemById
         app.MapGet("/{id:int}", Handle).WithName("GetCollectionScheduleItemById");
     }
 
-    public record CollectionScheduleItem(int CollectionScheduleItemId, int CollectionId, int ScheduleItemId, int Duration, string CollectionType, string PlayoutType, int Index, bool DisableIntroBump, bool DisableInterStitials);
+    public record CollectionScheduleItem(int CollectionScheduleItemId, int CollectionId, int ScheduleItemId, int PlayDuration, int PlayCount, int PadTo, CollectionType CollectionType, PlayoutType PlayoutType, int Index);
 
     public static Results<Ok<CollectionScheduleItem>, NotFound<string>> Handle(CollectionSchedulteItemService scheduleItemService, [FromRoute] int id)
     {
@@ -19,7 +20,7 @@ public static class GetCollectionScheduleItemById
 
         if (item is not null)
         {
-            return TypedResults.Ok(new CollectionScheduleItem(item.CollectionScheduleItemId, item.CollectionId, item.ScheduleItemId, item.Duration, item.CollectionType.ToString(), item.PlayoutType.ToString(), item.Index, item.DisableIntroBump, item.DisableInterStitials));
+            return TypedResults.Ok(new CollectionScheduleItem(item.CollectionScheduleItemId, item.CollectionId, item.ScheduleItemId, item.PlayDuration, item.PlayCount, item.PadTo, item.CollectionType, item.PlayoutType, item.Index));
         }
 
         return TypedResults.NotFound($"A collection schedule item with the ID: {id} was not found.");

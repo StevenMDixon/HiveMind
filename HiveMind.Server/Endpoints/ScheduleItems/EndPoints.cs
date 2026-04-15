@@ -5,7 +5,7 @@ public class EndPoints
 {
     public static void Map(IEndpointRouteBuilder app)
     {
-        var endpoints = app.MapGroup("ScheduleItems");
+        var endpoints = app.MapGroup("scheduleitems");
         GetAllScheduleItems.Map(endpoints);
         GetScheduleItemById.Map(endpoints);
         GetScheduleItemsByScheduleId.Map(endpoints);

@@ -3,9 +3,10 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
+import Stack from '@mui/material/Stack';
 
 import SaveIcon from '@mui/icons-material/Save';
-import { type PropsWithChildren, useState, useMemo, useEffect } from 'react';
+import { type PropsWithChildren, useState, useMemo } from 'react';
 
 import { type CustomFormField } from './FormFields';
 import CustomFormFields, { type FieldData } from './FormFields';
@@ -21,15 +22,8 @@ function getProperty<Type, Key extends keyof Type>(obj: Type, key: Key | string)
     return obj[key as Key];
 }
 
-
 const CustomForm = <T,>({ title, save, initialValue, fields, children }: PropsWithChildren<CustomFormProps<T>>) => {
     const [data, setData] = useState<T>(initialValue);
-
-    console.log(data)
-
-    useEffect(() => {
-        setData(initialValue);
-    }, [initialValue]);
 
     const formFields = useMemo(() => {
         return fields.map(field => ({
@@ -57,7 +51,9 @@ const CustomForm = <T,>({ title, save, initialValue, fields, children }: PropsWi
                 }
             </Box>
             <Divider />
-            <CustomFormFields fields={formFields} handleInputChanges={handleInputChanges} />
+            <Stack spacing={2}>
+                <CustomFormFields fields={formFields} handleInputChanges={handleInputChanges} />
+            </Stack>
             <Box component="form">
                 {children}
             </Box>

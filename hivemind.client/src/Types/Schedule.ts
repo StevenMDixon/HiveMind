@@ -8,6 +8,14 @@ export interface ScheduleItem {
 
 export interface CollectionScheduleItem {
     collectionScheduleItemId: number;
+    collectionId: number;
+    collectionType: number;
+    index: number;
+    padTo: number;
+    playCount: number;
+    playDuration: number;
+    playoutType: number;
+    scheduleItemId: number;
 }
 
 export interface Schedule {
