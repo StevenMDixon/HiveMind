@@ -9,10 +9,10 @@ import { type CustomFormField } from '../Components/FormFields';
 
 import type { Schedule } from '../../Types/Schedule';
 
-import { fetchSchedules, createSchedule, deleteSchedule } from '../../Api/Schedules';
+import { ApiClient } from '../../Api/ApiClient';
 
 const Schedules = () => {
-    const [schedulePromise, setSchedulePromise] = useState(() => fetchSchedules());
+    const [schedulePromise, setSchedulePromise] = useState(() => ApiClient.fetchSchedules());
     const navigate = useNavigate();
 
     const { showNotification } = useGlobalNotification();
@@ -29,14 +29,14 @@ const Schedules = () => {
     ] as CellData<Schedule>[];
 
     const handleRetry = () => {
-        setSchedulePromise(fetchSchedules());
+        setSchedulePromise(ApiClient.fetchSchedules());
     };
 
     const scheduleDefault = { scheduleId: -1, scheduleName: "", channelId: null, "startTime": "00:00:00" } as Schedule; 
 
     const handleDelete = async (schedule: Schedule) => {
-        const result = await deleteSchedule(schedule);
-        setSchedulePromise(fetchSchedules());
+        const result = await ApiClient.deleteSchedule(schedule);
+        setSchedulePromise(ApiClient.fetchSchedules());
 
         if (result.ok) {
             showNotification("Schedule Deleted", "success");
@@ -46,7 +46,7 @@ const Schedules = () => {
     }
 
     const handleCreate = async (schedule: Schedule) => {
-        const result = await createSchedule(schedule);
+        const result = await ApiClient.createSchedule(schedule);
 
         if (result.ok) {
             showNotification("Schedule Created", "success");
@@ -54,13 +54,13 @@ const Schedules = () => {
             showNotification("Failed to create schedule", "error");
         }
 
-        setSchedulePromise(fetchSchedules());
+        setSchedulePromise(ApiClient.fetchSchedules());
     }
 
     const fields = [
-        { name: 'scheduleName', type: "Text", initialValue: scheduleDefault.scheduleName },
-        { name: 'channelId', type: "Text", initialValue: scheduleDefault.channelId, required: false },
-        { name: 'startTime', type: "Time", initialValue: scheduleDefault.startTime },
+        { name: 'scheduleName', Display: "Name", type: "Text", initialValue: scheduleDefault.scheduleName },
+        { name: 'channelId', display: "Assigned Channel", type: "Text", initialValue: scheduleDefault.channelId, required: false },
+        { name: 'startTime', display: "Start Time", type: "Text", initialValue: scheduleDefault.startTime },
     ] as CustomFormField[];
 
     return (

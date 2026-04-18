@@ -1,13 +1,12 @@
 import { Container } from "@mui/material"
 import type { Channel } from '../../Types/Channel';
 import { use } from 'react';
-import { useNavigate } from "react-router-dom";
 
 import CustomForm from '../Components/CustomForm';
-
 import { fields } from './fields';
 
-import { saveChannel } from '../../Api/Channel'; 
+import { ApiClient } from '../../Api/ApiClient';
+import { useGlobalNotification } from '../../Dashboard/useGlobalNotification';
 
 interface ChannelEditLayoutProps {
     channelPromise: Promise<Channel>
@@ -17,12 +16,16 @@ const ChannelEditLayout = ({ channelPromise }: ChannelEditLayoutProps) => {
 
     const channel = use(channelPromise);
 
-    const navigate = useNavigate();
+    const { showNotification } = useGlobalNotification();
 
     const handleSaveChannel = async (item: Channel) => {
-        const result = await saveChannel(item);
+        const result = await ApiClient.saveChannel(item);
 
-        if (result.ok) navigate(-1);
+        if (result.ok) {
+            showNotification("Channel Edited Successfully", "success")
+        } else {
+            showNotification("Error Editing Channel", "error")
+        }
     }
 
     return (

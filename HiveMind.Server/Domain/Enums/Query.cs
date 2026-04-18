@@ -9,7 +9,10 @@ public static class QueryEnums
         Width,
         Height,
         LibraryId,
-        Tag
+        SeasonNumber,
+        EpisodeNumber,
+        Tag,
+        Show
     }
 
     public static string GetType(QueryAllowedFields field)
@@ -21,7 +24,10 @@ public static class QueryEnums
             QueryAllowedFields.Width => "int",
             QueryAllowedFields.Height => "int",
             QueryAllowedFields.LibraryId => "int",
+            QueryAllowedFields.SeasonNumber => "int",
+            QueryAllowedFields.EpisodeNumber => "int",
             QueryAllowedFields.Tag => "string",
+            QueryAllowedFields.Show => "string",
             _ => throw new ArgumentOutOfRangeException(nameof(field), field, null)
         };
     }
@@ -44,13 +50,15 @@ public static class QueryEnums
             QueryAllowedOperators.NotEquals => true,
             QueryAllowedOperators.GreaterThan => type == "int",
             QueryAllowedOperators.LessThan => type == "int",
-            QueryAllowedOperators.Contains => true,
+            QueryAllowedOperators.Contains => type == "string",
             QueryAllowedOperators.MatchesAny => true,
             _ => throw new ArgumentOutOfRangeException(nameof(op), op, null)
         };
     }
 
-    public record QueryOptions(string name, string type, string options);
+    public record QueryOptions(string name, string type, Option[] options);
+
+    public record Option(int id, string name);
 
     public static List<QueryOptions> GetAllowedOptions()
     {
@@ -60,9 +68,9 @@ public static class QueryEnums
             var type = GetType(field);
             var allowedOps = Enum.GetValues<QueryAllowedOperators>()
                 .Where(op => IsOperatorValidForType(op, type))
-                .Select(op => op.ToString())
+                .Select(op => new Option((int)op, op.ToString()))
                 .ToArray();
-            options.Add(new QueryOptions(field.ToString(), type, string.Join(", ", allowedOps)));
+            options.Add(new QueryOptions(field.ToString(), type, allowedOps));
         }
         return options;
     }

@@ -9,13 +9,13 @@ import CustomTable, { type CellData } from "../Components/Table";
 
 import type { Media, Show } from '../../Types/Media';
 
-import { fetchMedia } from '../../Api/Media'; 
+import { ApiClient } from '../../Api/ApiClient';
 
 const MediaPage = () => {
-    const [mediaPromise, setMediaPromise] = useState(() => fetchMedia());
+    const [mediaPromise, setMediaPromise] = useState(() => ApiClient.fetchMedia());
 
     const handleRetry = () => {
-        setMediaPromise(fetchMedia());
+        setMediaPromise(ApiClient.fetchMedia());
     };
 
     const columns = [

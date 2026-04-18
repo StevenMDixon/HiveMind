@@ -32,7 +32,7 @@ public class UpdateLibrary
     {
        var library = libraryService.GetLibraryByID(id);
 
-        if(library == null) return TypedResults.NotFound($"A collection with the ID: {id} was not found.");
+        if(library == null) return TypedResults.NotFound($"A query with the ID: {id} was not found.");
 
         if (library.LibraryPath != request.LibraryPath) library.IsProcessed = false;
 

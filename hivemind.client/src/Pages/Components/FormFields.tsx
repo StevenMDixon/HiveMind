@@ -24,6 +24,7 @@ export interface CustomFormField {
     valid?: boolean;
     options?: EnumOptionsObj;
     required?: boolean;
+    display?: string;
 }
 
 const CreateFields = (field: CustomFormField, index: number, disableLabels: boolean, variant: string, fullWidth: boolean, handle: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string> | SelectChangeEvent<number> | SelectChangeEvent<boolean>) => void) => {
@@ -36,7 +37,7 @@ const CreateFields = (field: CustomFormField, index: number, disableLabels: bool
         case 'Text': return (
             <TextField sx={{ m: 0, p: 0 }} key={index}
                 error={!field.valid}
-                label={!disableLabels ? field.name : ""}
+                label={!disableLabels ? field.display ? field.display : field.name  : ""}
                 required={field.required}
                 variant={variant as TextFieldVariants}
                 name={field.name}
@@ -52,18 +53,17 @@ const CreateFields = (field: CustomFormField, index: number, disableLabels: bool
                     type="number"
                     variant={variant as TextFieldVariants}
                     name={field.name}
-                    label={!disableLabels ? field.name : ""}
-                    value={field.initialValue}
+                    label={!disableLabels ? field.display ? field.display : field.name : ""}                    value={field.initialValue}
                     onChange={handle}
                     fullWidth={fullWidth}
                 />
         )
         case 'Select': return (
-            <FormControl sx={{ mr: 1, p: 0, minWidth: 100 }} key={index} >
-                {!disableLabels && <FormLabel>{field.name}</FormLabel>}
+            <FormControl sx={{ mr: 1, p: 0, minWidth: 100 }} key={index} fullWidth={fullWidth}>
+                {!disableLabels && <FormLabel>{field.display ? field.display : field.name}</FormLabel>}
                 <Select
                     required={field.required}
-                    fullWidth={fullWidth}
+                    
                     variant={variant as TextFieldVariants}
                     name={field.name}
                     value={field.initialValue}
@@ -74,8 +74,8 @@ const CreateFields = (field: CustomFormField, index: number, disableLabels: bool
             </FormControl>
         )
         case 'Radio': return (
-            <FormControl sx={{ m: 0, p: 0, minWidth: 100 }} key={index} >
-                {!disableLabels && <FormLabel>{field.name}</FormLabel>}
+            <FormControl sx={{ m: 0, p: 0, minWidth: 100 }} key={index} fullWidth={fullWidth}>
+                {!disableLabels && <FormLabel>{field.display ? field.display : field.name}</FormLabel>}
                 <RadioGroup
                     aria-labelledby="demo-radio-buttons-group-label"
                     value={field.initialValue}
@@ -124,14 +124,14 @@ const CustomFormFields = ({ fields, handleInputChanges, wrapper, disableLabels, 
     };
 
     return fields.map((field, index) => {
-            const value = field.initialValue;
+            const value = field.initialValue ?? "";
 
             const valid = field.validator
                 ? field.validator(value)
-                : true;
+            : true;
 
             const fieldElement = CreateFields(
-                { ...field, valid },
+                { ...field, initialValue: field.initialValue ?? "", valid },
                 index,
                 disableLabels ?? false,
                 variant ?? 'filled',

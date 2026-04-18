@@ -19,10 +19,10 @@ builder.Services.AddTransient<LibraryService>();
 builder.Services.AddTransient<MediaItemService>();
 builder.Services.AddTransient<MediaItemShowService>();
 builder.Services.AddTransient<TagsService>();
-builder.Services.AddTransient<CollectionService>();
+builder.Services.AddTransient<QueryService>();
 builder.Services.AddTransient<ScheduleService>();
 builder.Services.AddTransient<ScheduleItemService>();
-builder.Services.AddTransient<CollectionSchedulteItemService>();
+builder.Services.AddTransient<QueryScheduleItemService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 

@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using HiveMind.Server.Domain.Enums;
 using HiveMind.Server.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -10,20 +9,52 @@ public class QueryRequest
 {
     public List<FilterRule> Filters { get; set; } = new();
     public string? SortBy { get; set; }
-    public bool SortDescending { get; set; }
+    public bool SortDescending { get; set; } = false;
     public int Page { get; set; } = 1;
     public int PageSize { get; set; } = 50;
 }
 
 public class FilterRule
 {
-    public string Field { get; set; } = "";
-    public string Operator { get; set; } = "";
+    public FilterRule()
+    {
+    }
+
+    public FilterRule(QueryEnums.QueryAllowedFields field, QueryEnums.QueryAllowedOperators @operator, string? value)
+    {
+        Field = field;
+        Operator = @operator;
+        Value = value;
+    }
+
+    public QueryEnums.QueryAllowedFields Field { get; set; }
+    public QueryEnums.QueryAllowedOperators Operator { get; set; }
     public string? Value { get; set; }
 }
 
 public static class MediaQueryBuilder
 {
+    private static object? ConvertValueToType(string? value, Type targetType)
+    {
+        if (value == null)
+            return null;
+
+        // Handle nullable types
+        var underlyingType = Nullable.GetUnderlyingType(targetType) ?? targetType;
+
+        if (underlyingType == typeof(string))
+            return value;
+
+        try
+        {
+            return Convert.ChangeType(value, underlyingType);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException(
+                $"Cannot convert value '{value}' to type {targetType.Name}", ex);
+        }
+    }
 
     public static IQueryable<MediaItem> Apply(
         IQueryable<MediaItem> query,
@@ -36,24 +67,24 @@ public static class MediaQueryBuilder
 
             foreach (var filter in request.Filters)
             {
-                if (!Enum.IsDefined(typeof(QueryEnums.QueryAllowedFields), filter.Field))
-                    throw new InvalidOperationException("Invalid field");
-
                 Expression comparison;
 
                 // Special handling for tag filtering
-                if (filter.Field.Equals("Tag", StringComparison.OrdinalIgnoreCase))
+                if (filter.Field == QueryEnums.QueryAllowedFields.Tag)
                 {
                     comparison = BuildTagFilter(parameter, filter);
                 }
+                else if (filter.Field == QueryEnums.QueryAllowedFields.Show)
+                {
+                    comparison = BuildShowFilter(parameter, filter);
+                }
                 else
                 {
-                    var property = Expression.Property(parameter, filter.Field);
-                    var constant = Expression.Constant(filter.Value);
+                    var property = Expression.Property(parameter, filter.Field.ToString());
+                    var convertedValue = ConvertValueToType(filter.Value, property.Type);
+                    var constant = Expression.Constant(convertedValue, property.Type);
 
-                    if (!Enum.TryParse(filter.Operator, out QueryEnums.QueryAllowedOperators operatorValue)) throw new NotSupportedException("Operator not supported");
-
-                    comparison = operatorValue switch
+                    comparison = filter.Operator switch
                     {
                         QueryEnums.QueryAllowedOperators.Equals => Expression.Equal(property, constant),
                         QueryEnums.QueryAllowedOperators.NotEquals => Expression.NotEqual(property, constant),
@@ -122,17 +153,16 @@ public static class MediaQueryBuilder
     {
         // Get the Tags collection property
         var tagsProperty = Expression.Property(parameter, "Tags");
-        
+
         // Create lambda for tag filtering: tag => tag.TagName.Contains(value)
         var tagParam = Expression.Parameter(typeof(Tags), "tag");
         var tagNameProperty = Expression.Property(tagParam, "TagName");
         var constant = Expression.Constant(filter.Value);
 
-        Enum.TryParse(filter.Operator, out QueryEnums.QueryAllowedOperators operatorValue);
-
-        Expression tagComparison = operatorValue switch
+        Expression tagComparison = filter.Operator switch
         {
             QueryEnums.QueryAllowedOperators.Equals => Expression.Equal(tagNameProperty, constant),
+            QueryEnums.QueryAllowedOperators.NotEquals => Expression.NotEqual(tagNameProperty, constant),
             QueryEnums.QueryAllowedOperators.MatchesAny when tagNameProperty.Type == typeof(string) => BuildInFilter(tagNameProperty, filter),
             QueryEnums.QueryAllowedOperators.Contains => Expression.Call(
                 tagNameProperty,
@@ -150,5 +180,32 @@ public static class MediaQueryBuilder
             .MakeGenericMethod(typeof(Tags));
 
         return Expression.Call(anyMethod, tagsProperty, tagLambda);
+    }
+
+    private static Expression BuildShowFilter(ParameterExpression parameter, FilterRule filter)
+    {
+        // Get the Show navigation property (single object, not a collection)
+        var showProperty = Expression.Property(parameter, "Show");
+
+        // Get the MediaItemShowTitle property from Show
+        var showNameProperty = Expression.Property(showProperty, "MediaItemShowTitle");
+        var constant = Expression.Constant(filter.Value);
+
+        Expression showComparison = filter.Operator switch
+        {
+            QueryEnums.QueryAllowedOperators.Equals => Expression.Equal(showNameProperty, constant),
+            QueryEnums.QueryAllowedOperators.NotEquals => Expression.NotEqual(showNameProperty, constant),
+            QueryEnums.QueryAllowedOperators.Contains => Expression.Call(
+                showNameProperty,
+                typeof(string).GetMethod("Contains", new[] { typeof(string) })!,
+                constant),
+            _ => throw new NotSupportedException("Operator not supported for shows")
+        };
+
+        // Add null check for Show property since it's nullable
+        var showNotNull = Expression.NotEqual(showProperty, Expression.Constant(null, typeof(MediaItemShow)));
+
+        // Combine null check with the comparison: Show != null && Show.MediaItemShowTitle [operator] value
+        return Expression.AndAlso(showNotNull, showComparison);
     }
 }

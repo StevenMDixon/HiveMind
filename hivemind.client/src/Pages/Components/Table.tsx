@@ -74,7 +74,7 @@ const CustomTableCell = <T,>({ item, column }: { item: T, column: CellData<T> })
     );
 }
 
-const CustomTable = <T,>({ dataPromise, columns, actionColumns, handleRetry }: CustomTableProps<T>) => {
+export const CustomTable = <T,>({ dataPromise, columns, actionColumns, handleRetry }: CustomTableProps<T>) => {
     return (
         <TableContainer  sx={{mt: 2, p: 2}} >
             <Table>

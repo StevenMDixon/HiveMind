@@ -21,8 +21,8 @@ public class ScheduleService:BaseService
     public Schedule? GetScheduleByID(int id)
     {
         return _context.Schedules
-            .Include(c => c.ScheduleItems)
-            .ThenInclude(s => s.Collections)
+            .Include(c => c.ScheduleItems!)
+            .ThenInclude(s => s.Queries)
             .FirstOrDefault(x => x.ScheduleId == id);
     }
 

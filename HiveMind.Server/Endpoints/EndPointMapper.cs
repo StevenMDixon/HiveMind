@@ -6,13 +6,13 @@ public static class EndPointMapper
     {
         Channels.EndPoints.Map(builder);
         Libraries.EndPoints.Map(builder);
-        Weather.EndPoints.Map(builder);
-        Collections.Endpoints.Map(builder);
+        Queries.EndPoints.Map(builder);
         MediaItems.EndPoints.Map(builder);
         Schedules.EndPoints.Map(builder);
         ScheduleItems.EndPoints.Map(builder);
-        CollectionScheduleItems.Endpoints.Map(builder);
+        QueryScheduleItems.Endpoints.Map(builder);
         QuerySettings.Map(builder);
+        QueryOptions.Map(builder);
         GetPlayoutTypes.Map(builder);
     }
 }

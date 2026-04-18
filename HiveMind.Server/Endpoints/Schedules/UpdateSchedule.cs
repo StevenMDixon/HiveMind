@@ -21,7 +21,6 @@ public class UpdateSchedule
         public Validator()
         {
             RuleFor(x => x.ScheduleName).NotEmpty().MaximumLength(100);
-            RuleFor(x => x.ChannelId).GreaterThan(0);
         }
     }
 
@@ -33,12 +32,14 @@ public class UpdateSchedule
 
         if (schedule is not null)
         {
-            schedule.ScheduleName = request.ScheduleName ?? schedule.ScheduleName;
-            schedule.ChannelId = request.ChannelId ?? schedule.ChannelId;
-            schedule.StartTime = request.StartTime ?? schedule.StartTime;
-            schedule.ScheduleItems = request.ScheduleItems ?? schedule.ScheduleItems;
+            var channelId = request?.ChannelId > 0 ? request.ChannelId : null;
 
-            foreach (var item in schedule.ScheduleItems)
+            schedule.ScheduleName = request?.ScheduleName ?? schedule.ScheduleName;
+            schedule.ChannelId = channelId;
+            schedule.StartTime = request?.StartTime ?? schedule.StartTime;
+            schedule.ScheduleItems = request?.ScheduleItems ?? schedule.ScheduleItems;
+
+            foreach (var item in schedule.ScheduleItems ?? [])
             {
                 if (item.ScheduleItemId < 0) item.ScheduleItemId = 0;
             }

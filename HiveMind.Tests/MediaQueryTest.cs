@@ -1,4 +1,5 @@
-﻿using HiveMind.Server.Entities;
+﻿using HiveMind.Server.Domain.Enums;
+using HiveMind.Server.Entities;
 using HiveMind.Server.QueryEngine;
 using Microsoft.EntityFrameworkCore;
 
@@ -124,7 +125,7 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
             {
-                new() { Field = "Title", Operator = "equals", Value = "Movie A" }
+                new() { Field = QueryEnums.QueryAllowedFields.Title, Operator = QueryEnums.QueryAllowedOperators.Equals, Value = "Movie A" }
             },
             PageSize = 100
         };
@@ -146,7 +147,7 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
             {
-                new() { Field = "Title", Operator = "Contains", Value = "Show" }
+                new() { Field = QueryEnums.QueryAllowedFields.Title, Operator = QueryEnums.QueryAllowedOperators.Contains, Value = "Show" }
             },
             PageSize = 100
         };
@@ -168,8 +169,8 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
             {
-                new() { Field = "Title", Operator = "Contains", Value = "Show" },
-                new() { Field = "Title", Operator = "Contains", Value = "Episode 1" }
+                new() { Field = QueryEnums.QueryAllowedFields.Title, Operator = QueryEnums.QueryAllowedOperators.Contains, Value = "Show" },
+                new() { Field = QueryEnums.QueryAllowedFields.Title, Operator = QueryEnums.QueryAllowedOperators.Contains, Value = "Episode 1" }
             },
             PageSize = 100
         };
@@ -182,43 +183,13 @@ public class MediaQueryBuilderTests : IDisposable
         Assert.Equal("Show Episode 1", result[0].Title);
     }
 
-    [Fact]
-    public void Apply_WithInvalidField_ThrowsInvalidOperationException()
-    {
-        // Arrange
-        var query = _context.MediaItems.AsQueryable();
-        var request = new QueryRequest
-        {
-            Filters = new List<FilterRule>
-            {
-                new() { Field = "InvalidField", Operator = "equals", Value = "test" }
-            }
-        };
+    // This test is no longer relevant - invalid fields are now caught at compile time due to enum usage
+    // [Fact]
+    // public void Apply_WithInvalidField_ThrowsInvalidOperationException()
 
-        // Act & Assert
-        var exception = Assert.Throws<InvalidOperationException>(() =>
-            MediaQueryBuilder.Apply(query, request).ToList());
-        Assert.Equal("Invalid field", exception.Message);
-    }
-
-    [Fact]
-    public void Apply_WithInvalidOperator_ThrowsNotSupportedException()
-    {
-        // Arrange
-        var query = _context.MediaItems.AsQueryable();
-        var request = new QueryRequest
-        {
-            Filters = new List<FilterRule>
-            {
-                new() { Field = "Title", Operator = "Invalid", Value = "test" }
-            }
-        };
-
-        // Act & Assert
-        var exception = Assert.Throws<NotSupportedException>(() =>
-            MediaQueryBuilder.Apply(query, request).ToList());
-        Assert.Equal("Operator not supported", exception.Message);
-    }
+    // This test is no longer relevant - invalid operators are now caught at compile time due to enum usage  
+    // [Fact]
+    // public void Apply_WithInvalidOperator_ThrowsNotSupportedException()
 
     [Fact]
     public void Apply_WithNullValue_HandlesGracefully()
@@ -229,7 +200,7 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
             {
-                new() { Field = "Title", Operator = "equals", Value = null }
+                new() { Field = QueryEnums.QueryAllowedFields.Title, Operator = QueryEnums.QueryAllowedOperators.Equals, Value = null }
             },
             PageSize = 100
         };
@@ -442,7 +413,7 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
             {
-                new() { Field = "Title", Operator = "Contains", Value = "Movie" }
+                new() { Field = QueryEnums.QueryAllowedFields.Title, Operator = QueryEnums.QueryAllowedOperators.Contains, Value = "Movie" }
             },
             SortBy = "Title",
             SortDescending = false,
@@ -468,7 +439,7 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
             {
-                new() { Field = "Title", Operator = "Contains", Value = "Show" }
+                new() { Field = QueryEnums.QueryAllowedFields.Title, Operator = QueryEnums.QueryAllowedOperators.Contains, Value = "Show" }
             },
             SortBy = "Title",
             SortDescending = true,
@@ -531,7 +502,7 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
         {
-            new() { Field = "Tag", Operator = "Equals", Value = "Action" }
+            new() { Field = QueryEnums.QueryAllowedFields.Tag, Operator = QueryEnums.QueryAllowedOperators.Equals, Value = "Action" }
         },
             PageSize = 100
         };
@@ -554,7 +525,7 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
         {
-            new() { Field = "Tag", Operator = "Contains", Value = "edy" } // Matches "Comedy"
+            new() { Field = QueryEnums.QueryAllowedFields.Tag, Operator = QueryEnums.QueryAllowedOperators.Contains, Value = "edy" } // Matches "Comedy"
         },
             PageSize = 100
         };
@@ -575,7 +546,7 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
         {
-            new() { Field = "Title", Operator = "MatchesAny", Value = "A,B" }, // Matches "Movie A" and "Movie B"
+            new() { Field = QueryEnums.QueryAllowedFields.Title, Operator = QueryEnums.QueryAllowedOperators.MatchesAny, Value = "A,B" }, // Matches "Movie A" and "Movie B"
         },
             PageSize = 100
         };
@@ -596,8 +567,8 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
         {
-            new() { Field = "Tag", Operator = "Equals", Value = "Action" },
-            new() { Field = "Tag", Operator = "Equals", Value = "Drama" }
+            new() { Field = QueryEnums.QueryAllowedFields.Tag, Operator = QueryEnums.QueryAllowedOperators.Equals, Value = "Action" },
+            new() { Field = QueryEnums.QueryAllowedFields.Tag, Operator = QueryEnums.QueryAllowedOperators.Equals, Value = "Drama" }
         },
             PageSize = 100
         };
@@ -619,8 +590,8 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
         {
-            new() { Field = "Tag", Operator = "Equals", Value = "Action" },
-            new() { Field = "Title", Operator = "Contains", Value = "Show" }
+            new() { Field = QueryEnums.QueryAllowedFields.Tag, Operator = QueryEnums.QueryAllowedOperators.Equals, Value = "Action" },
+            new() { Field = QueryEnums.QueryAllowedFields.Title, Operator = QueryEnums.QueryAllowedOperators.Contains, Value = "Show" }
         },
             PageSize = 100
         };
@@ -641,8 +612,8 @@ public class MediaQueryBuilderTests : IDisposable
         {
             Filters = new List<FilterRule>
         {
-            new() { Field = "Tag", Operator = "MatchesAny", Value = "Action,Comedy" },
-            
+            new() { Field = QueryEnums.QueryAllowedFields.Tag, Operator = QueryEnums.QueryAllowedOperators.MatchesAny, Value = "Action,Comedy" },
+
         },
             PageSize = 100
         };

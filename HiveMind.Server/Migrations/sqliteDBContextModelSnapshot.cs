@@ -55,58 +55,6 @@ namespace HiveMind.Server.Migrations
                         });
                 });
 
-            modelBuilder.Entity("HiveMind.Server.Entities.Collection", b =>
-                {
-                    b.Property<int>("CollectionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("CollectionId");
-
-                    b.ToTable("Collections");
-                });
-
-            modelBuilder.Entity("HiveMind.Server.Entities.CollectionScheduleItem", b =>
-                {
-                    b.Property<int>("CollectionScheduleItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CollectionId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CollectionType")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Index")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PadTo")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PlayCount")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PlayDuration")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PlayoutType")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ScheduleItemId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("CollectionScheduleItemId");
-
-                    b.HasIndex("ScheduleItemId");
-
-                    b.ToTable("CollectionScheduleItems");
-                });
-
             modelBuilder.Entity("HiveMind.Server.Entities.Library", b =>
                 {
                     b.Property<int>("LibraryId")
@@ -195,22 +143,35 @@ namespace HiveMind.Server.Migrations
                     b.ToTable("MediaItemShows");
                 });
 
+            modelBuilder.Entity("HiveMind.Server.Entities.Query", b =>
+                {
+                    b.Property<int>("QueryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("QueryId");
+
+                    b.ToTable("Queries");
+                });
+
             modelBuilder.Entity("HiveMind.Server.Entities.QueryFilters", b =>
                 {
                     b.Property<int>("QueryFilterId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("CollectionId")
+                    b.Property<int>("Field")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Field")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Operator")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("Operator")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("QueryId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Value")
                         .IsRequired()
@@ -218,9 +179,46 @@ namespace HiveMind.Server.Migrations
 
                     b.HasKey("QueryFilterId");
 
-                    b.HasIndex("CollectionId");
+                    b.HasIndex("QueryId");
 
                     b.ToTable("QueryFilters");
+                });
+
+            modelBuilder.Entity("HiveMind.Server.Entities.QueryScheduleItem", b =>
+                {
+                    b.Property<int>("QueryScheduleItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Index")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PadTo")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PlayCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PlayDuration")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PlayoutType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("QueryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("QueryType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ScheduleItemId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("QueryScheduleItemId");
+
+                    b.HasIndex("ScheduleItemId");
+
+                    b.ToTable("QueryScheduleItems");
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.Schedule", b =>
@@ -316,15 +314,6 @@ namespace HiveMind.Server.Migrations
                     b.ToTable("MediaItemTags");
                 });
 
-            modelBuilder.Entity("HiveMind.Server.Entities.CollectionScheduleItem", b =>
-                {
-                    b.HasOne("HiveMind.Server.Entities.ScheduleItem", null)
-                        .WithMany("Collections")
-                        .HasForeignKey("ScheduleItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("HiveMind.Server.Entities.MediaItem", b =>
                 {
                     b.HasOne("HiveMind.Server.Entities.Library", "Library")
@@ -344,13 +333,22 @@ namespace HiveMind.Server.Migrations
 
             modelBuilder.Entity("HiveMind.Server.Entities.QueryFilters", b =>
                 {
-                    b.HasOne("HiveMind.Server.Entities.Collection", "Collection")
+                    b.HasOne("HiveMind.Server.Entities.Query", "Query")
                         .WithMany("Filters")
-                        .HasForeignKey("CollectionId")
+                        .HasForeignKey("QueryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Collection");
+                    b.Navigation("Query");
+                });
+
+            modelBuilder.Entity("HiveMind.Server.Entities.QueryScheduleItem", b =>
+                {
+                    b.HasOne("HiveMind.Server.Entities.ScheduleItem", null)
+                        .WithMany("Queries")
+                        .HasForeignKey("ScheduleItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.Schedule", b =>
@@ -393,14 +391,14 @@ namespace HiveMind.Server.Migrations
                     b.Navigation("Schedule");
                 });
 
-            modelBuilder.Entity("HiveMind.Server.Entities.Collection", b =>
-                {
-                    b.Navigation("Filters");
-                });
-
             modelBuilder.Entity("HiveMind.Server.Entities.Library", b =>
                 {
                     b.Navigation("MediaItems");
+                });
+
+            modelBuilder.Entity("HiveMind.Server.Entities.Query", b =>
+                {
+                    b.Navigation("Filters");
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.Schedule", b =>
@@ -410,7 +408,7 @@ namespace HiveMind.Server.Migrations
 
             modelBuilder.Entity("HiveMind.Server.Entities.ScheduleItem", b =>
                 {
-                    b.Navigation("Collections");
+                    b.Navigation("Queries");
                 });
 #pragma warning restore 612, 618
         }

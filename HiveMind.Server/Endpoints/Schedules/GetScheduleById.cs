@@ -13,9 +13,9 @@ public static class GetScheduleById
         app.MapGet("/{id:int}", Handle).WithName("GetScheduleById");
     }
 
-    public record CollectionScheduleItem(int CollectionScheduleItemId, int CollectionId, int ScheduleItemId, int PlayDuration, int PlayCount, int PadTo, string CollectionType, string PlayoutType, int Index);
+    public record QueryScheduleItem(int QueryScheduleItemId, int QueryId, int ScheduleItemId, int PlayDuration, int PlayCount, int PadTo, QueryType QueryType, PlayoutType PlayoutType, int Index);
 
-    public record ScheduleItem(int ScheduleItemId, int Index, string Type, string Name, int ScheduleId, ICollection<CollectionScheduleItem> Collections);
+    public record ScheduleItem(int ScheduleItemId, int Index, string Type, string Name, int ScheduleId, ICollection<QueryScheduleItem> Queries);
 
     public record Schedule(int ScheduleId, string ScheduleName, int? ChannelId, TimeOnly StartTime, ICollection<ScheduleItem> ScheduleItems);
 
@@ -30,7 +30,7 @@ public static class GetScheduleById
                 schedule.ScheduleName, 
                 schedule.ChannelId, 
                 schedule.StartTime, 
-                schedule.ScheduleItems?.Select(item => new ScheduleItem(item.ScheduleItemId, item.Index, item.Type, item.Name, item.ScheduleId, item.Collections?.Select(c => new CollectionScheduleItem(c.CollectionScheduleItemId, c.CollectionId, c.ScheduleItemId, c.PlayDuration, c.PlayCount, c.PadTo, c.CollectionType.ToString(), c.PlayoutType.ToString(), c.Index)).ToList() ?? new List<CollectionScheduleItem>())).ToList() ?? new List<ScheduleItem>()));
+                schedule.ScheduleItems?.Select(item => new ScheduleItem(item.ScheduleItemId, item.Index, item.Type, item.Name, item.ScheduleId, item.Queries?.Select(c => new QueryScheduleItem(c.QueryScheduleItemId, c.QueryId, c.ScheduleItemId, c.PlayDuration, c.PlayCount, c.PadTo, c.QueryType, c.PlayoutType, c.Index)).ToList() ?? new List<QueryScheduleItem>())).ToList() ?? new List<ScheduleItem>()));
         }
 
         return TypedResults.NotFound($"A schedule with the ID: {id} was not found.");

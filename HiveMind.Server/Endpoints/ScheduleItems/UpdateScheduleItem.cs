@@ -4,7 +4,6 @@ using HiveMind.Server.Services;
 using HiveMind.Server.Entities;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace HiveMind.Server.Endpoints.ScheduleItems;
 
@@ -28,7 +27,7 @@ public class UpdateScheduleItem
         }
     }
 
-    public record ScheduleItemRequest(int ScheduleItemId, string Name, int Index, string Type, int ScheduleId, CollectionScheduleItem[] Collections);
+    public record ScheduleItemRequest(int ScheduleItemId, string Name, int Index, string Type, int ScheduleId, ICollection<QueryScheduleItem> Queries);
 
     public static Results<Ok, NotFound<string>, ValidationProblem> Handle(ScheduleItemService scheduleItemService, [FromRoute] int id, [FromBody] ScheduleItemRequest request)
     {
@@ -41,8 +40,12 @@ public class UpdateScheduleItem
             scheduleItem.Type = request.Type;
             scheduleItem.ScheduleId = request.ScheduleId;
 
-            scheduleItem.Collections = request.Collections;
+            scheduleItem.Queries = request.Queries;
 
+            foreach (var item in scheduleItem.Queries)
+            {
+                if (item.QueryScheduleItemId < 0) item.QueryScheduleItemId = 0;
+            }
 
             scheduleItemService.Update(scheduleItem);
             return TypedResults.Ok();

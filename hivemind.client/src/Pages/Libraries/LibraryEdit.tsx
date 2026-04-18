@@ -5,15 +5,13 @@ import ErrorBoundary from "../../Components/ErrorBoundary";
 import { useNavigate, useParams } from "react-router-dom";
 
 import LibraryEditLayout from './LibraryEditLayout';
-
-import { fetchLibrary, fetchLibraryTypes } from '../../Api/Libraries';
-
+import { ApiClient } from '../../Api/ApiClient';
 
 const LibraryEdit = () => {
     const { id } = useParams();
 
-    const [libraryPromise] = useState(() => fetchLibrary(id));
-    const [libraryTypesPromise] = useState(() => fetchLibraryTypes());
+    const [libraryPromise] = useState(() => ApiClient.fetchLibrary(id));
+    const [libraryTypesPromise] = useState(() => ApiClient.fetchLibraryTypes());
 
     const navigate = useNavigate();
 

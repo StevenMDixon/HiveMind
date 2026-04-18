@@ -14,19 +14,14 @@ import type { Channel } from '../../Types/Channel';
 
 import {channelDefault, fields } from './fields'
 
-import { fetchChannels } from '../../Api/Channel'; 
+import { ApiClient } from '../../Api/ApiClient';
 
 const ChannelPage = () => {
 
     const { showNotification } = useGlobalNotification();
 
-
     const createChannel = async (channel: Channel) => {
-        const response = await fetch('/channels', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ChannelName: channel.channelName, ChannelNumber: channel.channelNumber }),
-        });
+        const response = await ApiClient.createChannel(channel);
 
         if (response.ok) {
             showNotification("Channel Created", "success");
@@ -34,14 +29,11 @@ const ChannelPage = () => {
             showNotification("Failed to create channel", "error");
         }
  
-        setChannelPromise(fetchChannels());
+        setChannelPromise(ApiClient.fetchChannels());
     };
 
     const deleteChannel = async (channelId: number) => {
-        const response =  await fetch(`/channels/${channelId}`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' }
-        });
+        const response = await ApiClient.deleteChannel(channelId);
 
         if (response.ok) {
             showNotification("Channel deleted", "success")
@@ -49,10 +41,10 @@ const ChannelPage = () => {
             showNotification("Failed to delete channel", "error");
         }
 
-        setChannelPromise(fetchChannels());
+        setChannelPromise(ApiClient.fetchChannels());
     };
 
-    const [channelPromise, setChannelPromise] = useState(() => fetchChannels());
+    const [channelPromise, setChannelPromise] = useState(() => ApiClient.fetchChannels());
 
     const navigate = useNavigate();
 
@@ -68,7 +60,7 @@ const ChannelPage = () => {
     ] as CellData<Channel>[];
 
     const handleRetry = () => {
-        setChannelPromise(fetchChannels());
+        setChannelPromise(ApiClient.fetchChannels());
     };
 
     return (

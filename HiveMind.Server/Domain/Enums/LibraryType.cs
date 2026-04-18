@@ -2,7 +2,7 @@
 
 public enum LibraryType
 {
-    None,
+    None = 0,
     Show,
     Commercial,
     Bumper,

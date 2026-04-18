@@ -11,6 +11,8 @@ import { type PropsWithChildren, useState, useMemo } from 'react';
 import { type CustomFormField } from './FormFields';
 import CustomFormFields, { type FieldData } from './FormFields';
 
+import { getProperty } from '../../Utilities/FormOptionsMapper';
+
 interface CustomFormProps<T> {
     title: string;
     initialValue: T;
@@ -18,9 +20,6 @@ interface CustomFormProps<T> {
     save?: (item: T) => void | Promise<void>;
 }
 
-function getProperty<Type, Key extends keyof Type>(obj: Type, key: Key | string) {  
-    return obj[key as Key];
-}
 
 const CustomForm = <T,>({ title, save, initialValue, fields, children }: PropsWithChildren<CustomFormProps<T>>) => {
     const [data, setData] = useState<T>(initialValue);
@@ -40,7 +39,7 @@ const CustomForm = <T,>({ title, save, initialValue, fields, children }: PropsWi
 
     return (
         <Paper>
-            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', mx: 1 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', mx: 1, p: ".5em" }}>
                 <Typography variant="h5">
                     {title}
                 </Typography>
@@ -51,8 +50,13 @@ const CustomForm = <T,>({ title, save, initialValue, fields, children }: PropsWi
                 }
             </Box>
             <Divider />
-            <Stack spacing={2}>
-                <CustomFormFields fields={formFields} handleInputChanges={handleInputChanges} />
+            <Stack spacing={2} direction="column" useFlexGap
+                sx={{
+                    flexWrap: 'wrap', m: 2, p: 2, alignItems: "stretch"
+                    }}
+                >
+                <CustomFormFields fields={formFields} handleInputChanges={handleInputChanges} fullWidth
+                    wrapper={(component, index) => <Box key={index}  sx={{maxWidth: '100%'} }>{component}</Box>} />
             </Stack>
             <Box component="form">
                 {children}

@@ -15,8 +15,15 @@ import Delete from '@mui/icons-material/DeleteOutline';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 
+interface ScheduleItemContainerProps {
+    scheduleItem: ScheduleItem,
+    index: number,
+    selectItem: (a: ScheduleItem) => void,
+    deleteItem: (a: ScheduleItem) => void,
+    moveItem: (a: ScheduleItem, i: number) => void 
+}
 
-const ScheduleItemContainer = ({ scheduleItem, selectItem, deleteItem }: { scheduleItem: ScheduleItem, selectItem: (a: ScheduleItem) => void, deleteItem: (a: ScheduleItem) => void }) => {
+const ScheduleItemContainer = ({ scheduleItem, index, selectItem, deleteItem, moveItem}: ScheduleItemContainerProps) => {
 
     const time = new Date(2024, 11, 25, 0, 0, 0);
 
@@ -51,10 +58,10 @@ const ScheduleItemContainer = ({ scheduleItem, selectItem, deleteItem }: { sched
                         <IconButton aria-label="Edit" onClick={() => selectItem(scheduleItem)}>
                             <EditIcon />
                         </IconButton>
-                        <IconButton aria-label="Move Up" onClick={() => selectItem(scheduleItem)}>
+                        <IconButton disabled={index == 0} aria-label="Move Up" onClick={() => moveItem(scheduleItem, -1)}>
                             <ArrowUpwardIcon />
                         </IconButton>
-                        <IconButton aria-label="Move Down" onClick={() => selectItem(scheduleItem)}>
+                        <IconButton aria-label="Move Down" onClick={() => moveItem(scheduleItem, 1)}>
                             <ArrowDownwardIcon />
                         </IconButton>
                         <IconButton aria-label="Delete" onClick={() => deleteItem(scheduleItem)}>
@@ -72,19 +79,24 @@ interface ScheduleTimelineProps {
     remove: (a: ScheduleItem) => void;
     add: () => void;
     scheduleItems: ScheduleItem[];
+    move: (a: ScheduleItem, i: number) => void;
 }
 
-const ScheduleTimeline = ({ selector, add, scheduleItems, remove }: ScheduleTimelineProps) => {
+const ScheduleTimeline = ({ selector, add, scheduleItems, remove, move}: ScheduleTimelineProps) => {
     return (
         <Timeline>
-            {scheduleItems && scheduleItems.map((scheduleItem: ScheduleItem) => <ScheduleItemContainer key={scheduleItem.scheduleItemId} scheduleItem={scheduleItem} selectItem={selector} deleteItem={remove} />)}
-            <TimelineContent>
-                <TimelineSeparator >
-                    <IconButton onClick={add}>
-                        <AddIcon />
-                    </IconButton>
+            {scheduleItems && scheduleItems.map((scheduleItem: ScheduleItem, index: number) =>
+                <ScheduleItemContainer key={scheduleItem.scheduleItemId} scheduleItem={scheduleItem} index={index} selectItem={selector} deleteItem={remove} moveItem={move} />)}
+            <TimelineItem>
+           
+                    <TimelineSeparator >
+                        <TimelineDot color="primary" variant="outlined" onClick={add}  >
+                                <AddIcon />
+                        </TimelineDot>
+                    
             </TimelineSeparator >
-            </TimelineContent>
+    
+        </TimelineItem>
         </Timeline>
         )
 }

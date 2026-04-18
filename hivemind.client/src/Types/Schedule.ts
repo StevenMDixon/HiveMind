@@ -3,19 +3,19 @@ export interface ScheduleItem {
     name: string;
     index: number;
     type: string;
-    collections: CollectionScheduleItem[];
+    queries: QueryScheduleItem[];
 }
 
-export interface CollectionScheduleItem {
-    collectionScheduleItemId: number;
-    collectionId: number;
-    collectionType: number;
+export interface QueryScheduleItem {
+    queryScheduleItemId: number;
+    queryId: number;
+    scheduleItemId: number;
+    queryType: number;
     index: number;
     padTo: number;
     playCount: number;
     playDuration: number;
     playoutType: number;
-    scheduleItemId: number;
 }
 
 export interface Schedule {

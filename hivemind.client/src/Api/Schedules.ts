@@ -1,4 +1,4 @@
-import type { CollectionScheduleItem, Schedule, ScheduleItem } from '../Types/Schedule';
+import type { QueryScheduleItem, Schedule, ScheduleItem } from '../Types/Schedule';
 
 export const fetchScheduleData = async (id: number) => {
     const response = await fetch('/schedules/' + id);
@@ -15,7 +15,7 @@ export const updateSchedule = async (schedule: Schedule) => {
     const result = await fetch('/schedules/' + schedule.scheduleId, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ScheduleName: schedule.scheduleName, ScheduleItems: schedule.scheduleItems }),
+        body: JSON.stringify({ ...schedule }),
     });
 
     return result;
@@ -47,56 +47,56 @@ export const deleteSchedule = async (schedule: Schedule) => {
     });
 }
 
-export const createScheduleCollectionItem = async (collectionScheduleItem: CollectionScheduleItem) => {
-    return await fetch('/collectionscheduleitem', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...collectionScheduleItem }),
-    });
-}
-
 export const createScheduleItem = async (scheduleItem: ScheduleItem) => {
-    const response = await fetch('/scheduleitems', {
+    return await fetch('/scheduleitems', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...scheduleItem }),
     });
-
-    return await response.json();
 }
 
 export const updateScheduleItem = async (scheduleItem: ScheduleItem) => {
-    const response = await fetch('/scheduleitems/' + scheduleItem.scheduleItemId, {
+    return await fetch('/scheduleitems/' + scheduleItem.scheduleItemId, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...scheduleItem }),
     });
-
-    return response;
 }
 
-export const createCollectionScheduleItem = async (collectionScheduleItem: CollectionScheduleItem) => {
-    const response = await fetch('/collectionscheduleitems', {
+export const createQueryScheduleItem = async (queryScheduleItem: QueryScheduleItem) => {
+    const response = await fetch('/queryscheduleitems', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...collectionScheduleItem }),
+        body: JSON.stringify({ ...queryScheduleItem }),
     });
 
     return await response.json();
 }
 
-export const deleteCollectionScheduleItem = async (id: number) => {
-    return await fetch('/collectionscheduleitems/' + id, {
+export const deleteQueryScheduleItem = async (id: number) => {
+    return await fetch('/queryscheduleitems/' + id, {
         method: 'Delete',
         headers: { 'Content-Type': 'application/json' }
     });
 }
 
-export const fetchCollectionScheduleItemsByScheduleItem = async (id: number) => {
-    const response = await fetch('/collectionscheduleitems/scheduleItem/' + id);
+export const fetchScheduleItem = async (id: number): Promise<ScheduleItem> => {
+    const response = await fetch('/scheduleitems/' + id);
 
     if (!response.ok) {
-        throw new Error(`Failed to fetch schedule: ${response.status} ${response.statusText}`);
+        throw new Error(`Failed to fetch schedule Item: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    return data;
+};
+
+export const fetchQueryScheduleItemsByScheduleItem = async (id: number) => {
+    const response = await fetch('/queryscheduleitems/scheduleItem/' + id);
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch query schedule items: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();

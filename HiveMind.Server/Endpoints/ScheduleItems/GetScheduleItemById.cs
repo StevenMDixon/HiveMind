@@ -1,3 +1,4 @@
+using HiveMind.Server.Domain.Enums;
 using HiveMind.Server.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,10 @@ public static class GetScheduleItemById
         app.MapGet("/{id:int}", Handle).WithName("GetScheduleItemById");
     }
 
-    public record ScheduleItem(int ScheduleItemId, int Index, string Type, int ScheduleId);
+    public record QueryScheduleItem(int QueryScheduleItemId, int QueryId, int ScheduleItemId, int PlayDuration, int PlayCount, int PadTo, QueryType QueryType, PlayoutType PlayoutType, int Index);
+
+
+    public record ScheduleItem(int ScheduleItemId, int Index, string name, string Type, int ScheduleId, ICollection<QueryScheduleItem>? Queries);
 
     public static Results<Ok<ScheduleItem>, NotFound<string>> Handle(ScheduleItemService scheduleItemService, [FromRoute] int id)
     {
@@ -19,7 +23,7 @@ public static class GetScheduleItemById
 
         if (scheduleItem is not null)
         {
-            return TypedResults.Ok(new ScheduleItem(scheduleItem.ScheduleItemId, scheduleItem.Index, scheduleItem.Type, scheduleItem.ScheduleId));
+            return TypedResults.Ok(new ScheduleItem(scheduleItem.ScheduleItemId, scheduleItem.Index, scheduleItem.Name, scheduleItem.Type, scheduleItem.ScheduleId, scheduleItem.Queries.Select(query => new QueryScheduleItem(query.QueryScheduleItemId, query.QueryId, query.ScheduleItemId, query.PlayDuration, query.PlayCount, query.PadTo, query.QueryType, query.PlayoutType, query.Index)).ToArray()));
         }
 
         return TypedResults.NotFound($"A schedule item with the ID: {id} was not found.");

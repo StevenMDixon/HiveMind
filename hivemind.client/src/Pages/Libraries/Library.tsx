@@ -12,8 +12,7 @@ import { type CustomFormField } from '../Components/FormFields';
 
 import CustomDialog from '../Components/Dialog';
 
-import { fetchLibraries, fetchLibraryTypes, createLibrary, deleteLibrary } from '../../Api/Libraries';
-
+import { ApiClient } from '../../Api/ApiClient';
 interface NewLibraryFormProps {
     createLibrary: (a: Library) => void;
     libraryTypesPromise: Promise<string[]>;
@@ -26,9 +25,9 @@ const NewLibraryForm = ({createLibrary, libraryTypesPromise } : NewLibraryFormPr
     const libraryDefault = { libraryId: 0, libraryName: '', libraryPath: '', libraryType: 0 };
 
     const fields = [
-        { name: 'libraryName', type: "Text", initialValue: libraryDefault.libraryName, validator: (libraryName: string) => libraryName != '', required: true },
-        { name: 'libraryPath', type: "Text", initialValue: libraryDefault.libraryPath, validator: (libraryPath: string) => libraryPath != '', required: true },
-        { name: 'libraryType', type: "Select", initialValue: libraryDefault.libraryType, required: true, options: libraryTypes }
+        { name: 'libraryName', display: "Name", type: "Text", initialValue: libraryDefault.libraryName, validator: (libraryName: string) => libraryName != '', required: true },
+        { name: 'libraryPath', display: "Path", type: "Text", initialValue: libraryDefault.libraryPath, validator: (libraryPath: string) => libraryPath != '', required: true },
+        { name: 'libraryType', display: "Type", type: "Select", initialValue: libraryDefault.libraryType, required: true, options: libraryTypes }
 
     ] as CustomFormField[];
 
@@ -40,13 +39,13 @@ const NewLibraryForm = ({createLibrary, libraryTypesPromise } : NewLibraryFormPr
 const LibraryPage = () => {
     const { showNotification } = useGlobalNotification();
 
-    const [librariesPromise, setLibrariesPromise] = useState(() => fetchLibraries());
-    const [libraryTypesPromise] = useState(() => fetchLibraryTypes());
+    const [librariesPromise, setLibrariesPromise] = useState(() => ApiClient.fetchLibraries());
+    const [libraryTypesPromise] = useState(() => ApiClient.fetchLibraryTypes());
 
     const navigate = useNavigate();
     
     const handleCreateLibrary = async (libraryInputs : Library)  => {
-        const response = await createLibrary(libraryInputs);
+        const response = await ApiClient.createLibrary(libraryInputs);
 
         if (response.ok) {
             showNotification("Library Created", "success");
@@ -54,11 +53,11 @@ const LibraryPage = () => {
             showNotification("Failed to create library", "error");
         }
 
-        setLibrariesPromise(fetchLibraries());
+        setLibrariesPromise(ApiClient.fetchLibraries());
     };
 
     const handleDeleteLibrary = async (libraryId: number) => {
-        const response = await deleteLibrary(libraryId);
+        const response = await ApiClient.deleteLibrary(libraryId);
 
         if (response.ok) {
             showNotification("Library deleted", "success")
@@ -66,7 +65,7 @@ const LibraryPage = () => {
             showNotification("Failed to delete library", "error");
         }
 
-        setLibrariesPromise(fetchLibraries());
+        setLibrariesPromise(ApiClient.fetchLibraries());
     };
 
     const columns = [
@@ -82,7 +81,7 @@ const LibraryPage = () => {
     ] as CellData<Library>[];
 
     const handleRetry = () => {
-        setLibrariesPromise(fetchLibraries());
+        setLibrariesPromise(ApiClient.fetchLibraries());
     };
 
     

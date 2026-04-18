@@ -8,9 +8,9 @@ namespace HiveMind.Server;
 public class sqliteDBContext: DbContext
 {
     public DbSet<Channel> Channels { get; set; }
-    public DbSet<Collection> Collections { get; set; }
+    public DbSet<Query> Queries { get; set; }
     public DbSet<QueryFilters> QueryFilters { get; set; }
-    public DbSet<CollectionScheduleItem> CollectionScheduleItems { get; set; }
+    public DbSet<QueryScheduleItem> QueryScheduleItems { get; set; }
     public DbSet<Library> Libraries { get; set; }
     public DbSet<MediaItem> MediaItems { get; set; }
     public DbSet<MediaItemShow> MediaItemShows { get; set; }

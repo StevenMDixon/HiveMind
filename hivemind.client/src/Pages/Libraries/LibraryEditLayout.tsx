@@ -1,12 +1,12 @@
 import { Container } from "@mui/material"
 import type { Library } from '../../Types/Library';
 import { use } from 'react';
-import { useNavigate } from "react-router-dom";
 
 import CustomForm from '../Components/CustomForm';
 import { type CustomFormField } from '../Components/FormFields';
+import { useGlobalNotification } from '../../Dashboard/useGlobalNotification';
 
-import { saveLibrary } from '../../Api/Libraries'; 
+import { ApiClient } from '../../Api/ApiClient';
 
 interface LibraryEditLayoutProps {
     libraryPromise: Promise<Library>
@@ -18,18 +18,22 @@ const LibraryEditLayout = ({ libraryPromise, libraryTypesPromise }: LibraryEditL
     const library = use(libraryPromise);
     const libraryTypes = use(libraryTypesPromise);
 
-    const navigate = useNavigate();
+    const { showNotification } = useGlobalNotification();
 
     const handleSaveLibrary = async (item: Library) => {
-        const result = await saveLibrary(item);
+        const result = await ApiClient.saveLibrary(item);
 
-        if (result.ok) navigate(-1);
+        if (result.ok) {
+            showNotification("Library Edited Successfully", "success")
+        } else {
+            showNotification("Error Editing Library", "error")
+        }
     }
 
     const fields = [
-        { name: 'libraryName', type: "Text", initialValue: library.libraryName },
-        { name: 'libraryPath', type: "Text", initialValue: library.libraryPath },
-        { name: 'libraryType', type: "Select", initialValue: library.libraryType, options: libraryTypes },
+        { name: 'libraryName', display: "Name", type: "Text", initialValue: library.libraryName },
+        { name: 'libraryPath', display: "Path", type: "Text", initialValue: library.libraryPath },
+        { name: 'libraryType', display: "Type", type: "Select", initialValue: library.libraryType, options: libraryTypes },
     ] as CustomFormField[];
 
     return (

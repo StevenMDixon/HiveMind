@@ -23,30 +23,21 @@ export type EditingGridFieldTypes = 'Text' | 'Number' | 'Date' | 'Select' | 'Tim
 import FormFields from './FormFields';
 import { type FieldData } from './FormFields';
 
-export interface EditingGridColumns {
+export interface EditingGridColumns<T> {
     name: string;
     display: string;
     initialValue: string | number | boolean;
     type: EditingGridFieldTypes;
     validator?: (x: string | number | boolean) => boolean;
     valid?: boolean;
-    options?: EnumOptionsObj;
+    options?: EnumOptionsObj | ((x: T) => EnumOptionsObj );
     required?: boolean;
     format?: (item: string | boolean | number) => string | number | boolean;
 }
 
-//export interface CellData<T> {
-//    key: string,
-//    name: string
-//    align?: "left" | "right" | "center";
-//    format?: (item: string) => string;
-//    action?: (item: T) => void;
-//    icon?: "Edit" | "Delete";
-//}
-
 interface EditingGridProps<T> {
     gridItems: T[],
-    gridFieldColumns: EditingGridColumns[],
+    gridFieldColumns: EditingGridColumns<T>[],
     deleteItem: (i: T) => void;
     saveItem: (i: T) => void;
 }
@@ -94,7 +85,7 @@ const EditingGrid = <T,>({ gridItems, gridFieldColumns, deleteItem, saveItem} : 
 
 interface RowProps<T>{
     item: T;
-    columns: EditingGridColumns[];
+    columns: EditingGridColumns<T>[];
 }
 
 interface ViewActionProps<T> {
@@ -121,8 +112,8 @@ const ViewTableRow = <T,>({ item, columns, setEdit, remove} : RowProps<T> & View
                 return (<TableCell align="right" key={index}>{column.format ? column.format(columnValue) : columnValue}</TableCell>)
             })
             }
-            <TableCell align="center">
-                <Stack direction="row">
+            <TableCell align="right">
+                <Stack direction="row" justifyContent="right">
                 <IconButton onClick={() => setEdit(item)}>
                     <EditIcon />
                 </IconButton>
@@ -142,7 +133,8 @@ const EditTableRow = <T,>({ item, columns, stopEdit, saveEdit }: RowProps<T> & E
         return columns.map(column => ({
             ...column,
             initialValue: getProperty(data, column.name) as string | number | boolean,
-            valid: column.validator ? column.validator(getProperty(data, column.name) as string | number | boolean) : true
+            valid: column.validator ? column.validator(getProperty(data, column.name) as string | number | boolean) : true,
+            options: column.options && typeof column.options === 'function' ? column.options(data) : column.options
         }));
     }, [data, columns]);
 
@@ -160,10 +152,10 @@ const EditTableRow = <T,>({ item, columns, stopEdit, saveEdit }: RowProps<T> & E
                     handleInputChanges={handleInputChanges}
                     variant="standard"
                     disableLabels={true}
-                    wrapper={(field, index) => <TableCell sx={{ m: 0, p: 0 }}  key={index}>{field}</TableCell>}
+                    wrapper={(field, index) => <TableCell sx={{ m: 0, p: 0 }} align="right" key={index}>{field}</TableCell>}
                 />
             <TableCell align="center"> 
-                <Stack direction="row">
+                <Stack direction="row" justifyContent="right">
                     <IconButton onClick={() => saveEdit(data)} >
                         <CheckIcon />
                     </IconButton>

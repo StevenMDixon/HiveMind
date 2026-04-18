@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using static HiveMind.Server.Domain.Enums.QueryEnums;
 
 namespace HiveMind.Server.Entities;
 
@@ -6,11 +7,11 @@ public class QueryFilters
 {
     [Key]
     public int QueryFilterId { get; set; }
-    public string Field { get; set; } = string.Empty;
-    public string Operator { get; set; } = string.Empty;
+    public QueryAllowedFields Field { get; set; }
+    public QueryAllowedOperators Operator { get; set; }
     public string Value { get; set; } = string.Empty;
-    public int CollectionId { get; set; }
-    public Collection? Collection { get; set; }
+    public int QueryId { get; set; }
+    public Query? Query { get; set; }
 }
 
 //library_id:9 AND(title:199? or title:200?) AND NOT tag:holidays

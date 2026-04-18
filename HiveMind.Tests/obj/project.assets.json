@@ -88,7 +88,7 @@
           "build/_._": {}
         }
       },
-      "Microsoft.AspNetCore.SpaProxy/10.0.5": {
+      "Microsoft.AspNetCore.SpaProxy/10.0.6": {
         "type": "package",
         "compile": {
           "lib/net10.0/Microsoft.AspNetCore.SpaProxy.dll": {}
@@ -1138,10 +1138,10 @@
         "microsoft.aspnetcore.openapi.nuspec"
       ]
     },
-    "Microsoft.AspNetCore.SpaProxy/10.0.5": {
-      "sha512": "q9mjn2xgPb6mnNJwcyoGhFvnNH10KL8ok6t7C02QoxUSf1utzzbd9LnCfk2dQy7z22+pyYRBz1Ip2xfT1PW2TQ==",
+    "Microsoft.AspNetCore.SpaProxy/10.0.6": {
+      "sha512": "m7dB5DTFFnXodL55eeCI1B4GTNgouwIc7N90l59gn7wdZi9zgsG/CleQP90RH0dKlsmWWBHm1QiDhikt/oa69g==",
       "type": "package",
-      "path": "microsoft.aspnetcore.spaproxy/10.0.5",
+      "path": "microsoft.aspnetcore.spaproxy/10.0.6",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -1149,7 +1149,7 @@
         "THIRD-PARTY-NOTICES.TXT",
         "build/Microsoft.AspNetCore.SpaProxy.targets",
         "lib/net10.0/Microsoft.AspNetCore.SpaProxy.dll",
-        "microsoft.aspnetcore.spaproxy.10.0.5.nupkg.sha512",
+        "microsoft.aspnetcore.spaproxy.10.0.6.nupkg.sha512",
         "microsoft.aspnetcore.spaproxy.nuspec"
       ]
     },

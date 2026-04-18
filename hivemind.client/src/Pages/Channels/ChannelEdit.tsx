@@ -6,14 +6,12 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import ChannelEditLayout from './ChannelEditLayout';
 
-import { fetchChannel } from '../../Api/Channel'; 
-
-
+import { ApiClient } from '../../Api/ApiClient'; 
 
 const ChannelEdit = () => {
     const { id } = useParams();
 
-    const [channelPromise] = useState(() => fetchChannel(id));
+    const [channelPromise] = useState(() => ApiClient.fetchChannel(id));
 
     const navigate = useNavigate();
 

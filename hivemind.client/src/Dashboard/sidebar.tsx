@@ -8,19 +8,19 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import EventNoteIcon from '@mui/icons-material/EventNote';
-import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import TvIcon from '@mui/icons-material/Tv';
 import HiveIcon from '@mui/icons-material/Hive';
 import { Link, useLocation } from 'react-router-dom';
 import MovieIcon from '@mui/icons-material/Movie';
 import Typography from '@mui/material/Typography'
+import SavedSearchIcon from '@mui/icons-material/SavedSearch';
 
 const Sidebar: React.FC = () => {
     const location = useLocation();
 
     const navElements = [
         { key: "Channels", route: "/channels", icon: TvIcon },
-        { key: "Collections", route: "/collections", icon: LibraryBooksIcon },
+        { key: "Queries", route: "/queries", icon: SavedSearchIcon },
         { key: "Libraries", route: "/libraries", icon: VideoLibraryIcon },
         { key: "Schedules", route: "/schedules", icon: EventNoteIcon },
         { key: "Media", route: "/media", icon: MovieIcon }

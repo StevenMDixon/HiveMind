@@ -1,4 +1,5 @@
 ﻿using HiveMind.Server.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace HiveMind.Server.Services
 {
@@ -20,7 +21,7 @@ namespace HiveMind.Server.Services
         
         public ScheduleItem? GetScheduleItemByID(int id)
         {
-            return _context.ScheduleItems.Find(id);
+            return _context.ScheduleItems.Include(x => x.Queries).FirstOrDefault(x => x.ScheduleItemId == id);
         }
 
         public IEnumerable<ScheduleItem> GetScheduleItemsByScheduleID(int scheduleId)
