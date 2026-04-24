@@ -1,22 +1,16 @@
 import type { Channel } from '../Types/Channel'; 
-import type { ApiResponse } from './ApiResponse';
+//import type { ApiResponse } from './ApiResponse';
 
-export const fetchChannel = async (id: string | undefined): Promise<ApiResponse<Channel>> => {
+export const fetchChannel = async (id: string): Promise<Channel> => {
     const response = await fetch('/channels/' + id);
 
     if (!response.ok) {
-        return {
-            ok: false,
-            errorMessage: "Failed to fetch channels"
-        } as ApiResponse<Channel>
+        throw new Error(`Failed to fetch channel info: ${response.status} ${response.statusText}`); 
     }
 
     const data = await response.json()
 
-    return {
-        ok: true,
-        data: data.Channel
-    } as ApiResponse<Channel>
+    return data.channel;
 };
 
 export const fetchChannels = async () => {
@@ -29,7 +23,7 @@ export const fetchChannels = async () => {
 };
 
 export const saveChannel = async(channel: Channel) => {
-    const result = await fetch('/channels/' + channel.channelID, {
+    const result = await fetch('/channels/' + channel.channelId, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...channel }),

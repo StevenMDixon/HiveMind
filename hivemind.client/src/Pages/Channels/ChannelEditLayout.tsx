@@ -15,6 +15,7 @@ interface ChannelEditLayoutProps {
 const ChannelEditLayout = ({ channelPromise }: ChannelEditLayoutProps) => {
 
     const channel = use(channelPromise);
+    console.log(channel)
 
     const { showNotification } = useGlobalNotification();
 

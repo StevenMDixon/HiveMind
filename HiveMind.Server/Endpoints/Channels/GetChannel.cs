@@ -11,7 +11,7 @@ public class GetChannel
         app.MapGet("/{id:int}", Handle);
     }
 
-    public record Channel(int ChannelID, string ChannelName, int ChannelNumber);
+    public record Channel(int ChannelId, string ChannelName, int ChannelNumber);
     public record GetChannelsResponse(Channel Channel);
 
     public static Results<Ok<GetChannelsResponse>, NotFound<string>> Handle(ChannelService channelService, [FromRoute] int id)
