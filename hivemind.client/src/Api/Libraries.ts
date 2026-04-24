@@ -28,7 +28,7 @@ export const createLibrary = async (libraryInputs: Library) => {
     const response = await fetch('/libraries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ LibraryName: libraryInputs.libraryName, LibraryPath: libraryInputs.libraryPath, LibraryType: libraryInputs.libraryType }),
+        body: JSON.stringify({ LibraryName: libraryInputs.libraryName, LibraryPath: libraryInputs.libraryPath, PathsToIgnore: libraryInputs.pathsToIgnore, LibraryType: libraryInputs.libraryType }),
     });
 
     return response;
@@ -58,7 +58,16 @@ export const saveLibrary = async (item: Library) => {
     const result = await fetch('/libraries/' + item.libraryId, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ LibraryName: item.libraryName, LibraryPath: item.libraryPath, LibraryType: item.libraryType }),
+        body: JSON.stringify({ LibraryName: item.libraryName, LibraryPath: item.libraryPath, PathsToIgnore: item.pathsToIgnore, LibraryType: item.libraryType }),
+    });
+
+    return result;
+}
+
+export const reprocessLibrary = async (libraryId: number) => {
+    const result = await fetch('/libraries/reprocess/' + libraryId, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' }
     });
 
     return result;

@@ -13,22 +13,24 @@ import { type CustomFormField } from '../Components/FormFields';
 import CustomDialog from '../Components/Dialog';
 
 import { ApiClient } from '../../Api/ApiClient';
+import type { EnumOptionsObj } from '../../Types/General'; 
+
 interface NewLibraryFormProps {
     createLibrary: (a: Library) => void;
-    libraryTypesPromise: Promise<string[]>;
+    libraryTypesPromise: Promise<EnumOptionsObj>;
 }
 
 const NewLibraryForm = ({createLibrary, libraryTypesPromise } : NewLibraryFormProps) => {
 
     const libraryTypes = use(libraryTypesPromise);
 
-    const libraryDefault = { libraryId: 0, libraryName: '', libraryPath: '', libraryType: 0 };
+    const libraryDefault = { libraryId: 0, libraryName: '', libraryPath: '', pathsToIgnore: '', libraryType: 0, isProcessed: false };
 
     const fields = [
         { name: 'libraryName', display: "Name", type: "Text", initialValue: libraryDefault.libraryName, validator: (libraryName: string) => libraryName != '', required: true },
         { name: 'libraryPath', display: "Path", type: "Text", initialValue: libraryDefault.libraryPath, validator: (libraryPath: string) => libraryPath != '', required: true },
+        { name: 'pathsToIgnore', display: "Paths to Ignore", type: "Text", initialValue: libraryDefault.pathsToIgnore },
         { name: 'libraryType', display: "Type", type: "Select", initialValue: libraryDefault.libraryType, required: true, options: libraryTypes }
-
     ] as CustomFormField[];
 
     return (
@@ -68,6 +70,18 @@ const LibraryPage = () => {
         setLibrariesPromise(ApiClient.fetchLibraries());
     };
 
+    const handleRefreshLibrary = async (libraryId: number) => {
+        const response = await ApiClient.reprocessLibrary(libraryId);
+
+        if (response.ok) {
+            showNotification("Library marked to reprocess", "success")
+        } else {
+            showNotification("Failed to reprocess library", "error");
+        }
+
+        setLibrariesPromise(ApiClient.fetchLibraries());
+    }
+
     const columns = [
         { key: 'libraryId', name: 'ID', align: 'left' },
         { key: 'libraryName', name: 'Name', align: 'left' },
@@ -77,7 +91,9 @@ const LibraryPage = () => {
 
     const actionColumns = [
         { key: 'a1', name: "Edit", align: 'center', action: (e) => navigate("/libraries/" + e.libraryId), icon: "Edit"  },
-        { key: 'a2', name: "Delete", align: 'center', action: (e) => handleDeleteLibrary(e.libraryId), icon: "Delete" }
+        { key: 'a2', name: "Delete", align: 'center', action: (e) => handleDeleteLibrary(e.libraryId), icon: "Delete" },
+        { key: 'a3', name: "Refresh", align: 'center', action: (e) => handleRefreshLibrary(e.libraryId), icon: "Refresh",  disabled: (e: Library) => !e.isProcessed},
+
     ] as CellData<Library>[];
 
     const handleRetry = () => {

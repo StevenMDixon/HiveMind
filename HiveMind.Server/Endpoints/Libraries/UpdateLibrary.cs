@@ -26,7 +26,7 @@ public class UpdateLibrary
         }
     }
 
-    public record LibraryRequest(string LibraryName, string LibraryPath, LibraryType LibraryType);
+    public record LibraryRequest(string LibraryName, string LibraryPath, string PathsToIgnore, LibraryType LibraryType);
 
     public static Results<Ok, NotFound<string>, NoContent, ValidationProblem> Handle(LibraryService libraryService, [FromRoute] int id, [FromBody] LibraryRequest request)
     {
@@ -34,11 +34,12 @@ public class UpdateLibrary
 
         if(library == null) return TypedResults.NotFound($"A query with the ID: {id} was not found.");
 
-        if (library.LibraryPath != request.LibraryPath) library.IsProcessed = false;
+        if (library.LibraryPath != request.LibraryPath || library.PathsToIgnore != request.PathsToIgnore) library.IsProcessed = false;
 
         library.LibraryPath = request.LibraryPath;
         library.LibraryName = request.LibraryName;
         library.LibraryType = request.LibraryType;
+        library.PathsToIgnore = request.PathsToIgnore;
 
         libraryService.Update(library);
 

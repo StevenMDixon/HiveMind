@@ -4,6 +4,7 @@ import ErrorBoundary from "../../Components/ErrorBoundary";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from "@mui/material/IconButton";
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 import RoundedLoadingFiller from './RoundedLoadingFiller';
 
@@ -14,6 +15,7 @@ export interface CellData<T> {
     format?: (item: string) => string;
     action?: (item: T) => void;
     icon?: "Edit" | "Delete";
+    disabled?: (i: T) => boolean
 }
 
 interface CustomTableProps<T> {
@@ -39,6 +41,7 @@ const CustomIcon = (iconName: string) => {
     switch (iconName) {
         case 'Edit': return <EditIcon />
         case 'Delete': return <DeleteIcon />
+        case 'Refresh': return <RefreshIcon />
     }
 }
 
@@ -51,7 +54,7 @@ const CustomTableRow = <T,>({ item, columns, actionColumns }: { item: T, columns
                 <TableCell align={'right'} >
                     {actionColumns?.map(ac =>
                         ac.icon ? 
-                            <IconButton key={ac.key} onClick={() => ac.action?.(item)}>
+                            <IconButton key={ac.key} onClick={() => ac.action?.(item)} disabled={ac.disabled ? ac.disabled(item): false}> 
                                 {CustomIcon(ac.icon)}
                             </IconButton>
                         : <Button key={ac.key} onClick={() => ac.action?.(item)}>{ac.name}</Button>)

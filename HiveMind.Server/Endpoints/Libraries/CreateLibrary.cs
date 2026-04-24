@@ -14,7 +14,7 @@ public class CreateLibrary
             .WithName("CreateLibrary");
     }
 
-    public record LibraryRequest(string LibraryName, string LibraryPath, LibraryType LibraryType);
+    public record LibraryRequest(string LibraryName, string LibraryPath, string PathsToIgnore, LibraryType LibraryType);
 
     public static Results<Ok, NoContent, ValidationProblem> Handle(LibraryService libraryService, [FromBody] LibraryRequest request)
     {
@@ -22,7 +22,9 @@ public class CreateLibrary
         {
             LibraryName = request.LibraryName,
             LibraryPath = request.LibraryPath,
+            PathsToIgnore = request.PathsToIgnore,
             LibraryType = request.LibraryType
+
         };
 
         libraryService.AddLibrary(newLibrary);

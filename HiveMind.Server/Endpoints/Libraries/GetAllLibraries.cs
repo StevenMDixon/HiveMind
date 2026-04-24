@@ -11,12 +11,12 @@ public class GetAllLibraries
         app.MapGet("/", Handle).WithName("GetAllLibraries");
     }
 
-    public record Library(int LibraryId, string LibraryName, string LibraryPath, string LibraryType);
+    public record Library(int LibraryId, string LibraryName, string LibraryPath, string PathsToIgnore, string LibraryType, bool IsProcessed);
     public record GetAllLibrariesResponse(List<Library> Libraries);
     public static Results<Ok<GetAllLibrariesResponse>, NotFound> Handle(LibraryService libraryService)
     {
         var libraries = libraryService.GetAllLibraries();
 
-        return TypedResults.Ok(new GetAllLibrariesResponse(libraries.Select(x => new Library(x.LibraryId, x.LibraryName, x.LibraryPath, x.LibraryType.ToString())).ToList()));
+        return TypedResults.Ok(new GetAllLibrariesResponse(libraries.Select(x => new Library(x.LibraryId, x.LibraryName, x.LibraryPath, x.PathsToIgnore, x.LibraryType.ToString(), x.IsProcessed)).ToList()));
     }
 }

@@ -1,7 +1,7 @@
 import { fetchChannel, fetchChannels, saveChannel, createChannel, deleteChannel } from './Channel'
 import { fetchQueryTypes, fetchOptions, fetchPlayoutTypes, fetchSettings, fetchPadToOptions } from './Enums';
 import { fetchQuery, fetchQueries, deleteQuery, createQuery, saveQuery, fetchTestQueryResults } from './Queries';
-import { fetchLibrary, saveLibrary, deleteLibrary, fetchLibraries, createLibrary, fetchLibraryTypes } from './Libraries'
+import { fetchLibrary, saveLibrary, deleteLibrary, fetchLibraries, createLibrary, fetchLibraryTypes, reprocessLibrary } from './Libraries'
 import {
     fetchScheduleItem, deleteSchedule, deleteQueryScheduleItem, createSchedule, createScheduleItem, fetchSchedules, fetchScheduleData,
     fetchQueryScheduleItemsByScheduleItem, createQueryScheduleItem,
@@ -40,6 +40,7 @@ export const ApiClient = {
     saveLibrary,
     createLibrary,
     fetchLibraryTypes,
+    reprocessLibrary,
 
     //schedules
     fetchScheduleData,

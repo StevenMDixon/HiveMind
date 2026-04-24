@@ -37,6 +37,7 @@ const LibraryEditLayout = ({ libraryPromise, libraryTypesPromise }: LibraryEditL
     const fields = [
         { name: 'libraryName', display: "Name", type: "Text", initialValue: library.libraryName },
         { name: 'libraryPath', display: "Path", type: "Text", initialValue: library.libraryPath },
+        { name: 'pathsToIgnore', display: "Paths To Ignore", type: "Text", initialValue: library.pathsToIgnore },
         { name: 'libraryType', display: "Type", type: "Select", initialValue: library.libraryType, options: libraryTypes },
     ] as CustomFormField[];
 

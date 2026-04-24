@@ -58,7 +58,13 @@ public class MediaImporterBackgroundService : BackgroundService
 
                         try
                         {
-                            files.AddRange(Directory.GetFiles(targetLibary.LibraryPath, "*.*", SearchOption.AllDirectories).Where(x => Regex.IsMatch(x, $".*[.]({fileFormats})$")));
+                            var pathsToIgnore = targetLibary.PathsToIgnore == string.Empty ? [] : targetLibary.PathsToIgnore.Split(';');
+
+                            files.AddRange(
+                                Directory.GetFiles(targetLibary.LibraryPath, "*.*", SearchOption.AllDirectories)
+                                .Where(x => Regex.IsMatch(x, $".*[.]({fileFormats})$"))
+                                .Where(x => pathsToIgnore.Count() == 0 || !pathsToIgnore.Any(path => x.Contains(path)))
+                                );
                         }
                         catch
                         {
