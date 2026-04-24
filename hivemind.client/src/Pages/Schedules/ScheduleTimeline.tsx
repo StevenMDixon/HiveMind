@@ -20,17 +20,15 @@ interface ScheduleItemContainerProps {
     index: number,
     selectItem: (a: ScheduleItem) => void,
     deleteItem: (a: ScheduleItem) => void,
-    moveItem: (a: ScheduleItem, i: number) => void 
+    moveItem: (a: ScheduleItem, i: number) => void,
+    currenTime: Date
 }
 
-const ScheduleItemContainer = ({ scheduleItem, index, selectItem, deleteItem, moveItem}: ScheduleItemContainerProps) => {
-
-    const time = new Date(2024, 11, 25, 0, 0, 0);
-
+const ScheduleItemContainer = ({ scheduleItem, index, selectItem, deleteItem, moveItem, currenTime}: ScheduleItemContainerProps) => {
     return (
         <TimelineItem key={scheduleItem.scheduleItemId}>
             <TimelineOppositeContent color="text.secondary" >
-                {time.toLocaleTimeString()}
+                {currenTime.toLocaleTimeString()}
             </TimelineOppositeContent>
             < TimelineSeparator >
                 <TimelineDot />
@@ -41,8 +39,8 @@ const ScheduleItemContainer = ({ scheduleItem, index, selectItem, deleteItem, mo
                     <CardContent>
                         <Stack direction="row" spacing={2}
                             sx={{
-                                justifyContent: 'center', // Aligns children to the right
-                                width: '100%' // Ensures the container spans the full width
+                                justifyContent: 'center',
+                                width: '100%'
                             }}
                         >
                             {scheduleItem.type == 'Block' ? <LibraryBooksIcon /> : <MovieIcon />}
@@ -51,8 +49,8 @@ const ScheduleItemContainer = ({ scheduleItem, index, selectItem, deleteItem, mo
                     </CardContent>
                     <CardActions
                         sx={{
-                            justifyContent: 'center', // Aligns children to the right
-                            width: '100%' // Ensures the container spans the full width
+                            justifyContent: 'center',
+                            width: '100%'
                         }}
                     >
                         <IconButton aria-label="Edit" onClick={() => selectItem(scheduleItem)}>
@@ -80,23 +78,35 @@ interface ScheduleTimelineProps {
     add: () => void;
     scheduleItems: ScheduleItem[];
     move: (a: ScheduleItem, i: number) => void;
+    startTime: Date
 }
 
-const ScheduleTimeline = ({ selector, add, scheduleItems, remove, move}: ScheduleTimelineProps) => {
+const getTimeAtIndex = (startTime: Date, index: number, items: ScheduleItem[]) => {
+    let timeDelta = 0;
+
+    const d = items.slice(0, index);
+    d.forEach(x => timeDelta += x.queries.reduce((acc, cur) => { acc += (cur.queryType == 4 ? cur.playDuration : 0); return acc; }, 0))
+
+    const newDate = new Date(startTime.getTime() + timeDelta * 60000);
+
+    return newDate;
+}
+
+const ScheduleTimeline = ({ selector, add, scheduleItems, remove, move, startTime }: ScheduleTimelineProps) => {
     return (
         <Timeline>
             {scheduleItems && scheduleItems.map((scheduleItem: ScheduleItem, index: number) =>
-                <ScheduleItemContainer key={scheduleItem.scheduleItemId} scheduleItem={scheduleItem} index={index} selectItem={selector} deleteItem={remove} moveItem={move} />)}
+                <ScheduleItemContainer key={scheduleItem.scheduleItemId} scheduleItem={scheduleItem} index={index} selectItem={selector} deleteItem={remove} moveItem={move} currenTime={getTimeAtIndex(startTime, index, scheduleItems)} />)}
             <TimelineItem>
-           
-                    <TimelineSeparator >
-                        <TimelineDot color="primary" variant="outlined" onClick={add}  >
+                < TimelineSeparator >
+                    <TimelineDot color="primary" variant="outlined" onClick={add} >
                                 <AddIcon />
-                        </TimelineDot>
-                    
-            </TimelineSeparator >
-    
-        </TimelineItem>
+                    </TimelineDot>
+                </TimelineSeparator>
+                < TimelineContent >
+                </TimelineContent >
+            </TimelineItem>
+
         </Timeline>
         )
 }

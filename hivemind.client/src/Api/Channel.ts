@@ -1,16 +1,22 @@
 import type { Channel } from '../Types/Channel'; 
+import type { ApiResponse } from './ApiResponse';
 
-
-export const fetchChannel = async (id: string | undefined): Promise<Channel> => {
+export const fetchChannel = async (id: string | undefined): Promise<ApiResponse<Channel>> => {
     const response = await fetch('/channels/' + id);
 
     if (!response.ok) {
-        throw new Error("Failed to Load Channel")
+        return {
+            ok: false,
+            errorMessage: "Failed to fetch channels"
+        } as ApiResponse<Channel>
     }
 
     const data = await response.json()
 
-    return data.channel
+    return {
+        ok: true,
+        data: data.Channel
+    } as ApiResponse<Channel>
 };
 
 export const fetchChannels = async () => {

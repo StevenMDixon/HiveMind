@@ -14,5 +14,6 @@ public static class EndPointMapper
         QuerySettings.Map(builder);
         QueryOptions.Map(builder);
         GetPlayoutTypes.Map(builder);
+        GetPadTo.Map(builder);
     }
 }

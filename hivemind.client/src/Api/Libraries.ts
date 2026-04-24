@@ -1,5 +1,7 @@
 import type { Library } from '../Types/Library';
 import type { EnumOptionsObj } from '../Types/General';
+import { toEnumOptions } from "../Utilities/FormOptionsMapper"
+import type { QuerySettingItem } from "../Types/Query";
 
 export const fetchLibraries = async () => {
     const response = await fetch('/libraries');
@@ -10,13 +12,16 @@ export const fetchLibraries = async () => {
     return [];
 };
 
-export const fetchLibraryTypes = async () => {
+export const fetchLibraryTypes = async (): Promise<EnumOptionsObj> => {
     const response = await fetch('/libraries/types');
-    if (response.ok) {
-        const data = await response.json();
-        return data.types.reduce((acc: EnumOptionsObj, current: string, index: number) => { acc[index] = current;  return acc; }, {})
-    }
-    return [];
+
+    if (!response.ok) throw  new Error(`Failed to fetch library types: ${response.status} ${response.statusText}`);
+
+    const data = await response.json();
+
+    const options = data.types as QuerySettingItem[];
+
+    return toEnumOptions(options, 'id', 'name');
 };
 
 export const createLibrary = async (libraryInputs: Library) => {

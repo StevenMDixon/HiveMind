@@ -1,5 +1,5 @@
 import { fetchChannel, fetchChannels, saveChannel, createChannel, deleteChannel } from './Channel'
-import { fetchQueryTypes, fetchOptions, fetchPlayoutTypes, fetchSettings } from './Enums';
+import { fetchQueryTypes, fetchOptions, fetchPlayoutTypes, fetchSettings, fetchPadToOptions } from './Enums';
 import { fetchQuery, fetchQueries, deleteQuery, createQuery, saveQuery, fetchTestQueryResults } from './Queries';
 import { fetchLibrary, saveLibrary, deleteLibrary, fetchLibraries, createLibrary, fetchLibraryTypes } from './Libraries'
 import {
@@ -23,6 +23,7 @@ export const ApiClient = {
     fetchOptions,
     fetchPlayoutTypes,
     fetchSettings,
+    fetchPadToOptions,
 
     //queries
     fetchQuery,

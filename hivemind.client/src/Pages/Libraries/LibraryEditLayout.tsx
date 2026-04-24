@@ -1,5 +1,7 @@
 import { Container } from "@mui/material"
 import type { Library } from '../../Types/Library';
+import type { EnumOptionsObj } from '../../Types/General'; 
+
 import { use } from 'react';
 
 import CustomForm from '../Components/CustomForm';
@@ -10,13 +12,15 @@ import { ApiClient } from '../../Api/ApiClient';
 
 interface LibraryEditLayoutProps {
     libraryPromise: Promise<Library>
-    libraryTypesPromise: Promise<string []>
+    libraryTypesPromise: Promise<EnumOptionsObj>
 }
 
 const LibraryEditLayout = ({ libraryPromise, libraryTypesPromise }: LibraryEditLayoutProps) => {
 
     const library = use(libraryPromise);
     const libraryTypes = use(libraryTypesPromise);
+
+    console.log(libraryTypes)
 
     const { showNotification } = useGlobalNotification();
 

@@ -56,7 +56,6 @@ const QueryDetail = () => {
                 )}>
                 <Suspense fallback={<p> Loading </p>}>
                     <QueryLayout promise={queryPromise} options={optionPromise} settings={settingPromise} save={handleSaveQuery} />       
-                    
                 </Suspense>
                 
             </ErrorBoundary>

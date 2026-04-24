@@ -26,34 +26,28 @@ import AddIcon from '@mui/icons-material/Add';
 
 import { useGlobalNotification } from '../../../Dashboard/useGlobalNotification';
 
-import { toEnumOptions } from "../../../Utilities/FormOptionsMapper"
+import { toEnumOptions, getValueFromMappedObject } from "../../../Utilities/FormOptionsMapper"
 
 interface ItemEditorProps {
     scheduleItemPromise: Promise<ScheduleItem>;
     queryTypePromise: Promise<EnumOptionsObj>;
     playoutTypePromise: Promise<EnumOptionsObj>;
     availableQueryPromise: Promise<Query[]>
+    padToPromise: Promise<EnumOptionsObj>;
 }
 
-const ItemEditor = ({ scheduleItemPromise, queryTypePromise, playoutTypePromise, availableQueryPromise }: ItemEditorProps) => {
+const ItemEditor = ({ scheduleItemPromise, queryTypePromise, playoutTypePromise, availableQueryPromise, padToPromise }: ItemEditorProps) => {
     const queryTypes = use(queryTypePromise);
     const queries = use(availableQueryPromise);
     const playOutTypes = use(playoutTypePromise);
     const scheduleItemData = use(scheduleItemPromise);
+    const padToData = use(padToPromise); 
 
     const { showNotification } = useGlobalNotification();
 
     const getQueryName = (id: number) => {
         const foundQuery = queries.find(x => x.queryId == id);
         return foundQuery?.queryName ?? 'none';
-    }
-
-    const getQueryType = (id: number) => {
-        return queryTypes[id];
-    }
-
-    const getPlayoutType = (id: number) => {
-        return playOutTypes[id];
     }
 
     const [scheduleItem, setScheduleItem] = useState(scheduleItemData);
@@ -66,11 +60,11 @@ const ItemEditor = ({ scheduleItemPromise, queryTypePromise, playoutTypePromise,
 
     const columns = [
         { name: 'queryId', display: 'Query', initialValue: 0, type: 'Select', format: (e: number) => getQueryName(e), options: toEnumOptions(queries, "queryId", "queryName", true)},
-        { name: 'queryType', display: 'Assigned Type', initialValue: 0, type: 'Select', format: (e: number) => getQueryType(e), options: queryTypes },
-        { name: 'playoutType', display: 'Playout Type', initialValue: 0, type: 'Select', format: (e: number) => getPlayoutType(e), options: playOutTypes },
+        { name: 'queryType', display: 'Assigned Type', initialValue: 0, type: 'Select', format: (e: number) => getValueFromMappedObject(queryTypes, e), options: queryTypes },
+        { name: 'playoutType', display: 'Playout Type', initialValue: 0, type: 'Select', format: (e: number) => getValueFromMappedObject(playOutTypes, e), options: playOutTypes },
         { name: 'playDuration', display: 'Duration', initialValue: 0, type: 'Number', validator: (n: number) => n > -1 },
         { name: 'playCount', display: 'Count', initialValue: 0, type: 'Number', validator: (n: number) => n > -1 },
-        { name: 'padTo', display: 'Pad To', initialValue: 0, type: 'Number', validator: (n: number) => n > -1 }
+        { name: 'padTo', display: 'Pad To', initialValue: 0, type: 'Select', format: (e: number) => getValueFromMappedObject(padToData, e), options: padToData }
     ] as EditingGridColumns<QueryScheduleItem>[]
 
     const addItem = async () => {
@@ -126,6 +120,7 @@ const ScheduleItemEdit = () => {
     const [availableQueries] = useState(() => ApiClient.fetchQueries());
     const [availablePlayoutTypes] = useState(() => ApiClient.fetchPlayoutTypes());
     const [availableQueryTypes] = useState(() => ApiClient.fetchQueryTypes());
+    const [availablePadTo] = useState(() => ApiClient.fetchPadToOptions());
 
     const correctedId = itemId ?? ""
 
@@ -150,7 +145,7 @@ const ScheduleItemEdit = () => {
                     <p>{error.message}</p>
                 )}>
                <Suspense>
-                    <ItemEditor scheduleItemPromise={scheduleItem} availableQueryPromise={availableQueries} playoutTypePromise={availablePlayoutTypes} queryTypePromise={availableQueryTypes} />
+                    <ItemEditor scheduleItemPromise={scheduleItem} availableQueryPromise={availableQueries} playoutTypePromise={availablePlayoutTypes} queryTypePromise={availableQueryTypes} padToPromise={availablePadTo} />
                 </Suspense>
             </ErrorBoundary>
         </Container>

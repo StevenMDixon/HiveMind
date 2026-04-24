@@ -7,6 +7,7 @@ public enum QueryType
     Closing,
     Commercials,
     Media,
-    Promo,
-    Bumpers
+    Promos,
+    Idents,
+    Interstitials
 }

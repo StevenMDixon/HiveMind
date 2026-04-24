@@ -1,4 +1,4 @@
-import type { EnumOptionsObj } from '../Types/General'; 
+//import type { EnumOptionsObj } from '../Types/General'; 
 
 export function getProperty<Type, Key extends keyof Type>(obj: Type, key: Key | string) {
     return obj[key as Key];
@@ -20,9 +20,9 @@ export function getKey() { }
 //    }, {} as EnumOptionsObj)
 //}
 
- export const getValueFromMappedObject = <T,>(id: number, object: T)=> {
-
-        return object<T>[id];
+export const getValueFromMappedObject = <T, K extends keyof T>(object: T, key: K,) => {
+        console.log(object, key)
+        return object[key];
 }
 
 export function toEnumOptions<

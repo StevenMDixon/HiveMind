@@ -13,6 +13,8 @@ import type { EnumOptionsObj } from '../../Types/General';
 import EditingGrid from '../Components/EditingGrid';
 import type { EditingGridColumns } from '../Components/EditingGrid';
 
+import { toEnumOptions } from '../../Utilities/FormOptionsMapper';
+
 export const QueryLayout = ({ promise, options, settings, save }: { promise: Promise<Query>, options: Promise<QuerySettingItem[]>, settings: Promise<QuerySetting[]>, save: (c: Query) => Promise<void> }) => {
     const query = use(promise);
     const queryOptions = use(options);
@@ -26,11 +28,11 @@ export const QueryLayout = ({ promise, options, settings, save }: { promise: Pro
 
     const operatorOptions = (filter: Filter) => {
         const targetQueryOption = querySettings.find(x => x.name == fieldSettings[Number(filter.field)])
-        return targetQueryOption ? targetQueryOption.options.reduce((acc: EnumOptionsObj, curr) => { acc[curr.id] = curr.name; return acc; }, {}) : { } as EnumOptionsObj;
+        return targetQueryOption ? toEnumOptions(targetQueryOption.options, 'id', 'name') : {};
     }
 
     const formatOperator = (item: number) => {
-        const options = queryOptions.reduce((acc, cur) => { acc[cur.id] = cur.name; return acc }, {} as EnumOptionsObj)
+        const options = toEnumOptions(queryOptions, 'id', 'name');
         return options[item];
     }
 
@@ -46,20 +48,18 @@ export const QueryLayout = ({ promise, options, settings, save }: { promise: Pro
     }
 
     const removeFilter = (item: Filter) => {
-        const newFilterData = filterData.filter(x => x.queryFilterID != item.queryFilterID)
+        const newFilterData = filterData.filter(x => x.queryFilterId != item.queryFilterId)
         setFilterData(newFilterData)
     }
 
     const addFilter = () => {
-        const newFilterData = [...filterData, { queryFilterID: (filterData.length + 1) * -1, field: 0, operator: 0, value: "" } as Filter];
+        const newFilterData = [...filterData, { queryFilterId: (filterData.length + 1) * -1, field: 0, operator: 0, value: "" } as Filter];
 
         setFilterData(newFilterData);
     }
 
     const saveFilter = (item: Filter) => {
-        const newF = [...filterData];
-
-        setFilterData(newF.map(filter => filter.queryFilterID == item.queryFilterID ? item : filter));
+        setFilterData(filterData.map(filter => filter.queryFilterId == item.queryFilterId ? item : filter));
     }
 
     const fields = [

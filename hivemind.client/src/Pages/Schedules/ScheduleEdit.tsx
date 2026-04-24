@@ -113,14 +113,14 @@ const ScheduleDataWrapper = ({ schedulePromise, channelPromise }: { scheduleProm
 
     const scheduleFields = [
         { name: 'scheduleName', display: "Name", type: "Text", initialValue: schedule.scheduleName },
-        { name: 'channelId', display: "Assigned Channel", type: "Select", initialValue: schedule.channelId, options: toEnumOptions(availableChannels, "channelID", "channelName",true) },
+        { name: 'channelId', display: "Assigned Channel", type: "Select", initialValue: schedule.channelId, options: toEnumOptions(availableChannels, "channelId", "channelName",true) },
         { name: 'startTime', display: "Start Time", type: "Text", initialValue: schedule.startTime ?? ""}
     ] as CustomFormField[];
 
     return (
             <Stack direction="row" spacing={2}>
                 <Box width="45%">
-                <ScheduleTimeline selector={setScheduleItemToEdit} add={AddScheduleItem} remove={deleteScheduleItem} scheduleItems={scheduleItems.sort((a, b) => a.index - b.index)} move={MoveScheduleItem} />
+                <ScheduleTimeline selector={setScheduleItemToEdit} add={AddScheduleItem} remove={deleteScheduleItem} scheduleItems={scheduleItems.sort((a, b) => a.index - b.index)} move={MoveScheduleItem} startTime={new Date("December 17, 1995 " + schedule.startTime)} />
                 </Box>
 
                 <Box width="55%">

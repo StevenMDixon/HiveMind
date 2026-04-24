@@ -5,7 +5,7 @@ export interface Option {
 }
 
 export interface Filter {
-    queryFilterID: number;
+    queryFilterId: number;
     field: number;
     operator: number;
     value: string;

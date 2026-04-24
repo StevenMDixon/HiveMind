@@ -4,6 +4,8 @@ import DashboardLayout from './Dashboard/layout';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
+import Intro from './Pages/Intro';
+
 import ChannelPage from './Pages/Channels/Channels';
 import LibaryPage from './Pages/Libraries/Library';
 import QueryPage from './Pages/Queries/Queries'
@@ -33,7 +35,7 @@ const App = () => {
                 <HashRouter>
                 <Routes>
                     <Route path="/" element={<DashboardLayout />}>
-                        <Route index element={<div>HiveMind Client</div>} />
+                        <Route index element={<Intro />} />
                             <Route path="channels" element={<ChannelPage />} />
                             <Route path="channels/:id/" element={<ChannelEdit />} />
                             <Route path="schedules" element={<Schedules />} />
