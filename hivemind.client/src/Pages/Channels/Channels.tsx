@@ -55,8 +55,8 @@ const ChannelPage = () => {
     ] as CellData<Channel>[];
 
     const actionColumns = [
-        { key: 'a1', name: "Edit", action: (e: Channel) => navigate("/channels/" + e.channelID), icon: "Edit" },
-        { key: 'a2', name: "Delete", action: (e: Channel) => deleteChannel(e.channelID), icon: "Delete" }
+        { key: 'a1', name: "Edit", action: (e: Channel) => navigate("/channels/" + e.channelId), icon: "Edit" },
+        { key: 'a2', name: "Delete", action: (e: Channel) => deleteChannel(e.channelId), icon: "Delete" }
     ] as CellData<Channel>[];
 
     const handleRetry = () => {

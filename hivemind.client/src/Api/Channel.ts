@@ -1,7 +1,11 @@
 import type { Channel } from '../Types/Channel'; 
 //import type { ApiResponse } from './ApiResponse';
 
-export const fetchChannel = async (id: string): Promise<Channel> => {
+export const fetchChannel = async (id: string | undefined): Promise<Channel> => {
+    if (!id) {
+        throw new Error("Channel ID is undefined");
+    }
+
     const response = await fetch('/channels/' + id);
 
     if (!response.ok) {
