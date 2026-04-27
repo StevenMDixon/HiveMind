@@ -3,6 +3,7 @@ using System;
 using HiveMind.Server;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HiveMind.Server.Migrations
 {
     [DbContext(typeof(sqliteDBContext))]
-    partial class sqliteDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260427003825_ChangeMediaItemShowToShow")]
+    partial class ChangeMediaItemShowToShow
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.2");
@@ -272,7 +275,7 @@ namespace HiveMind.Server.Migrations
 
                     b.HasKey("ShowId");
 
-                    b.ToTable("Shows");
+                    b.ToTable("MediaItemShows");
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.Tags", b =>

@@ -31,7 +31,7 @@ public class MediaImporterBackgroundService : BackgroundService
             {
                 var libraryService = scope.ServiceProvider.GetRequiredService<LibraryService>();
                 var mediaItemService = scope.ServiceProvider.GetRequiredService<Services.MediaItemService>();
-                var mediaItemShowService = scope.ServiceProvider.GetRequiredService<Services.MediaItemShowService>();
+                var mediaItemShowService = scope.ServiceProvider.GetRequiredService<Services.ShowService>();
                 var tagService = scope.ServiceProvider.GetRequiredService<TagsService>();
 
                 var unprocessedLibraries = libraryService.GetUnprocessedLibraries();
@@ -75,7 +75,7 @@ public class MediaImporterBackgroundService : BackgroundService
 
                         mediaItemsToDelete = currentMediaItems.ExceptBy(files, x => x.FilePath).ToList();
 
-                        var showCache = new Dictionary<string, Entities.MediaItemShow>();
+                        var showCache = new Dictionary<string, Entities.Show>();
 
                         foreach (string file in files)
                         {
@@ -121,20 +121,20 @@ public class MediaImporterBackgroundService : BackgroundService
 
                                 if (showCache.ContainsKey(formattedShowName))
                                 {
-                                    showId = showCache[formattedShowName].MediaItemShowId;
+                                    showId = showCache[formattedShowName].ShowId;
                                 }
                                 else
                                 {
                                     var existingShow = mediaItemShowService.GetByName(formattedShowName);
                                     if (existingShow != null)
                                     {
-                                        showId = existingShow.MediaItemShowId;
+                                        showId = existingShow.ShowId;
                                         showCache[formattedShowName] = existingShow;
                                     }
                                     else
                                     {
-                                        var newShow = new Entities.MediaItemShow { MediaItemShowTitle = formattedShowName };
-                                        showId = mediaItemShowService.AddMediaItemShow(newShow);
+                                        var newShow = new Entities.Show { ShowTitle = formattedShowName };
+                                        showId = mediaItemShowService.AddShow(newShow);
                                         showCache[formattedShowName] = newShow;
                                     }
                                 }
@@ -199,7 +199,7 @@ public class MediaImporterBackgroundService : BackgroundService
             Width = meta.width,
             Height = meta.height,
             Resolution = meta.resolution,
-            MediaItemShowId = meta.showId,
+            ShowId = meta.showId,
             EpisodeNumber = meta.episodeNumber,
             SeasonNumber = meta.seasonNumber,
             FilePath = meta.path,

@@ -7,14 +7,13 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
-import EventNoteIcon from '@mui/icons-material/EventNote';
-import TvIcon from '@mui/icons-material/Tv';
+//import EventNoteIcon from '@mui/icons-material/EventNote';
+import LiveTvIcon from '@mui/icons-material/LiveTv';
 import HiveIcon from '@mui/icons-material/Hive';
 import { Link, useLocation } from 'react-router-dom';
 import MovieIcon from '@mui/icons-material/Movie';
 import Typography from '@mui/material/Typography'
 import SavedSearchIcon from '@mui/icons-material/SavedSearch';
-import MicrowaveIcon from '@mui/icons-material/Microwave';
 import DisplaySettingsIcon from '@mui/icons-material/DisplaySettings';
 import { type SvgIconComponent } from '@mui/icons-material';
 import ExpandLess from '@mui/icons-material/ExpandLess';
@@ -22,6 +21,12 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
 import SettingsIcon from '@mui/icons-material/Settings';
 import PrecisionManufacturingIcon from '@mui/icons-material/PrecisionManufacturing';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
+import DevicesIcon from '@mui/icons-material/Devices';
+import ViewModuleIcon from '@mui/icons-material/ViewModule';
+import ViewTimelineIcon from '@mui/icons-material/ViewTimeline';
+import SlideshowIcon from '@mui/icons-material/Slideshow';
 
 import { useState } from 'react';
 
@@ -54,12 +59,16 @@ const RouteItem = ({name, route, current, icon: Icon }: RouteItemProps) => {
         <ListItem disablePadding>
             <ListItemButton component={Link} to={route} key={route} selected={current}>
                 <ListItemIcon sx={{ minWidth: 0, mr: 2 }} >
-                    {<Icon sx={{ m: 0, p: 0 }} />}
+                    {<Icon sx={{ m: 0, p: 0 }} color={current ? 'secondary' : 'inherit'} />}
                 </ListItemIcon>
                 <ListItemText primary={name} />
             </ListItemButton>
         </ListItem>
     )
+}
+
+const isCurrent = (elementRoute: string, currentRoute: string) => {
+    return elementRoute != '/' && currentRoute.includes(elementRoute);
 }
 
 const FolderItem = ({ name, icon: Icon, open, handleOpen, items, route}: FolderItemProps) => {
@@ -74,7 +83,7 @@ const FolderItem = ({ name, icon: Icon, open, handleOpen, items, route}: FolderI
             </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding sx={{ pl: 2 }}>
-                    {items && items.map(element => <RouteItem key={element.key} name={element.key} route={element.route} icon={element.icon} current={element.route == route} folder={element.folder} />)}
+                    {items && items.map(element => <RouteItem key={element.key} name={element.key} route={element.route} icon={element.icon} current={isCurrent(element.route,route)} folder={element.folder} />)}
                 </List>
             </Collapse>
         </>
@@ -86,6 +95,7 @@ const Sidebar: React.FC = () => {
 
     const folders = [
         { name: 'Manage', icon: DisplaySettingsIcon, open: false},
+        { name: 'Schedule', icon: CalendarMonthIcon, open: false},
         { name: 'Orchestrate', icon: PrecisionManufacturingIcon, open: false},
         { name: 'Settings', icon: SettingsIcon, open: false}
     ]
@@ -101,12 +111,16 @@ const Sidebar: React.FC = () => {
     }
 
     const navElements = [
-        { key: "Channels", route: "/channels", icon: TvIcon, folder: 'Manage'},
-        { key: "Queries", route: "/queries", icon: SavedSearchIcon, folder: 'Manage' },
+        { key: "Channels", route: "/channels", icon: LiveTvIcon, folder: 'Orchestrate'},
         { key: "Libraries", route: "/libraries", icon: VideoLibraryIcon, folder: 'Manage' },
-        { key: "Schedules", route: "/schedules", icon: EventNoteIcon, folder: 'Manage' },
         { key: "Media", route: "/media", icon: MovieIcon, folder: 'Manage' },
-        { key: "Drones", route: "/", icon: MicrowaveIcon, folder: 'Orchestrate' },
+        { key: "Queries", route: "/queries", icon: SavedSearchIcon, folder: 'Manage' },
+        { key: "Shows", route: "/shows", icon: SlideshowIcon, folder: 'Manage' },
+        { key: "Blocks", route: "/", icon: ViewModuleIcon, folder: 'Manage' },
+        { key: "Lineups", route: "/lineups", icon: ViewTimelineIcon, folder: 'Schedule' },
+        { key: "P. Strategy", route: "/", icon: AutoAwesomeMosaicIcon, folder: 'Schedule' },
+        { key: "Drones", route: "/", icon: DevicesIcon, folder: 'Orchestrate' },
+    //    { key: "Events", route: "/", icon: MicrowaveIcon, folder: 'Schedule' },
     ];
 
     const hasCurrentRoute = (elements : NavItems[]) : boolean => {

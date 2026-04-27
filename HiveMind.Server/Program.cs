@@ -17,12 +17,12 @@ builder.Services.AddOpenApi();
 builder.Services.AddTransient<ChannelService>();
 builder.Services.AddTransient<LibraryService>();
 builder.Services.AddTransient<MediaItemService>();
-builder.Services.AddTransient<MediaItemShowService>();
+builder.Services.AddTransient<ShowService>();
 builder.Services.AddTransient<TagsService>();
 builder.Services.AddTransient<QueryService>();
-builder.Services.AddTransient<ScheduleService>();
-builder.Services.AddTransient<ScheduleItemService>();
-builder.Services.AddTransient<QueryScheduleItemService>();
+builder.Services.AddTransient<LineupService>();
+builder.Services.AddTransient<LineupItemService>();
+builder.Services.AddTransient<QueryLineupItemService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 

@@ -11,11 +11,12 @@ import LibaryPage from './Pages/Libraries/Library';
 import QueryPage from './Pages/Queries/Queries'
 import MediaPage from './Pages/Media/MediaView'
 import QueryDetail from './Pages/Queries/QueryDetail'
-import Schedules from './Pages/Schedules/Schedules'
-import ScheduleEdit from './Pages/Schedules/ScheduleEdit'
-import ScheduleItemEdit from './Pages/Schedules/ScheduleItem/ScheduleItemEdit'; 
+import LineupView from './Pages/Lineups/Lineup'
+import LineupEdit from './Pages/Lineups/LineupEdit'
+import LineupItemEdit from './Pages/Lineups/LineupItem/LineupItemEdit'; 
 import ChannelEdit from './Pages/Channels/ChannelEdit';
 import LibraryEdit from './Pages/Libraries/LibraryEdit';
+import ShowsPage from './Pages/Shows/ShowsView';
 
 const darkTheme = createTheme({
     palette: {
@@ -38,15 +39,16 @@ const App = () => {
                         <Route index element={<Intro />} />
                             <Route path="channels" element={<ChannelPage />} />
                             <Route path="channels/:id/" element={<ChannelEdit />} />
-                            <Route path="schedules" element={<Schedules />} />
-                            <Route path="schedules/:id" element={<ScheduleEdit />} />
-                            <Route path="schedules/:id/items/:itemId" element={<ScheduleItemEdit />} />
+                            <Route path="lineups" element={<LineupView />} />
+                            <Route path="lineups/:id" element={<LineupEdit />} />
+                            <Route path="lineups/:id/items/:itemId" element={<LineupItemEdit />} />
                             <Route path="queries" element={<QueryPage />} />
                             <Route path="queries/:id" element={<QueryDetail />} />
                             <Route path="libraries" element={<LibaryPage />} />
                             <Route path="libraries/:id" element={<LibraryEdit />} />
                             <Route path="media" element={<MediaPage />} />
                             <Route path="media/manage/:id" element={<p>Hello!</p>} />
+                            <Route path="shows" element={<ShowsPage />} />
                         </Route>
                 </Routes>
                 </HashRouter>

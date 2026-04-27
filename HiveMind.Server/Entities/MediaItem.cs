@@ -16,7 +16,7 @@ public class MediaItem
     public string Resolution { get; set; } = string.Empty;
     public int EpisodeNumber { get; set; } = 0;
     public int SeasonNumber { get; set; } = 0;
-    public int? MediaItemShowId { get; set; }
-    public MediaItemShow? Show { get; set; }
+    public int? ShowId { get; set; }
+    public Show? Show { get; set; }
     public ICollection<Tags>? Tags { get; set; }
 }

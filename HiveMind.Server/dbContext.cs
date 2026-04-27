@@ -10,12 +10,12 @@ public class sqliteDBContext: DbContext
     public DbSet<Channel> Channels { get; set; }
     public DbSet<Query> Queries { get; set; }
     public DbSet<QueryFilters> QueryFilters { get; set; }
-    public DbSet<QueryScheduleItem> QueryScheduleItems { get; set; }
+    public DbSet<QueryLineupItem> QueryLineupItems { get; set; }
     public DbSet<Library> Libraries { get; set; }
     public DbSet<MediaItem> MediaItems { get; set; }
-    public DbSet<MediaItemShow> MediaItemShows { get; set; }
-    public DbSet<Schedule> Schedules { get; set; }
-    public DbSet<ScheduleItem> ScheduleItems { get; set; }
+    public DbSet<Show> Shows { get; set; }
+    public DbSet<Lineup> Lineups { get; set; }
+    public DbSet<LineupItem> LineupItems { get; set; }
     public DbSet<Tags> Tags { get; set; }
 
     public sqliteDBContext(DbContextOptions<sqliteDBContext> options) : base(options){ }
@@ -26,10 +26,6 @@ public class sqliteDBContext: DbContext
             new Channel { ChannelId = 1, ChannelName = "Test1"},
             new Channel { ChannelId = 2, ChannelName = "Test2"},
             new Channel { ChannelId = 3, ChannelName = "Test3"}
-        );
-
-        modelBuilder.Entity<Schedule>().HasData(
-            new Schedule { ScheduleId = 1, ScheduleName = "Test Schedule", ChannelId = 1, StartTime = new TimeOnly()}
         );
     }
 

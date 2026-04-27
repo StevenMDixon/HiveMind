@@ -28,45 +28,29 @@ function Intro() {
               <Stack direction="row" justifyContent="space-around">
                   <Paper sx={{ width: '30%'}}>
                       <Typography sx={{ m: 2 }} variant="h6" align="center">
-                          Management
+                          Manage
                       </Typography>
                       <Divider color="#ffc400" />
-                      <Typography sx={{ m: 2 }}>
-                          1. Create a library and specify the path to import your media.
-                      </Typography>
-                      <Typography sx={{ m: 2 }}>
-                          2. Automation will pull in all of your data and add tags
-                      </Typography>
-                      <Typography sx={{ m: 2 }}>
-                          3. Create Queries based on media item properties
-                          and tags (Like smart collections)
+                      <Typography sx={{ m: 2 }} align="center">
+                          Setup what to play
                       </Typography>
                   </Paper>
                   <Paper sx={{ width: '30%' }}>
                       <Typography sx={{ m: 2 }} variant="h6" align="center">
-                          Scheduling
+                          Schedule
                       </Typography>
                       <Divider color="#ffc400" />
-                      <Typography sx={{ m: 2 }}>
-                          1. Create a Schedule
-                      </Typography>
-                      <Typography sx={{ m: 2 }}>
-                          2. Add items to the schedules, we currently support General Items and Blocks
-                      </Typography>
-                      <Typography sx={{ m: 2 }}>
-                          3. Create a Channel add overlays or branding and assign a it Schedule.
-                      </Typography>
-                      <Typography sx={{ m: 2 }}>
-                          4. Backend Processing will Create a SChedule from these settings.
+                      <Typography sx={{ m: 2 }} align="center">
+                          Setup when to play it
                       </Typography>
                   </Paper>
                   <Paper sx={{ width: '30%' }}>
                       <Typography sx={{ m: 2 }} variant="h6" align="center">
-                          Orchestrating
+                          Orchestrate
                       </Typography>
                       <Divider color="#ffc400" />
-                      <Typography sx={{ m: 2 }}>
-                          Coming Soon!
+                      <Typography sx={{ m: 2 }} align="center">
+                          Setup what will play it
                       </Typography>
                   </Paper>
               </Stack>
@@ -93,6 +77,15 @@ function Intro() {
                       <ul>
                           <li>Events</li>
                           <li>Campaigns</li>
+                      </ul>
+                  </Paper>
+                  <Paper>
+                      <Typography sx={{ m: 2 }}>
+                          Orcheration Enhancements
+                      </Typography>
+                      <ul>
+                          <li>Drones - RPI/Linux/Windows</li>
+                          <li>Integrations - Ersatz Next</li>
                       </ul>
                   </Paper>
 

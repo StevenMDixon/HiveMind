@@ -203,7 +203,7 @@ public static class MediaQueryBuilder
         };
 
         // Add null check for Show property since it's nullable
-        var showNotNull = Expression.NotEqual(showProperty, Expression.Constant(null, typeof(MediaItemShow)));
+        var showNotNull = Expression.NotEqual(showProperty, Expression.Constant(null, typeof(Show)));
 
         // Combine null check with the comparison: Show != null && Show.MediaItemShowTitle [operator] value
         return Expression.AndAlso(showNotNull, showComparison);

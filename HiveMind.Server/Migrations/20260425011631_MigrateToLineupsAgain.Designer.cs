@@ -3,6 +3,7 @@ using System;
 using HiveMind.Server;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HiveMind.Server.Migrations
 {
     [DbContext(typeof(sqliteDBContext))]
-    partial class sqliteDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260425011631_MigrateToLineupsAgain")]
+    partial class MigrateToLineupsAgain
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.2");
@@ -156,14 +159,14 @@ namespace HiveMind.Server.Migrations
                     b.Property<int>("LibraryId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("MediaItemShowId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Resolution")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("SeasonNumber")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("ShowId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Title")
@@ -177,9 +180,24 @@ namespace HiveMind.Server.Migrations
 
                     b.HasIndex("LibraryId");
 
-                    b.HasIndex("ShowId");
+                    b.HasIndex("MediaItemShowId");
 
                     b.ToTable("MediaItems");
+                });
+
+            modelBuilder.Entity("HiveMind.Server.Entities.MediaItemShow", b =>
+                {
+                    b.Property<int>("MediaItemShowId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("MediaItemShowTitle")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("MediaItemShowId");
+
+                    b.ToTable("MediaItemShows");
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.Query", b =>
@@ -260,21 +278,6 @@ namespace HiveMind.Server.Migrations
                     b.ToTable("QueryLineupItems");
                 });
 
-            modelBuilder.Entity("HiveMind.Server.Entities.Show", b =>
-                {
-                    b.Property<int>("ShowId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("ShowTitle")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ShowId");
-
-                    b.ToTable("Shows");
-                });
-
             modelBuilder.Entity("HiveMind.Server.Entities.Tags", b =>
                 {
                     b.Property<int>("TagId")
@@ -336,9 +339,9 @@ namespace HiveMind.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HiveMind.Server.Entities.Show", "Show")
+                    b.HasOne("HiveMind.Server.Entities.MediaItemShow", "Show")
                         .WithMany()
-                        .HasForeignKey("ShowId");
+                        .HasForeignKey("MediaItemShowId");
 
                     b.Navigation("Library");
 

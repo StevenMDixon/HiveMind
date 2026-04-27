@@ -6,14 +6,15 @@ public static class EndPointMapper
     {
         Channels.EndPoints.Map(builder);
         Libraries.EndPoints.Map(builder);
-        Queries.EndPoints.Map(builder);
         MediaItems.EndPoints.Map(builder);
-        Schedules.EndPoints.Map(builder);
-        ScheduleItems.EndPoints.Map(builder);
-        QueryScheduleItems.Endpoints.Map(builder);
+        Lineup.EndPoints.Map(builder);
+        Queries.EndPoints.Map(builder);
+        QueryLineupItems.EndPoints.Map(builder);
+        LineupItems.EndPoints.Map(builder);
         QuerySettings.Map(builder);
         QueryOptions.Map(builder);
         GetPlayoutTypes.Map(builder);
         GetPadTo.Map(builder);
+        Shows.EndPoints.Map(builder);
     }
 }

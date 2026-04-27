@@ -9,7 +9,7 @@ public class ChannelService: BaseService
 
     public IEnumerable<Channel> GetAllChannels()
     {
-        return [.. _context.Channels.Include(c => c.Schedule)];
+        return _context.Channels;
     }
 
     public void AddChannel(Channel channel)

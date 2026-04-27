@@ -3,12 +3,11 @@ import { fetchQueryTypes, fetchOptions, fetchPlayoutTypes, fetchSettings, fetchP
 import { fetchQuery, fetchQueries, deleteQuery, createQuery, saveQuery, fetchTestQueryResults } from './Queries';
 import { fetchLibrary, saveLibrary, deleteLibrary, fetchLibraries, createLibrary, fetchLibraryTypes, reprocessLibrary } from './Libraries'
 import {
-    fetchScheduleItem, deleteSchedule, deleteQueryScheduleItem, createSchedule, createScheduleItem, fetchSchedules, fetchScheduleData,
-    fetchQueryScheduleItemsByScheduleItem, createQueryScheduleItem,
-    updateScheduleItem,
-    updateSchedule
-} from './Schedules';
+    fetchLineup, fetchLineups, createLineup, updateLineup, deleteLineup, createLineupItem, updateLineupItem, fetchLineupItem,
+    createQueryLineupItem, deleteQueryLineupItem, fetchQueryLineupItemsByLineupItem
+} from './Lineup';
 import { fetchMedia } from './Media';
+import { fetchShows } from './Shows'
 
 export const ApiClient = {
     //channels
@@ -42,20 +41,21 @@ export const ApiClient = {
     fetchLibraryTypes,
     reprocessLibrary,
 
-    //schedules
-    fetchScheduleData,
-    fetchSchedules,
-    createSchedule,
-    deleteSchedule,
-    updateSchedule,
-    createScheduleItem,
-    fetchScheduleItem,
-    updateScheduleItem,
-
-    createQueryScheduleItem,
-    deleteQueryScheduleItem,
-    fetchQueryScheduleItemsByScheduleItem,
+    //lineups
+    fetchLineup,
+    fetchLineups,
+    createLineup,
+    updateLineup,
+    deleteLineup,
+    createLineupItem,
+    fetchLineupItem,
+    updateLineupItem,
+    createQueryLineupItem,
+    deleteQueryLineupItem,
+    fetchQueryLineupItemsByLineupItem,
 
     //media
-    fetchMedia
+    fetchMedia,
+    //shows
+    fetchShows
 };
