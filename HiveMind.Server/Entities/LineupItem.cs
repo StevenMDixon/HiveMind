@@ -10,4 +10,6 @@ public class LineupItem
     public ICollection<QueryLineupItem>? Queries { get; set; }
     public int LineupId { get; set; }
     public Lineup? Lineup { get; set; }
+    public int? BlockId { get; set; } = null;
+    public Block? Block { get; set; } = null;
 }

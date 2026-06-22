@@ -13,4 +13,5 @@ public class QueryLineupItem
     public QueryType QueryType { get; set; } // e.g., "Opening", "Closing", "Commercials", "MediaItem", 
     public PlayoutType PlayoutType { get; set; } // e.g., "Sequential", "Random", "Shuffle".
     public int Index { get; set; } // Index inside of LineupItem
+    public int Group { get; set; } // Grouping for the lineup item, items with the same group will be played together, e.g., if you want to play 2 episodes of a show together, you can set the group to the same value for both items. 0 = no grouping
 }

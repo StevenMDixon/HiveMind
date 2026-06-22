@@ -10,14 +10,13 @@ public class GetQueryTypes
         app.MapGet("/types", Handle).WithName("GetQueryTypes");
     }
 
-    public record QueryTypeItem(int id, string name);
 
-    public record Response(IEnumerable<QueryTypeItem> Types);
+    public record Response(Dictionary<int, string> Types);
 
     public static Results<Ok<Response>, NotFound<string>> Handle()
     {
         return TypedResults.Ok(
             new Response(
-                Enum.GetValues<QueryType>().Select(x => new QueryTypeItem((int)x, x.ToString())).ToList()));
+                Enum.GetValues<QueryType>().ToDictionary(t => (int)t, t => t.ToString())));
     }
 }

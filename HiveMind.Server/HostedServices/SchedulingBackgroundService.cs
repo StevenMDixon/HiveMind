@@ -25,13 +25,38 @@ public class SchedulingBackgroundService : BackgroundService
             // Create a new scope for database operations
             using (var scope = _serviceProvider.CreateScope())
             {
-                var channelService = scope.ServiceProvider.GetRequiredService<ChannelService>();
+                var stationService = scope.ServiceProvider.GetRequiredService<StationService>();
+
+                var programStrategyService = scope.ServiceProvider.GetRequiredService<ProgramStrategyService>();
 
                 _logger.LogInformation("SchedulingBackgroundService is running at: {time}", DateTimeOffset.Now);
-                _logger.LogInformation("Found {Count} Channels", channelService.GetAllChannels().Count());
+                _logger.LogInformation("Found {Count} Stations", stationService.GetAllStations().Count());
+
+                // Need to figure out how to figure out if we need even create a schedule.
+
+                /*
+                 *  Get check all active programs. 
+                 *  
+                 * 
+                 * 
+                 * 
+                 * 
+                 * 
+                 * 
+                 */
             }
 
             await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken); // Example delay
         }
+    }
+
+    private async Task CreateBatch()
+    {
+
+    }
+
+    private async Task ProcessBatch()
+    {
+
     }
 }

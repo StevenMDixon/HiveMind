@@ -21,5 +21,4 @@ public class GetShows
         
         return TypedResults.Ok(new ShowsResponse(shows.Select(show => new Show(show.ShowId, show.ShowTitle)).ToList()));
     }
-
 }

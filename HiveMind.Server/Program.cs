@@ -14,7 +14,7 @@ builder.Services.AddDbContext<sqliteDBContext>(options => options.UseSqlite(sqli
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.AddTransient<ChannelService>();
+builder.Services.AddTransient<StationService>();
 builder.Services.AddTransient<LibraryService>();
 builder.Services.AddTransient<MediaItemService>();
 builder.Services.AddTransient<ShowService>();
@@ -23,12 +23,14 @@ builder.Services.AddTransient<QueryService>();
 builder.Services.AddTransient<LineupService>();
 builder.Services.AddTransient<LineupItemService>();
 builder.Services.AddTransient<QueryLineupItemService>();
+builder.Services.AddTransient<SettingsService>();
+builder.Services.AddTransient<ProgramStrategyService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 //builder.Services.AddHostedService<TimedHostedService>();
-//builder.Services.AddHostedService<SchedulingBackgroundService>();
-builder.Services.AddHostedService<MediaImporterBackgroundService>();
+builder.Services.AddHostedService<SchedulingBackgroundService>();
+//builder.Services.AddHostedService<MediaImporterBackgroundService>();
 
 var app = builder.Build();
 

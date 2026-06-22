@@ -10,13 +10,12 @@ public class GetLibraryTypes
         app.MapGet("/types", Handle).WithName("GetLibraryTypes");
     }
 
-    public record LibraryTypeItem(int id, string name);
-
-    public record Response(ICollection<LibraryTypeItem> types);
+    public record Response(Dictionary<int, string> types);
 
     public static Results<Ok<Response>, NotFound<string>> Handle()
     {
         return TypedResults.Ok(
-            new Response(Enum.GetValues<LibraryType>().Select(x => new LibraryTypeItem((int)x, x.ToString())).ToList()));
+            new Response(Enum.GetValues<LibraryType>()
+               .ToDictionary(t => (int)t, t => t.ToString())));
     }
 }

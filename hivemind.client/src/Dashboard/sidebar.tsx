@@ -27,7 +27,7 @@ import DevicesIcon from '@mui/icons-material/Devices';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import ViewTimelineIcon from '@mui/icons-material/ViewTimeline';
 import SlideshowIcon from '@mui/icons-material/Slideshow';
-
+import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
 import { useState } from 'react';
 
 interface RouteItemProps {
@@ -111,15 +111,16 @@ const Sidebar: React.FC = () => {
     }
 
     const navElements = [
-        { key: "Channels", route: "/channels", icon: LiveTvIcon, folder: 'Orchestrate'},
+        { key: "Stations", route: "/stations", icon: LiveTvIcon, folder: 'Orchestrate'},
         { key: "Libraries", route: "/libraries", icon: VideoLibraryIcon, folder: 'Manage' },
         { key: "Media", route: "/media", icon: MovieIcon, folder: 'Manage' },
         { key: "Queries", route: "/queries", icon: SavedSearchIcon, folder: 'Manage' },
         { key: "Shows", route: "/shows", icon: SlideshowIcon, folder: 'Manage' },
         { key: "Blocks", route: "/", icon: ViewModuleIcon, folder: 'Manage' },
         { key: "Lineups", route: "/lineups", icon: ViewTimelineIcon, folder: 'Schedule' },
-        { key: "P. Strategy", route: "/", icon: AutoAwesomeMosaicIcon, folder: 'Schedule' },
+        { key: "Progam Strategy", route: "/programstrategy", icon: AutoAwesomeMosaicIcon, folder: 'Schedule' },
         { key: "Drones", route: "/", icon: DevicesIcon, folder: 'Orchestrate' },
+        { key: "System Setting", route: "/system-settings", icon: SettingsSuggestIcon, folder: 'Settings' },
     //    { key: "Events", route: "/", icon: MicrowaveIcon, folder: 'Schedule' },
     ];
 

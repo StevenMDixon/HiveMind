@@ -1,13 +1,11 @@
 ﻿using HiveMind.Server.Entities;
 using Microsoft.EntityFrameworkCore;
-using static System.Reflection.Metadata.BlobBuilder;
-
 
 namespace HiveMind.Server;
 
 public class sqliteDBContext: DbContext
 {
-    public DbSet<Channel> Channels { get; set; }
+    public DbSet<Station> Stations { get; set; }
     public DbSet<Query> Queries { get; set; }
     public DbSet<QueryFilters> QueryFilters { get; set; }
     public DbSet<QueryLineupItem> QueryLineupItems { get; set; }
@@ -17,15 +15,25 @@ public class sqliteDBContext: DbContext
     public DbSet<Lineup> Lineups { get; set; }
     public DbSet<LineupItem> LineupItems { get; set; }
     public DbSet<Tags> Tags { get; set; }
+    public DbSet<Block> Blocks { get; set; }
+    public DbSet<BlockQuery> BlockQueries { get; set; }
+    public DbSet<Settings> Settings { get; set; }
+    public DbSet<ProgramStrategy> ProgramStrategies { get; set;}
+    public DbSet<ProgramStrategyLineup> ProgramStrategyLineups { get; set;}
 
     public sqliteDBContext(DbContextOptions<sqliteDBContext> options) : base(options){ }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Channel>().HasData(
-            new Channel { ChannelId = 1, ChannelName = "Test1"},
-            new Channel { ChannelId = 2, ChannelName = "Test2"},
-            new Channel { ChannelId = 3, ChannelName = "Test3"}
+        modelBuilder.Entity<Station>().HasData(
+            new Station { StationId = 1, StationName = "Test1", StationNumber = 1 },
+            new Station { StationId = 2, StationName = "Test2", StationNumber = 2 },
+            new Station { StationId = 3, StationName = "Test3", StationNumber = 3 }
+        );
+
+        modelBuilder.Entity<Settings>().HasData(
+            new Settings { SettingsId = 1, Name = "Import_Location", Value = "/" },
+            new Settings { SettingsId = 2, Name = "Export_Location", Value = "/" }
         );
     }
 
@@ -39,7 +47,6 @@ public class sqliteDBContext: DbContext
         var path = System.IO.Path.Combine(configFolder, "HiveMind.db");
 
         Console.WriteLine($"Using database folder: {path}");
-
         Console.WriteLine(System.IO.File.Exists(path));
 
         return $"Data Source={path}";

@@ -188,7 +188,7 @@ public static class MediaQueryBuilder
         var showProperty = Expression.Property(parameter, "Show");
 
         // Get the MediaItemShowTitle property from Show
-        var showNameProperty = Expression.Property(showProperty, "MediaItemShowTitle");
+        var showNameProperty = Expression.Property(showProperty, "ShowTitle");
         var constant = Expression.Constant(filter.Value);
 
         Expression showComparison = filter.Operator switch
