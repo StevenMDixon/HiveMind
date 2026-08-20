@@ -17,7 +17,7 @@ public static class GetLineupById
 
     public record LineupItem(int LineupItemId, int Index, string Type, string Name, int LineupId, ICollection<QueryLineupItem> Queries);
 
-    public record Lineup(int LineupId, string LineupName, TimeOnly StartTime, ICollection<LineupItem> LineupItems);
+    public record Lineup(int LineupId, string LineupName, TimeOnly StartTime, string FileLocation);
 
     public static Results<Ok<Lineup>, NotFound<string>> Handle(LineupService lineupService, [FromRoute] int id)
     {
@@ -29,7 +29,8 @@ public static class GetLineupById
                 lineup.LineupId, 
                 lineup.LineupName, 
                 lineup.StartTime, 
-                lineup.LineupItems?.Select(item => new LineupItem(item.LineupItemId, item.Index, item.Type, item.Name, item.LineupId, item.Queries?.Select(c => new QueryLineupItem(c.QueryLineupItemId, c.QueryId, c.LineupItemId, c.PlayDuration, c.PlayCount, c.PadTo, c.QueryType, c.PlayoutType, c.Index)).ToList() ?? new List<QueryLineupItem>())).ToList() ?? new List<LineupItem>()));
+                lineup.JsonData
+                ));
         }
 
         return TypedResults.NotFound($"A lineup with the ID: {id} was not found.");

@@ -1,9 +1,7 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
+﻿using HiveMind.Server.Domain.Enums;
+using HiveMind.Server.Domain.Scheduler;
+using HiveMind.Server.Entities;
 using HiveMind.Server.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace HiveMind.Server.HostedServices;
 
@@ -12,6 +10,7 @@ public class SchedulingBackgroundService : BackgroundService
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<SchedulingBackgroundService> _logger;
 
+    public record ScheduleContext(DateOnly date, ProgramStrategyLineup? programStrategyLineup = null);
     public SchedulingBackgroundService(IServiceProvider serviceProvider, ILogger<SchedulingBackgroundService> logger)
     {
         _serviceProvider = serviceProvider;
@@ -25,38 +24,109 @@ public class SchedulingBackgroundService : BackgroundService
             // Create a new scope for database operations
             using (var scope = _serviceProvider.CreateScope())
             {
-                var stationService = scope.ServiceProvider.GetRequiredService<StationService>();
+                var batchService = scope.ServiceProvider.GetRequiredService<BatchService>();
 
-                var programStrategyService = scope.ServiceProvider.GetRequiredService<ProgramStrategyService>();
+                var openBatches = batchService.GetUnprocessedBatches();
 
-                _logger.LogInformation("SchedulingBackgroundService is running at: {time}", DateTimeOffset.Now);
-                _logger.LogInformation("Found {Count} Stations", stationService.GetAllStations().Count());
+                if (openBatches.Any())
+                {
+                    // Process first open batch
+                    await ProcessBatch(openBatches.First(), scope);
+                }
+                else
+                {
+                    // we should not have any open batches at this point, so we can create new batches for any program strategies that need to be processed
+                    var programStrategyService = scope.ServiceProvider.GetRequiredService<ProgramStrategyService>();
+                    var programToProcess = programStrategyService.GetAvailableStrategiesToProcess();
 
-                // Need to figure out how to figure out if we need even create a schedule.
-
-                /*
-                 *  Get check all active programs. 
-                 *  
-                 * 
-                 * 
-                 * 
-                 * 
-                 * 
-                 * 
-                 */
+                    if(programToProcess.Any())
+                    {
+                        // create batches for each program strategy that needs to be processed
+                        foreach (var program in programToProcess)
+                        {
+                            await CreateBatch(program, batchService, programStrategyService);
+                        }
+                    }
+                }
             }
-
-            await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken); // Example delay
+            await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken); // Example delay
         }
     }
 
-    private async Task CreateBatch()
+    private async Task CreateBatch(ProgramStrategy programStrategy, BatchService batchService, ProgramStrategyService programStrategyService)
     {
+        var batchItems = new List<ScheduleBatchItem>();
 
+        var startDate = DateOnly.FromDateTime(DateTime.Now);
+        var endDate = DateOnly.FromDateTime(DateTime.Now.AddDays(programStrategy.AdvancedDays));
+
+        for (var date = startDate; date <= endDate; date = date.AddDays(1))
+        {
+            batchItems.Add(new ScheduleBatchItem
+            {
+                ScheduleDate = date,
+                IsCompleted = false,
+                OutputFilePath = programStrategy.ProgramStrategyId.ToString(),
+                ProgramStrategyLineUpId = LineUpSelectionMapper.GetMatchingProgramStrategyLineup(programStrategy, date)
+            });
+        }
+
+        var batch = new ScheduleBatch
+        {
+            ProgramStrategyId = programStrategy.ProgramStrategyId,
+            ScheduleBatchItems = batchItems,
+            StartDate = startDate,
+            EndDate = endDate
+        };
+
+        batchService.AddBatch(batch);
+
+        programStrategy.LastScheduleDate = endDate;
+
+        programStrategyService.Update(programStrategy);
     }
 
-    private async Task ProcessBatch()
+    private async Task ProcessBatch(ScheduleBatch batch, IServiceScope scope)
     {
+        // each batch item represents a day in the overall schedule.
+        var batchItemsToProcess = batch.ScheduleBatchItems?.Where(x => x.IsCompleted == false);
 
+        var batchService = scope.ServiceProvider.GetRequiredService<BatchService>();
+
+        var lineupService = scope.ServiceProvider.GetRequiredService<LineupService>();
+
+        // Complete batch early if there are no items to process
+        if (batchItemsToProcess == null || !batchItemsToProcess.Any())
+        {
+            batch.Status = BatchStatus.Completed;
+            batchService.UpdateBatch(batch);
+            _logger.LogWarning("Batch {BatchId} has no items to process.", batch.ScheduleBatchId);
+            return;
+        }
+
+        var programScheduleLineupService  = scope.ServiceProvider.GetRequiredService<ProgramStrategyLineupService>();
+
+        // Process each batch item
+        foreach (var batchItem in batchItemsToProcess)
+        {
+            if (batchItem == null)
+            {
+                _logger.LogWarning("Batch item is null for batch {BatchId}.", batch.ScheduleBatchId);
+                continue;
+            }
+         
+            var lineup = programScheduleLineupService.GetProgramStrategyLineupById(batchItem.ProgramStrategyLineUpId ?? 0);
+
+            var scheduler = new Scheduler(scope);
+
+            await scheduler.GenerateSchedule(lineup?.LineupId ?? 0, batch.ProgramStrategyId ?? 0, batchItem.ScheduleDate);
+
+            // Mark the batch item as completed
+            if (batchItem != null)
+            {
+                batchItem.IsCompleted = true;
+                batchService.UpdateBatchItem(batchItem);
+            }
+        }
     }
 }

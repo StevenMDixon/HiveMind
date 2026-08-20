@@ -14,6 +14,11 @@ public class QueryRequest
     public int PageSize { get; set; } = 50;
 }
 
+public class QueryUnionRequest
+{
+    public List<List<FilterRule>> Queries { get; set; } = new();
+}
+
 public class FilterRule
 {
     public FilterRule()
@@ -56,12 +61,32 @@ public static class MediaQueryBuilder
         }
     }
 
+    public static IQueryable<MediaItem> ApplyWithUnion(
+       DbSet<MediaItem> mediaItems,
+       QueryUnionRequest request)
+    {
+        IQueryable<MediaItem>? results = null;
+
+        foreach (var filterSet in request.Queries)
+        {
+            var queryRequest = new QueryRequest
+            {
+                Filters = filterSet
+            };
+            var filteredQuery = Apply(mediaItems.AsQueryable(), queryRequest);
+            results = results == null ? filteredQuery : results.Union(filteredQuery);
+        }
+
+        return results ?? mediaItems.AsQueryable();
+    }
+
     public static IQueryable<MediaItem> Apply(
         IQueryable<MediaItem> query,
         QueryRequest request)
     {
         if (request.Filters.Any())
         {
+            
             var parameter = Expression.Parameter(typeof(MediaItem), "m");
             Expression? combined = null;
 
@@ -89,7 +114,9 @@ public static class MediaQueryBuilder
                         QueryEnums.QueryAllowedOperators.Equals => Expression.Equal(property, constant),
                         QueryEnums.QueryAllowedOperators.NotEquals => Expression.NotEqual(property, constant),
                         QueryEnums.QueryAllowedOperators.GreaterThan => Expression.GreaterThan(property, constant),
+                        QueryEnums.QueryAllowedOperators.GreaterThanEquals => Expression.GreaterThanOrEqual(property, constant),
                         QueryEnums.QueryAllowedOperators.LessThan => Expression.LessThan(property, constant),
+                        QueryEnums.QueryAllowedOperators.LessThanEquals => Expression.LessThanOrEqual(property, constant),
                         QueryEnums.QueryAllowedOperators.Contains when property.Type == typeof(string) =>
                             Expression.Call(
                                 property,
@@ -112,16 +139,7 @@ public static class MediaQueryBuilder
             }
         }
 
-        if (!string.IsNullOrEmpty(request.SortBy))
-        {
-            query = request.SortDescending
-                ? query.OrderByDescending(e => EF.Property<object>(e, request.SortBy))
-                : query.OrderBy(e => EF.Property<object>(e, request.SortBy));
-        }
-
-        return query
-            .Skip((request.Page - 1) * request.PageSize)
-            .Take(request.PageSize);
+        return query;
     }
 
     private static Expression BuildInFilter(MemberExpression property, FilterRule filter)

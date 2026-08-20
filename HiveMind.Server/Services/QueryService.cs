@@ -1,6 +1,8 @@
 ﻿using HiveMind.Server.Entities;
 using Microsoft.EntityFrameworkCore;
 namespace HiveMind.Server.Services;
+
+using HiveMind.Server.Domain.Enums;
 using HiveMind.Server.QueryEngine;
 
 public class QueryService: BaseService
@@ -40,7 +42,7 @@ public class QueryService: BaseService
         }
     }
 
-    public ICollection<MediaItem> GetMediaItemsByQueryId(int queryId)
+    public ICollection<MediaItem> GetMediaItemsByQueryId(int queryId, List<(string, string, string)>? customFilters = null)
     {
         var query = _context.Queries.Include(q => q.Filters).FirstOrDefault(q => q.QueryId == queryId);
         
@@ -54,8 +56,50 @@ public class QueryService: BaseService
             Filters = query.Filters.Select(f => new FilterRule(f.Field, f.Operator, f.Value)).ToList()
         };
 
+        if(customFilters != null && customFilters.Any())
+        {
+            queryRequest.Filters.AddRange(customFilters.Select(f => new FilterRule(Enum.Parse<QueryEnums.QueryAllowedFields>(f.Item1), Enum.Parse<QueryEnums.QueryAllowedOperators>(f.Item2), f.Item3)).ToList());
+        }
+
         var mediaItemsQuery = _context.MediaItems.AsQueryable();
         mediaItemsQuery = MediaQueryBuilder.Apply(mediaItemsQuery, queryRequest);
+
+        return mediaItemsQuery.ToList();
+    }
+
+    public ICollection<MediaItem> GetMediaItemsByQueryGroup(ICollection<int> queryIds, List<(string, string, string)>? customFilters = null)
+    {
+        var queries = _context.Queries.Include(q => q.Filters).Where(q => queryIds.Contains(q.QueryId)).ToList();
+
+        if (queries == null || !queries.Any())
+        {
+            return Array.Empty<MediaItem>();
+        }
+
+        var filtersList = queries.Select(q => q.Filters?.Select(f => new FilterRule(f.Field, f.Operator, f.Value)).ToList() ?? new List<FilterRule>()).ToList();
+
+        if (customFilters != null)
+        {
+            filtersList.AddRange(customFilters.Select(f => new FilterRule(Enum.Parse<QueryEnums.QueryAllowedFields>(f.Item1), Enum.Parse<QueryEnums.QueryAllowedOperators>(f.Item2), f.Item3)).ToList());
+        }
+
+        var queryUnionRequest = new QueryUnionRequest() { Queries = filtersList};
+
+        var mediaItemsQuery = MediaQueryBuilder.ApplyWithUnion(_context.MediaItems, queryUnionRequest);
+
+        return mediaItemsQuery.ToList();
+    }
+
+    public ICollection<MediaItem> GetMediaItemsByQueries(List<(string, string, string)> customFilters)
+    {
+        var queries = new List<List<FilterRule>>();
+
+        queries.AddRange(customFilters
+            .Select(f => new FilterRule(Enum.Parse<QueryEnums.QueryAllowedFields>(f.Item1), Enum.Parse<QueryEnums.QueryAllowedOperators>(f.Item2), f.Item3)).ToList());
+
+        var queryUnionRequest = new QueryUnionRequest() { Queries = queries  };
+
+        var mediaItemsQuery = MediaQueryBuilder.ApplyWithUnion(_context.MediaItems, queryUnionRequest);
 
         return mediaItemsQuery.ToList();
     }

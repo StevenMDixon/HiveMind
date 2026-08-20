@@ -1,6 +1,7 @@
 ﻿using HiveMind.Server.Domain.Enums;
 using HiveMind.Server.Entities;
 using HiveMind.Server.QueryEngine;
+using HiveMind.Tests;
 using Microsoft.EntityFrameworkCore;
 
 namespace HiveMind.Server.Tests.QueryEngine;
@@ -217,7 +218,7 @@ public class MediaQueryBuilderTests : IDisposable
     #region Sorting Tests
 
     [Fact]
-    public void Apply_WithSortByAscending_SortsCorrectly()
+    public void Apply_WithSortByAscending_ReturnsAllItemsWithoutSorting()
     {
         // Arrange
         var query = _context.MediaItems.AsQueryable();
@@ -231,14 +232,12 @@ public class MediaQueryBuilderTests : IDisposable
         // Act
         var result = MediaQueryBuilder.Apply(query, request).ToList();
 
-        // Assert
+        // Assert - Apply no longer sorts, just returns all items
         Assert.Equal(5, result.Count);
-        Assert.Equal("Documentary", result[0].Title);
-        Assert.Equal("Show Episode 2", result[4].Title);
     }
 
     [Fact]
-    public void Apply_WithSortByDescending_SortsCorrectly()
+    public void Apply_WithSortByDescending_ReturnsAllItemsWithoutSorting()
     {
         // Arrange
         var query = _context.MediaItems.AsQueryable();
@@ -252,10 +251,8 @@ public class MediaQueryBuilderTests : IDisposable
         // Act
         var result = MediaQueryBuilder.Apply(query, request).ToList();
 
-        // Assert
+        // Assert - Apply no longer sorts, just returns all items
         Assert.Equal(5, result.Count);
-        Assert.Equal("Show Episode 2", result[0].Title);
-        Assert.Equal("Documentary", result[4].Title);
     }
 
     [Fact]
@@ -299,9 +296,9 @@ public class MediaQueryBuilderTests : IDisposable
     #region Pagination Tests
 
     [Fact]
-    public void Apply_WithPagination_ReturnsCorrectPage()
+    public void Apply_WithPagination_ReturnsAllItems()
     {
-        // Arrange
+        // Arrange - Apply no longer paginates
         var query = _context.MediaItems.AsQueryable();
         var request = new QueryRequest
         {
@@ -314,15 +311,13 @@ public class MediaQueryBuilderTests : IDisposable
         var result = MediaQueryBuilder.Apply(query, request).ToList();
 
         // Assert
-        Assert.Equal(2, result.Count);
-        Assert.Equal(1, result[0].MediaItemId);
-        Assert.Equal(2, result[1].MediaItemId);
+        Assert.Equal(5, result.Count);
     }
 
     [Fact]
-    public void Apply_WithSecondPage_ReturnsCorrectItems()
+    public void Apply_WithSecondPage_ReturnsAllItems()
     {
-        // Arrange
+        // Arrange - Apply no longer paginates
         var query = _context.MediaItems.AsQueryable();
         var request = new QueryRequest
         {
@@ -335,15 +330,13 @@ public class MediaQueryBuilderTests : IDisposable
         var result = MediaQueryBuilder.Apply(query, request).ToList();
 
         // Assert
-        Assert.Equal(2, result.Count);
-        Assert.Equal(3, result[0].MediaItemId);
-        Assert.Equal(4, result[1].MediaItemId);
+        Assert.Equal(5, result.Count);
     }
 
     [Fact]
-    public void Apply_WithLastPartialPage_ReturnsRemainingItems()
+    public void Apply_WithLastPartialPage_ReturnsAllItems()
     {
-        // Arrange
+        // Arrange - Apply no longer paginates
         var query = _context.MediaItems.AsQueryable();
         var request = new QueryRequest
         {
@@ -356,14 +349,13 @@ public class MediaQueryBuilderTests : IDisposable
         var result = MediaQueryBuilder.Apply(query, request).ToList();
 
         // Assert
-        Assert.Single(result);
-        Assert.Equal(5, result[0].MediaItemId);
+        Assert.Equal(5, result.Count);
     }
 
     [Fact]
-    public void Apply_WithPageBeyondData_ReturnsEmpty()
+    public void Apply_WithPageBeyondData_ReturnsAllItems()
     {
-        // Arrange
+        // Arrange - Apply no longer paginates
         var query = _context.MediaItems.AsQueryable();
         var request = new QueryRequest
         {
@@ -375,17 +367,17 @@ public class MediaQueryBuilderTests : IDisposable
         var result = MediaQueryBuilder.Apply(query, request).ToList();
 
         // Assert
-        Assert.Empty(result);
+        Assert.Equal(5, result.Count);
     }
 
     [Theory]
     [InlineData(1, 10, 5)]
-    [InlineData(1, 3, 3)]
-    [InlineData(2, 3, 2)]
-    [InlineData(3, 3, 0)]
+    [InlineData(1, 3, 5)]
+    [InlineData(2, 3, 5)]
+    [InlineData(3, 3, 5)]
     public void Apply_WithVariousPageSizes_ReturnsCorrectCount(int page, int pageSize, int expectedCount)
     {
-        // Arrange
+        // Arrange - Apply no longer paginates
         var query = _context.MediaItems.AsQueryable();
         var request = new QueryRequest
         {
@@ -405,7 +397,7 @@ public class MediaQueryBuilderTests : IDisposable
     #region Combined Tests
 
     [Fact]
-    public void Apply_WithFilterSortAndPagination_AppliesAllCorrectly()
+    public void Apply_WithFilterSortAndPagination_AppliesFilterOnly()
     {
         // Arrange
         var query = _context.MediaItems.AsQueryable();
@@ -424,14 +416,14 @@ public class MediaQueryBuilderTests : IDisposable
         // Act
         var result = MediaQueryBuilder.Apply(query, request).ToList();
 
-        // Assert
+        // Assert - Only filtering is applied, no sort/pagination
         Assert.Equal(2, result.Count);
-        Assert.Equal("Movie A", result[0].Title);
-        Assert.Equal("Movie B", result[1].Title);
+        Assert.Contains(result, item => item.Title == "Movie A");
+        Assert.Contains(result, item => item.Title == "Movie B");
     }
 
     [Fact]
-    public void Apply_WithComplexScenario_WorksCorrectly()
+    public void Apply_WithComplexScenario_AppliesFilterOnly()
     {
         // Arrange
         var query = _context.MediaItems.AsQueryable();
@@ -450,9 +442,10 @@ public class MediaQueryBuilderTests : IDisposable
         // Act
         var result = MediaQueryBuilder.Apply(query, request).ToList();
 
-        // Assert
-        Assert.Single(result);
-        Assert.Equal("Show Episode 2", result[0].Title);
+        // Assert - Only filtering is applied, returns all matching items
+        Assert.Equal(2, result.Count);
+        Assert.Contains(result, item => item.Title == "Show Episode 1");
+        Assert.Contains(result, item => item.Title == "Show Episode 2");
     }
 
     #endregion
@@ -513,7 +506,7 @@ public class MediaQueryBuilderTests : IDisposable
         // Assert
         Assert.Equal(3, result.Count); // Movie A, Show Episode 1, Show Episode 2
         Assert.All(result, item =>
-            Assert.Contains(item.Tags, tag => tag.TagName == "Action"));
+            Assert.Contains(item.Tags ?? [], tag => tag.TagName == "Action"));
     }
 
     [Fact]
@@ -626,36 +619,269 @@ public class MediaQueryBuilderTests : IDisposable
     }
 
     #endregion
+
+    #region ApplyWithUnion Tests
+
+    [Fact]
+    public void ApplyWithUnion_WithEmptyQueries_ReturnsAllItems()
+    {
+        // Arrange
+        var request = new QueryUnionRequest
+        {
+            Queries = new List<List<FilterRule>>()
+        };
+
+        // Act
+        var result = MediaQueryBuilder.ApplyWithUnion(_context.MediaItems, request).ToList();
+
+        // Assert
+        Assert.Equal(5, result.Count);
+    }
+
+    [Fact]
+    public void ApplyWithUnion_WithSingleQuery_ReturnsSameAsApply()
+    {
+        // Arrange
+        var request = new QueryUnionRequest
+        {
+            Queries = new List<List<FilterRule>>
+            {
+                new()
+                {
+                    new FilterRule(QueryEnums.QueryAllowedFields.Title, QueryEnums.QueryAllowedOperators.Equals, "Movie A")
+                }
+            }
+        };
+
+        // Act
+        var result = MediaQueryBuilder.ApplyWithUnion(_context.MediaItems, request).ToList();
+
+        // Assert
+        Assert.Single(result);
+        Assert.Equal("Movie A", result[0].Title);
+    }
+
+    [Fact]
+    public void ApplyWithUnion_WithMultipleQueries_CombinesResults()
+    {
+        // Arrange
+        var request = new QueryUnionRequest
+        {
+            Queries = new List<List<FilterRule>>
+            {
+                new()
+                {
+                    new FilterRule(QueryEnums.QueryAllowedFields.Title, QueryEnums.QueryAllowedOperators.Equals, "Movie A")
+                },
+                new()
+                {
+                    new FilterRule(QueryEnums.QueryAllowedFields.Title, QueryEnums.QueryAllowedOperators.Equals, "Movie B")
+                }
+            }
+        };
+
+        // Act
+        var result = MediaQueryBuilder.ApplyWithUnion(_context.MediaItems, request).ToList();
+
+        // Assert
+        Assert.Equal(2, result.Count);
+        Assert.Contains(result, item => item.Title == "Movie A");
+        Assert.Contains(result, item => item.Title == "Movie B");
+    }
+
+    [Fact]
+    public void ApplyWithUnion_WithOverlappingQueries_DeduplicatesResults()
+    {
+        // Arrange - both queries match "Show Episode 1"
+        var request = new QueryUnionRequest
+        {
+            Queries = new List<List<FilterRule>>
+            {
+                new()
+                {
+                    new FilterRule(QueryEnums.QueryAllowedFields.Title, QueryEnums.QueryAllowedOperators.Contains, "Show")
+                },
+                new()
+                {
+                    new FilterRule(QueryEnums.QueryAllowedFields.Title, QueryEnums.QueryAllowedOperators.Equals, "Show Episode 1")
+                }
+            }
+        };
+
+        // Act
+        var result = MediaQueryBuilder.ApplyWithUnion(_context.MediaItems, request).ToList();
+
+        // Assert - Union should deduplicate overlapping results
+        Assert.Equal(2, result.Count);
+        Assert.Contains(result, item => item.Title == "Show Episode 1");
+        Assert.Contains(result, item => item.Title == "Show Episode 2");
+    }
+
+    [Fact]
+    public void ApplyWithUnion_WithMultipleQueries_ReturnsAllMatches()
+    {
+        // Arrange
+        var request = new QueryUnionRequest
+        {
+            Queries = new List<List<FilterRule>>
+            {
+                new()
+                {
+                    new FilterRule(QueryEnums.QueryAllowedFields.Title, QueryEnums.QueryAllowedOperators.Contains, "Movie")
+                },
+                new()
+                {
+                    new FilterRule(QueryEnums.QueryAllowedFields.Title, QueryEnums.QueryAllowedOperators.Contains, "Show")
+                }
+            }
+        };
+
+        // Act
+        var result = MediaQueryBuilder.ApplyWithUnion(_context.MediaItems, request).ToList();
+
+        // Assert - All Movies (2) + All Shows (2) = 4
+        Assert.Equal(4, result.Count);
+    }
+
+    [Fact]
+    public void ApplyWithUnion_WithDifferentFieldFilters_CombinesCorrectly()
+    {
+        // Arrange - one query filters by LibraryId, another by Title
+        var request = new QueryUnionRequest
+        {
+            Queries = new List<List<FilterRule>>
+            {
+                new()
+                {
+                    new FilterRule(QueryEnums.QueryAllowedFields.LibraryId, QueryEnums.QueryAllowedOperators.Equals, "2")
+                },
+                new()
+                {
+                    new FilterRule(QueryEnums.QueryAllowedFields.Title, QueryEnums.QueryAllowedOperators.Equals, "Documentary")
+                }
+            }
+        };
+
+        // Act
+        var result = MediaQueryBuilder.ApplyWithUnion(_context.MediaItems, request).ToList();
+
+        // Assert - LibraryId=2 gives Show Episode 1 & 2, plus Documentary
+        Assert.Equal(3, result.Count);
+        Assert.Contains(result, item => item.Title == "Show Episode 1");
+        Assert.Contains(result, item => item.Title == "Show Episode 2");
+        Assert.Contains(result, item => item.Title == "Documentary");
+    }
+
+    [Fact]
+    public void ApplyWithUnion_WithMultipleFiltersPerQuery_AppliesAndWithinEachQuery()
+    {
+        // Arrange - each filter set uses AND logic internally
+        var request = new QueryUnionRequest
+        {
+            Queries = new List<List<FilterRule>>
+            {
+                new()
+                {
+                    new FilterRule(QueryEnums.QueryAllowedFields.Title, QueryEnums.QueryAllowedOperators.Contains, "Movie"),
+                    new FilterRule(QueryEnums.QueryAllowedFields.Duration, QueryEnums.QueryAllowedOperators.GreaterThan, "6000000")
+                },
+                new()
+                {
+                    new FilterRule(QueryEnums.QueryAllowedFields.Title, QueryEnums.QueryAllowedOperators.Equals, "Show Episode 1")
+                }
+            }
+        };
+
+        // Act
+        var result = MediaQueryBuilder.ApplyWithUnion(_context.MediaItems, request).ToList();
+
+        // Assert - "Movie B" (duration 7200000 > 6000000) plus "Show Episode 1"
+        Assert.Equal(2, result.Count);
+        Assert.Contains(result, item => item.Title == "Movie B");
+        Assert.Contains(result, item => item.Title == "Show Episode 1");
+    }
+
+    [Fact]
+    public void ApplyWithUnion_WithNoMatchingResults_ReturnsEmpty()
+    {
+        // Arrange
+        var request = new QueryUnionRequest
+        {
+            Queries = new List<List<FilterRule>>
+            {
+                new()
+                {
+                    new FilterRule(QueryEnums.QueryAllowedFields.Title, QueryEnums.QueryAllowedOperators.Equals, "Nonexistent")
+                },
+                new()
+                {
+                    new FilterRule(QueryEnums.QueryAllowedFields.Title, QueryEnums.QueryAllowedOperators.Equals, "Also Nonexistent")
+                }
+            }
+        };
+
+        // Act
+        var result = MediaQueryBuilder.ApplyWithUnion(_context.MediaItems, request).ToList();
+
+        // Assert
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void ApplyWithUnion_WithTagFilters_CombinesTagQueries()
+    {
+        // Arrange
+        var request = new QueryUnionRequest
+        {
+            Queries = new List<List<FilterRule>>
+            {
+                new()
+                {
+                    new FilterRule(QueryEnums.QueryAllowedFields.Tag, QueryEnums.QueryAllowedOperators.Equals, "Comedy")
+                },
+                new()
+                {
+                    new FilterRule(QueryEnums.QueryAllowedFields.Tag, QueryEnums.QueryAllowedOperators.Equals, "Drama")
+                }
+            }
+        };
+
+        // Act
+        var result = MediaQueryBuilder.ApplyWithUnion(
+            _context.MediaItems.Include(m => m.Tags) as DbSet<MediaItem> ?? _context.MediaItems,
+            request).ToList();
+
+        // Assert - Comedy: Movie B, Show Episode 2; Drama: Movie A, Documentary
+        Assert.Equal(4, result.Count);
+    }
+
+    [Fact]
+    public void ApplyWithUnion_WithAllLibraries_ReturnsAllItems()
+    {
+        // Arrange - Union of both libraries covers all items
+        var request = new QueryUnionRequest
+        {
+            Queries = new List<List<FilterRule>>
+            {
+                new()
+                {
+                    new FilterRule(QueryEnums.QueryAllowedFields.LibraryId, QueryEnums.QueryAllowedOperators.Equals, "1")
+                },
+                new()
+                {
+                    new FilterRule(QueryEnums.QueryAllowedFields.LibraryId, QueryEnums.QueryAllowedOperators.Equals, "2")
+                }
+            }
+        };
+
+        // Act
+        var result = MediaQueryBuilder.ApplyWithUnion(_context.MediaItems, request).ToList();
+
+        // Assert - LibraryId=1 has 3 items, LibraryId=2 has 2 items, union = 5
+        Assert.Equal(5, result.Count);
+    }
+
+    #endregion
 }
 
 // Test DbContext
-public class TestDbContext : DbContext
-{
-    public TestDbContext(DbContextOptions<TestDbContext> options) : base(options)
-    {
-    }
-
-    public DbSet<MediaItem> MediaItems { get; set; } = null!;
-    public DbSet<Tags> Tags { get; set; } = null!;
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<MediaItem>(entity =>
-        {
-            entity.HasKey(e => e.MediaItemId);
-            entity.Property(e => e.Title).IsRequired();
-            entity.Property(e => e.FilePath).IsRequired();
-        });
-
-        modelBuilder.Entity<Tags>(entity =>
-        {
-            entity.HasKey(e => e.TagId);
-            entity.Property(e => e.TagName).IsRequired();
-        });
-
-        // Many-to-many relationship
-        modelBuilder.Entity<MediaItem>()
-            .HasMany(m => m.Tags)
-           .WithMany(t => t.MediaItem);
-    }
-}

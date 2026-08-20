@@ -1,6 +1,7 @@
 using FluentValidation;
 using HiveMind.Server;
 using HiveMind.Server.Endpoints;
+using HiveMind.Server.Entities;
 using HiveMind.Server.HostedServices;
 using HiveMind.Server.Services;
 using Microsoft.EntityFrameworkCore;
@@ -21,16 +22,18 @@ builder.Services.AddTransient<ShowService>();
 builder.Services.AddTransient<TagsService>();
 builder.Services.AddTransient<QueryService>();
 builder.Services.AddTransient<LineupService>();
-builder.Services.AddTransient<LineupItemService>();
-builder.Services.AddTransient<QueryLineupItemService>();
 builder.Services.AddTransient<SettingsService>();
 builder.Services.AddTransient<ProgramStrategyService>();
+builder.Services.AddTransient<BatchService>();
+builder.Services.AddTransient<ProgramStrategyLineupService>();
+builder.Services.AddTransient<TransitionTemplateService>();
+builder.Services.AddTransient<ScheduleService>();
+builder.Services.AddTransient<DroneService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
-//builder.Services.AddHostedService<TimedHostedService>();
 builder.Services.AddHostedService<SchedulingBackgroundService>();
-//builder.Services.AddHostedService<MediaImporterBackgroundService>();
+builder.Services.AddHostedService<MediaImporterBackgroundService>();
 
 var app = builder.Build();
 

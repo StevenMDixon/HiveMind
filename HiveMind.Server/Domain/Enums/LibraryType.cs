@@ -4,7 +4,10 @@ public enum LibraryType
 {
     None = 0,
     Show,
+    Movie,
     Commercial,
     Bumper,
+    Interstitial,
+    Idents,
     Other
 }

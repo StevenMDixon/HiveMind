@@ -21,8 +21,6 @@ public class LineupService:BaseService
     public Lineup? GetLineupByID(int id)
     {
         return _context.Lineups
-            .Include(c => c.LineupItems!)
-            .ThenInclude(s => s.Queries)
             .FirstOrDefault(x => x.LineupId == id);
     }
 

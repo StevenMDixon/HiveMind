@@ -34,8 +34,6 @@ public class Update
             strategy.Name = request.Name ?? strategy.Name;
             strategy.AdvancedDays = request.AdvancedDays ?? strategy.AdvancedDays;
             strategy.Active = request.Active ?? strategy.Active;
-            strategy.StartDate = request.StartDate ?? request.StartDate;
-            strategy.EndDate = request.StartDate ?? request.EndDate;
 
             programStrategyService.Update(strategy);
             return TypedResults.Ok();

@@ -3,8 +3,8 @@
 public enum LineupSelectionType
 {
     Any = 0,
-    WeekDay,
-    Date,
+    DayOfWeek,
     Month,
-    // Special
+    MonthAndDay,
+    Date
 }

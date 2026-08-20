@@ -12,6 +12,13 @@ namespace HiveMind.Server.Services
             return _context.ProgramStrategies.Include(c => c.Lineups);
         }
 
+        public IEnumerable<ProgramStrategy> GetAvailableStrategiesToProcess()
+        {
+            var currentDate = DateOnly.FromDateTime(DateTime.Now);
+
+            return _context.ProgramStrategies.Include(x => x.Lineups).Where(ps => ps.Active == true && (ps.LastScheduleDate <= currentDate || ps.LastScheduleDate == null)).ToList();
+        }
+
         public ProgramStrategy AddProgramStrategy(ProgramStrategy programStrategy)
         {
             _context.ProgramStrategies.Add(programStrategy);

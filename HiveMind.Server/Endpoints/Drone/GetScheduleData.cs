@@ -1,0 +1,30 @@
+﻿using HiveMind.Server.Entities;
+using HiveMind.Server.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+
+
+namespace HiveMind.Server.Endpoints.Drone;
+
+public class GetScheduleData
+{
+    public static void Map(IEndpointRouteBuilder app)
+    {
+        app.MapGet("/Schedules/{id:int}", Handle)
+            .WithName("GetScheduleData");
+    }
+
+    public record DroneScheduleResults(string StationNumber, SchedulingResult SchedulingResult);
+
+    public static Results<Ok<List<DroneScheduleResults>>, NoContent, ValidationProblem> Handle(DroneService droneService, [FromRoute] int id)
+    {
+        var droneScheduleData = droneService.GetDroneSchedule(id);
+
+        if (droneScheduleData.Count == 0)
+        {
+            return TypedResults.NoContent();
+        }
+
+        return TypedResults.Ok(droneScheduleData);
+    }
+}

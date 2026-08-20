@@ -17,7 +17,7 @@
       },
       "publishAllPorts": true,
       "useSSL": false,
-      "containerRunArguments": "-v f:\\\\Commercials\\Test:/home/app/test"
+      "containerRunArguments": "-v f:\\Test:/home/app/test"
     }
   },
   "$schema": "https://json.schemastore.org/launchsettings.json"

@@ -32,9 +32,7 @@ public class Create
         {
             Name =  request.Name,
             AdvancedDays =  request.AdvancedDays ?? 0,
-            Active = request.Active ?? false,
-            StartDate =  request.StartDate,
-            EndDate = request.EndDate
+            Active = request.Active ?? false
         };
 
         programStrategyService.AddProgramStrategy(newProgramStrategy);

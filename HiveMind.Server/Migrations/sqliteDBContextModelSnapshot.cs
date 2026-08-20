@@ -15,63 +15,40 @@ namespace HiveMind.Server.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.2");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.10");
 
-            modelBuilder.Entity("HiveMind.Server.Entities.Block", b =>
+            modelBuilder.Entity("DroneStation", b =>
                 {
-                    b.Property<int>("BlockId")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("DronesDroneId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("BlockName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("StationsStationId")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("Logo")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.HasKey("DronesDroneId", "StationsStationId");
 
-                    b.HasKey("BlockId");
+                    b.HasIndex("StationsStationId");
 
-                    b.ToTable("Blocks");
+                    b.ToTable("DroneStation");
                 });
 
-            modelBuilder.Entity("HiveMind.Server.Entities.BlockQuery", b =>
+            modelBuilder.Entity("HiveMind.Server.Entities.Drone", b =>
                 {
-                    b.Property<int>("BlockQueryId")
+                    b.Property<int>("DroneId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("BlockId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("HostName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
-                    b.Property<int>("Group")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
-                    b.Property<int>("Index")
-                        .HasColumnType("INTEGER");
+                    b.HasKey("DroneId");
 
-                    b.Property<int>("PadTo")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PlayCount")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PlayDuration")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PlayoutType")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("QueryId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("QueryType")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("BlockQueryId");
-
-                    b.ToTable("BlockQueries");
+                    b.ToTable("Drones");
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.Library", b =>
@@ -109,6 +86,10 @@ namespace HiveMind.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("JsonData")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("LineupName")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -121,52 +102,23 @@ namespace HiveMind.Server.Migrations
                     b.ToTable("Lineups");
                 });
 
-            modelBuilder.Entity("HiveMind.Server.Entities.LineupItem", b =>
-                {
-                    b.Property<int>("LineupItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("BlockId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Index")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("LineupId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("LineupItemId");
-
-                    b.HasIndex("BlockId");
-
-                    b.HasIndex("LineupId");
-
-                    b.ToTable("LineupItems");
-                });
-
             modelBuilder.Entity("HiveMind.Server.Entities.MediaItem", b =>
                 {
                     b.Property<int>("MediaItemId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("Duration")
-                        .HasColumnType("REAL");
+                    b.Property<int>("Duration")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("EpisodeNumber")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("FilePath")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Group")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Height")
@@ -213,14 +165,11 @@ namespace HiveMind.Server.Migrations
                     b.Property<int>("AdvancedDays")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateOnly?>("EndDate")
+                    b.Property<DateOnly?>("LastScheduleDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateOnly?>("StartDate")
                         .HasColumnType("TEXT");
 
                     b.HasKey("ProgramStrategyId");
@@ -297,49 +246,79 @@ namespace HiveMind.Server.Migrations
                     b.ToTable("QueryFilters");
                 });
 
-            modelBuilder.Entity("HiveMind.Server.Entities.QueryLineupItem", b =>
+            modelBuilder.Entity("HiveMind.Server.Entities.ScheduleBatch", b =>
                 {
-                    b.Property<int>("QueryLineupItemId")
+                    b.Property<int>("ScheduleBatchId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("BlockId")
+                    b.Property<DateOnly>("EndDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("ProgramStrategyId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Group")
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Index")
+                    b.HasKey("ScheduleBatchId");
+
+                    b.HasIndex("ProgramStrategyId");
+
+                    b.ToTable("ScheduleBatches");
+                });
+
+            modelBuilder.Entity("HiveMind.Server.Entities.ScheduleBatchItem", b =>
+                {
+                    b.Property<int>("ScheduleBatchItemId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("LineupItemId")
+                    b.Property<bool>("IsCompleted")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("PadTo")
+                    b.Property<string>("OutputFilePath")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("ProgramStrategyLineUpId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("PlayCount")
+                    b.Property<int?>("ScheduleBatchId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("PlayDuration")
+                    b.Property<DateOnly>("ScheduleDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ScheduleBatchItemId");
+
+                    b.HasIndex("ScheduleBatchId");
+
+                    b.ToTable("ScheduleBatchItems");
+                });
+
+            modelBuilder.Entity("HiveMind.Server.Entities.SchedulingResult", b =>
+                {
+                    b.Property<int>("SchedulingResultId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("PlayoutType")
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("ProgramStrategyId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("QueryId")
-                        .HasColumnType("INTEGER");
+                    b.HasKey("SchedulingResultId");
 
-                    b.Property<int>("QueryType")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("QueryLineupItemId");
-
-                    b.HasIndex("BlockId");
-
-                    b.HasIndex("LineupItemId");
-
-                    b.ToTable("QueryLineupItems");
+                    b.ToTable("SchedulingResults");
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.Settings", b =>
@@ -372,6 +351,24 @@ namespace HiveMind.Server.Migrations
                             SettingsId = 2,
                             Name = "Export_Location",
                             Value = "/"
+                        },
+                        new
+                        {
+                            SettingsId = 3,
+                            Name = "Bump In Tag",
+                            Value = "In"
+                        },
+                        new
+                        {
+                            SettingsId = 4,
+                            Name = "Bump Out Tag",
+                            Value = "Out"
+                        },
+                        new
+                        {
+                            SettingsId = 5,
+                            Name = "Bump Generic Tag",
+                            Value = "Generic"
                         });
                 });
 
@@ -396,9 +393,6 @@ namespace HiveMind.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("LineupId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("StationLogo")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -410,9 +404,12 @@ namespace HiveMind.Server.Migrations
                     b.Property<int>("StationNumber")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("StrategyProgramStrategyId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("StationId");
 
-                    b.HasIndex("LineupId");
+                    b.HasIndex("StrategyProgramStrategyId");
 
                     b.ToTable("Stations");
 
@@ -458,6 +455,113 @@ namespace HiveMind.Server.Migrations
                     b.ToTable("Tags");
                 });
 
+            modelBuilder.Entity("HiveMind.Server.Entities.TransitionTemplate", b =>
+                {
+                    b.Property<int>("TransitionTemplateId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("MatchShowBumps")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("TransitionTemplateId");
+
+                    b.ToTable("TransitionTemplates");
+
+                    b.HasData(
+                        new
+                        {
+                            TransitionTemplateId = 1,
+                            MatchShowBumps = true,
+                            Name = "Default MidRoll"
+                        },
+                        new
+                        {
+                            TransitionTemplateId = 2,
+                            MatchShowBumps = true,
+                            Name = "Default PostRoll"
+                        });
+                });
+
+            modelBuilder.Entity("HiveMind.Server.Entities.TransitionTemplateSlot", b =>
+                {
+                    b.Property<int>("TransitionTemplateSlotId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Slot")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TransitionTemplateId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("TransitionTemplateSlotId");
+
+                    b.HasIndex("TransitionTemplateId");
+
+                    b.ToTable("TransitionTemplateSlots");
+
+                    b.HasData(
+                        new
+                        {
+                            TransitionTemplateSlotId = 1,
+                            Slot = 1,
+                            TransitionTemplateId = 1
+                        },
+                        new
+                        {
+                            TransitionTemplateSlotId = 2,
+                            Slot = 2,
+                            TransitionTemplateId = 1
+                        },
+                        new
+                        {
+                            TransitionTemplateSlotId = 3,
+                            Slot = 4,
+                            TransitionTemplateId = 1
+                        },
+                        new
+                        {
+                            TransitionTemplateSlotId = 4,
+                            Slot = 2,
+                            TransitionTemplateId = 1
+                        },
+                        new
+                        {
+                            TransitionTemplateSlotId = 5,
+                            Slot = 0,
+                            TransitionTemplateId = 1
+                        },
+                        new
+                        {
+                            TransitionTemplateSlotId = 6,
+                            Slot = 2,
+                            TransitionTemplateId = 2
+                        },
+                        new
+                        {
+                            TransitionTemplateSlotId = 7,
+                            Slot = 5,
+                            TransitionTemplateId = 2
+                        },
+                        new
+                        {
+                            TransitionTemplateSlotId = 8,
+                            Slot = 4,
+                            TransitionTemplateId = 2
+                        },
+                        new
+                        {
+                            TransitionTemplateSlotId = 9,
+                            Slot = 2,
+                            TransitionTemplateId = 2
+                        });
+                });
+
             modelBuilder.Entity("MediaItemTags", b =>
                 {
                     b.Property<int>("MediaItemId")
@@ -473,21 +577,19 @@ namespace HiveMind.Server.Migrations
                     b.ToTable("MediaItemTags");
                 });
 
-            modelBuilder.Entity("HiveMind.Server.Entities.LineupItem", b =>
+            modelBuilder.Entity("DroneStation", b =>
                 {
-                    b.HasOne("HiveMind.Server.Entities.Block", "Block")
+                    b.HasOne("HiveMind.Server.Entities.Drone", null)
                         .WithMany()
-                        .HasForeignKey("BlockId");
-
-                    b.HasOne("HiveMind.Server.Entities.Lineup", "Lineup")
-                        .WithMany("LineupItems")
-                        .HasForeignKey("LineupId")
+                        .HasForeignKey("DronesDroneId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Block");
-
-                    b.Navigation("Lineup");
+                    b.HasOne("HiveMind.Server.Entities.Station", null)
+                        .WithMany()
+                        .HasForeignKey("StationsStationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.MediaItem", b =>
@@ -533,26 +635,38 @@ namespace HiveMind.Server.Migrations
                     b.Navigation("Query");
                 });
 
-            modelBuilder.Entity("HiveMind.Server.Entities.QueryLineupItem", b =>
+            modelBuilder.Entity("HiveMind.Server.Entities.ScheduleBatch", b =>
                 {
-                    b.HasOne("HiveMind.Server.Entities.Block", null)
-                        .WithMany("Queries")
-                        .HasForeignKey("BlockId");
+                    b.HasOne("HiveMind.Server.Entities.ProgramStrategy", "ProgramStrategy")
+                        .WithMany()
+                        .HasForeignKey("ProgramStrategyId");
 
-                    b.HasOne("HiveMind.Server.Entities.LineupItem", null)
-                        .WithMany("Queries")
-                        .HasForeignKey("LineupItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("ProgramStrategy");
+                });
+
+            modelBuilder.Entity("HiveMind.Server.Entities.ScheduleBatchItem", b =>
+                {
+                    b.HasOne("HiveMind.Server.Entities.ScheduleBatch", null)
+                        .WithMany("ScheduleBatchItems")
+                        .HasForeignKey("ScheduleBatchId");
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.Station", b =>
                 {
-                    b.HasOne("HiveMind.Server.Entities.Lineup", "Lineup")
+                    b.HasOne("HiveMind.Server.Entities.ProgramStrategy", "Strategy")
                         .WithMany()
-                        .HasForeignKey("LineupId");
+                        .HasForeignKey("StrategyProgramStrategyId");
 
-                    b.Navigation("Lineup");
+                    b.Navigation("Strategy");
+                });
+
+            modelBuilder.Entity("HiveMind.Server.Entities.TransitionTemplateSlot", b =>
+                {
+                    b.HasOne("HiveMind.Server.Entities.TransitionTemplate", null)
+                        .WithMany("Slots")
+                        .HasForeignKey("TransitionTemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MediaItemTags", b =>
@@ -570,24 +684,9 @@ namespace HiveMind.Server.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("HiveMind.Server.Entities.Block", b =>
-                {
-                    b.Navigation("Queries");
-                });
-
             modelBuilder.Entity("HiveMind.Server.Entities.Library", b =>
                 {
                     b.Navigation("MediaItems");
-                });
-
-            modelBuilder.Entity("HiveMind.Server.Entities.Lineup", b =>
-                {
-                    b.Navigation("LineupItems");
-                });
-
-            modelBuilder.Entity("HiveMind.Server.Entities.LineupItem", b =>
-                {
-                    b.Navigation("Queries");
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.ProgramStrategy", b =>
@@ -598,6 +697,16 @@ namespace HiveMind.Server.Migrations
             modelBuilder.Entity("HiveMind.Server.Entities.Query", b =>
                 {
                     b.Navigation("Filters");
+                });
+
+            modelBuilder.Entity("HiveMind.Server.Entities.ScheduleBatch", b =>
+                {
+                    b.Navigation("ScheduleBatchItems");
+                });
+
+            modelBuilder.Entity("HiveMind.Server.Entities.TransitionTemplate", b =>
+                {
+                    b.Navigation("Slots");
                 });
 #pragma warning restore 612, 618
         }

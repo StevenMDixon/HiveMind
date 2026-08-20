@@ -37,7 +37,9 @@ public static class QueryEnums
         Equals, //Any
         NotEquals, //Any
         GreaterThan, //int
+        GreaterThanEquals, //int
         LessThan, //int
+        LessThanEquals, //int
         Contains, //Any
         MatchesAny //Any
     }
@@ -49,7 +51,9 @@ public static class QueryEnums
             QueryAllowedOperators.Equals => true,
             QueryAllowedOperators.NotEquals => true,
             QueryAllowedOperators.GreaterThan => type == "int",
+            QueryAllowedOperators.GreaterThanEquals => type == "int",
             QueryAllowedOperators.LessThan => type == "int",
+            QueryAllowedOperators.LessThanEquals => type == "int",
             QueryAllowedOperators.Contains => type == "string",
             QueryAllowedOperators.MatchesAny => true,
             _ => throw new ArgumentOutOfRangeException(nameof(op), op, null)

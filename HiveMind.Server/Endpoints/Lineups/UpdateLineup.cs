@@ -24,7 +24,7 @@ public class UpdateLineup
         }
     }
 
-    public record LineupRequest(string? LineupName, TimeOnly? StartTime, List<LineupItem>? LineupItems);
+    public record LineupRequest(string? LineupName, TimeOnly? StartTime, string? JsonData);
     public static Results<Ok, NotFound<string>, ValidationProblem> Handle(LineupService lineupService, [FromRoute] int id, [FromBody] LineupRequest request)
     {
         var lineup = lineupService.GetLineupByID(id);
@@ -33,12 +33,7 @@ public class UpdateLineup
         {
             lineup.LineupName = request?.LineupName ?? lineup.LineupName;
             lineup.StartTime = request?.StartTime ?? lineup.StartTime;
-            lineup.LineupItems = request?.LineupItems ?? lineup.LineupItems;
-
-            foreach (var item in lineup.LineupItems ?? [])
-            {
-                if (item.LineupItemId < 0) item.LineupItemId = 0;
-            }
+            lineup.JsonData = request?.JsonData ?? lineup.JsonData;
 
             lineupService.Update(lineup);
             return TypedResults.Ok();

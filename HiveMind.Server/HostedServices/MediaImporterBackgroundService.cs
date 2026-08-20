@@ -33,6 +33,7 @@ public class MediaImporterBackgroundService : BackgroundService
                 var mediaItemService = scope.ServiceProvider.GetRequiredService<Services.MediaItemService>();
                 var mediaItemShowService = scope.ServiceProvider.GetRequiredService<Services.ShowService>();
                 var tagService = scope.ServiceProvider.GetRequiredService<TagsService>();
+                var settingsService = scope.ServiceProvider.GetRequiredService<SettingsService>();
 
                 var unprocessedLibraries = libraryService.GetUnprocessedLibraries();
                 _logger.LogInformation("MediaImporterBackgroundService is running at: {time}", DateTimeOffset.Now);
@@ -45,6 +46,10 @@ public class MediaImporterBackgroundService : BackgroundService
                 var mediaItems = new List<VideoMeta>();
                 var mediaItemsToDelete = new List<Entities.MediaItem>();
 
+                var settings = settingsService.GetAllSettings().ToDictionary(x => x.Name, y => y.Value);
+
+                var libraryPath = settings["Import_Location"] ?? "";
+
                 if (targetLibary != null && !targetLibary.IsProcessed)
                 {
                     // Get current media items so we can filter out any that have already been added to the database. We can use the file path to check if it has already been added.
@@ -52,6 +57,9 @@ public class MediaImporterBackgroundService : BackgroundService
 
                     if (targetLibary.LibraryPath != null && targetLibary.LibraryPath != string.Empty)
                     {
+
+                        targetLibary.LibraryPath = libraryPath + targetLibary.LibraryPath;
+
                         _logger.LogInformation("Processing Library: {LibraryName}", targetLibary.LibraryName);
 
                         var files = new List<string>();
@@ -66,9 +74,9 @@ public class MediaImporterBackgroundService : BackgroundService
                                 .Where(x => pathsToIgnore.Count() == 0 || !pathsToIgnore.Any(path => x.Contains(path)))
                                 );
                         }
-                        catch
+                        catch (Exception e)
                         {
-
+                            _logger.LogError(e, "Error while getting files from library path: {LibraryPath}", targetLibary.LibraryPath);
                         }
 
                         _logger.LogInformation("Found files: {Count}", files.Count());
@@ -92,6 +100,7 @@ public class MediaImporterBackgroundService : BackgroundService
 
                             var duration = mediaInfo.Duration.TotalMilliseconds;
                             var fileName = Path.GetFileNameWithoutExtension(file);
+                            var normalizedFile = file.Replace(libraryPath, String.Empty); 
                             var fileNameWithExt = Path.GetFileName(file);
                             var width = 0;
                             var height = 0;
@@ -170,8 +179,10 @@ public class MediaImporterBackgroundService : BackgroundService
                                 }
                             }
 
-                            mediaItems.Add(new VideoMeta(file, fileName, duration, height, width, res, showId, seasonNumber, episodeNumber, mappedTags));
+                            mediaItems.Add(new VideoMeta(normalizedFile, fileName, duration, height, width, res, showId, seasonNumber, episodeNumber, mappedTags));
                         }
+
+                        if (libraryPath != String.Empty) targetLibary.LibraryPath = targetLibary.LibraryPath.Replace(libraryPath, "");
                     }
 
                     mediaItemService.AddMediaItems(mediaItems.Select(x => ConvertMetaToMediaItem(x, targetLibary.LibraryId)));    
@@ -195,7 +206,7 @@ public class MediaImporterBackgroundService : BackgroundService
         return new Entities.MediaItem
         {
             Title = meta.name,
-            Duration = meta.duration,
+            Duration = (int)meta.duration,
             Width = meta.width,
             Height = meta.height,
             Resolution = meta.resolution,

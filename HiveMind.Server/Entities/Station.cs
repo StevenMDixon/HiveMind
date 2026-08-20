@@ -6,5 +6,6 @@ public class Station
     public int StationNumber { get; set; }
     public string StationName { get; set; } = string.Empty;
     public string StationLogo { get; set; } = string.Empty;
-    public Lineup? Lineup { get; set; }
+    public ProgramStrategy? Strategy { get; set; }
+    public List<Drone>? Drones { get; set; }
 }

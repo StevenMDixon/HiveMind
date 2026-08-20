@@ -12,11 +12,9 @@ public class ProgramStrategy
     public bool Active { get; set; } = false;
 
     // How many days in the future to schedule.
-    public int AdvancedDays { get; set; } = 1;
+    public int AdvancedDays { get; set; } = 0;
 
-    public DateOnly? StartDate { get; set; } = new DateOnly();
-
-    public DateOnly? EndDate { get; set; } = new DateOnly();
+    public DateOnly? LastScheduleDate { get; set; } = null;
 
     public ICollection<ProgramStrategyLineup>? Lineups { get; set; } = null;
 
