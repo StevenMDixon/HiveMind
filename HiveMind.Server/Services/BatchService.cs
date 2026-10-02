@@ -4,10 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HiveMind.Server.Services;
 
-public class BatchService : BaseService
+public class BatchService(SqliteDBContext context) : BaseService(context)
 {
-    public BatchService(sqliteDBContext context) : base(context) { }
-
     public IEnumerable<ScheduleBatch> GetAllBatches()
     {
         return _context.ScheduleBatches;

@@ -1,11 +1,6 @@
 ﻿namespace HiveMind.Server.Services;
 
-public abstract class BaseService: IService
+public abstract class BaseService(SqliteDBContext context) : IService
 {
-    protected readonly sqliteDBContext _context;
-
-    public BaseService(sqliteDBContext context)
-    {
-        _context = context;
-    }
+    protected readonly SqliteDBContext _context = context;
 }

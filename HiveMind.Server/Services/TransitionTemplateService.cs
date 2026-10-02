@@ -5,7 +5,7 @@ namespace HiveMind.Server.Services;
 
 public class TransitionTemplateService: BaseService
 {
-    public TransitionTemplateService(sqliteDBContext context) : base(context)
+    public TransitionTemplateService(SqliteDBContext context) : base(context)
     {
     }
 

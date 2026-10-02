@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HiveMind.Server.Migrations
 {
-    [DbContext(typeof(sqliteDBContext))]
+    [DbContext(typeof(SqliteDBContext))]
     [Migration("20261001125527_TRANSITIONSLOTINDEX2")]
     partial class TRANSITIONSLOTINDEX2
     {

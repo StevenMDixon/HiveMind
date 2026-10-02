@@ -12,6 +12,6 @@ public class SingleStrategy : ISelectionStrategy
             Queries.Insert(0, "Show, Equals, " + ShowName);
         }
 
-        return context.Retriever.GetMedia(Queries.ToArray(), retreiverType);
+        return context.Retriever.GetMedia([.. Queries], retreiverType);
     }
 }

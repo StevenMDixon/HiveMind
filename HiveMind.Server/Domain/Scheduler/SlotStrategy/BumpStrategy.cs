@@ -17,6 +17,6 @@ public class BumpStrategy : ISlotStrategy
 
         var mediaItems = retriever.GetMedia(source, retreiverType, 1, customFilter);
 
-        return mediaItems.Select(x => new GenerationResultItem() { MediaItem = x , Type = TransitionSlot.Bump, StartTime = 0, EndTime = x.Duration}).ToList();
+        return [.. mediaItems.Select(x => new GenerationResultItem() { MediaItem = x , Type = TransitionSlot.Bump, StartTime = 0, EndTime = x.Duration })];
     }
 }

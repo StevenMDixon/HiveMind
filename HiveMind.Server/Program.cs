@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Register the DbContext service
-builder.Services.AddDbContext<sqliteDBContext>(options => options.UseSqlite(sqliteDBContext.GetDataBaseConnectionString()));
+builder.Services.AddDbContext<SqliteDBContext>(options => options.UseSqlite(SqliteDBContext.GetDataBaseConnectionString()));
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -41,7 +41,7 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
-    var context = services.GetRequiredService<sqliteDBContext>();
+    var context = services.GetRequiredService<SqliteDBContext>();
     if (context.Database.GetPendingMigrations().Any())
     {
         context.Database.Migrate();

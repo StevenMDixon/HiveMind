@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HiveMind.Server.Migrations
 {
-    [DbContext(typeof(sqliteDBContext))]
+    [DbContext(typeof(SqliteDBContext))]
     [Migration("20260217143945_LibrariesAddTypes")]
     partial class LibrariesAddTypes
     {

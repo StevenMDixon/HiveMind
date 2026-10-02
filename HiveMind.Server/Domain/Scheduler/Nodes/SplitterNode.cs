@@ -33,7 +33,7 @@ public class SplitterNode: INode
 
         results.AddRange(splitter.Generate(node, SplitInterval));
 
-        if (!results.Any()) results.Add(node);
+        if (results.Count == 0) results.Add(node);
 
         return results;
     }

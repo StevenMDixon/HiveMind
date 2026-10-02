@@ -2,10 +2,8 @@
 
 namespace HiveMind.Server.Services;
 
-public class LibraryService: BaseService
+public class LibraryService(SqliteDBContext context) : BaseService(context)
 {
-    public LibraryService(sqliteDBContext context) : base(context) { }
-
     public IEnumerable<Library> GetAllLibraries()
     {
         return _context.Libraries;

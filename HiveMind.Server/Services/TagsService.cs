@@ -4,7 +4,7 @@ namespace HiveMind.Server.Services;
 
 public class TagsService: BaseService
 {
-    public TagsService(sqliteDBContext context) : base(context) { }
+    public TagsService(SqliteDBContext context) : base(context) { }
 
     public IEnumerable<Tags> GetAllTags()
     {

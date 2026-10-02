@@ -16,6 +16,6 @@ public class IdentStrategy: ISlotStrategy
 
         var mediaItems = retriever.GetMedia(source, retreiverType, 1, customFilter);
 
-        return mediaItems.Select(x => new GenerationResultItem() { MediaItem = x, Type = TransitionSlot.Ident, StartTime = 0, EndTime = x.Duration }).ToList();
+        return [.. mediaItems.Select(x => new GenerationResultItem() { MediaItem = x, Type = TransitionSlot.Ident, StartTime = 0, EndTime = x.Duration })];
     }
 }

@@ -4,7 +4,7 @@ namespace HiveMind.Server.Services;
 
 public class ScheduleService : BaseService
 {
-    public ScheduleService(sqliteDBContext context) : base(context) { }
+    public ScheduleService(SqliteDBContext context) : base(context) { }
 
     public void Create(SchedulingResult item)
     {

@@ -3,13 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HiveMind.Server.Services;
 
-public class DroneService: BaseService
+public class DroneService(SqliteDBContext context) : BaseService(context)
 {
-    public DroneService(sqliteDBContext context) : base(context) { }
-
     public List<Drone> GetAll()
     {
-        return _context.Drones.Include(x => x.Stations).ToList();
+        return [.. _context.Drones.Include(x => x.Stations)];
     }
 
     public Drone? GetByHostName(string hostName)
@@ -50,7 +48,6 @@ public class DroneService: BaseService
     public List<(string, string)> GetDroneSchedule(int droneId, DateOnly date)
     {
         var drone = _context.Drones.Where(x => x.DroneId == droneId).Include(x => x.Stations).ThenInclude(x => x.Strategy).FirstOrDefault();
-        
 
         if (drone != null)
         {
@@ -76,6 +73,6 @@ public class DroneService: BaseService
             return schedules;
         }
 
-        return new List<(string, string)>();
+        return [.. new List<(string, string)>()];
     }
 }

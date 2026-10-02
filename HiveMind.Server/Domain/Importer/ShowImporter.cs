@@ -5,7 +5,7 @@ using static HiveMind.Server.Domain.Enums.QueryEnums;
 
 namespace HiveMind.Server.Domain.Importer;
 
-public class ShowImporter: IImporter
+public partial class ShowImporter: IImporter
 {
     public List<VideoMeta> Generate(List<string> files, string mountedPath, string libraryPath, ShowService showService, TagsService tagService, QueryService queryService)
     {
@@ -27,12 +27,12 @@ public class ShowImporter: IImporter
             int? showId = null;
             int episodeNumber = 0;
 
-            if (tags.Count() > 0)
+            if (tags.Count > 0)
             {
-                var formattedShowName = Regex.Replace(tags.First(), @"\s\(.*\)$", "").Trim();
+                var formattedShowName = ShowRegex().Replace(tags.First(), "").Trim();
 
                 if(!newQueries.ContainsKey(formattedShowName)) {
-                    newQueries[formattedShowName] = new HashSet<string>();
+                    newQueries[formattedShowName] = [];
                 }
 
                 if (showDict.ContainsKey(formattedShowName))
@@ -46,17 +46,18 @@ public class ShowImporter: IImporter
                     showDict[formattedShowName] = newShow;
                 }
 
-                if (tags.Count() > 1)
+                if (tags.Count > 1)
                 {
-                    var formattedSeasonNumber = Regex.Replace(tags[1], @"[^0-9]", "");
-                    Int32.TryParse(formattedSeasonNumber, out seasonNumber);
+                    var formattedSeasonNumber = SeasonNumber().Replace(tags[1], "");
+                    var success = Int32.TryParse(formattedSeasonNumber, out seasonNumber);
+                    if(!success) seasonNumber = 0;
 
                     newQueries[formattedShowName].Add(formattedSeasonNumber);
                 }
 
                 var r = ExtractEpisodeMeta(fileName);
-                if (seasonNumber == 0 && r?.season != null) seasonNumber = r.season;
-                episodeNumber = r?.episodeStart ?? 0;
+                if (seasonNumber == 0 && r?.Season != null) seasonNumber = r.Season;
+                episodeNumber = r?.EpisodeStart ?? 0;
 
                 results.Add(new VideoMeta
                 {
@@ -77,58 +78,55 @@ public class ShowImporter: IImporter
         return results;
     }
 
-    private List<Entities.Query> ConvertToQuery(string ShowTitle, string Season)
+    private static List<Entities.Query> ConvertToQuery(string ShowTitle, string Season)
     {
         return new List<Entities.Query>
         {
-            new Entities.Query
+            new Entities.Query()
             {
                 Name= ShowTitle,
                 QueryType = QueryType.Show,
-                Filters = new List<Entities.QueryFilters>
-                {
-                    new Entities.QueryFilters
+                Filters =
+                [
+                    new()
                     {
                         Field = QueryAllowedFields.Show,
                         Operator = QueryAllowedOperators.Equals,
                         Value = ShowTitle
                     }
-                }
+                ]
             },
-            new Entities.Query
+            new Entities.Query()
             {
-                Name= ShowTitle + " - Season " + Season,
+                Name = ShowTitle + " - Season " + Season,
                 QueryType = QueryType.ShowAndSeason,
-                Filters = new List<Entities.QueryFilters>
-                {
-                    new Entities.QueryFilters
+                Filters =
+                [
+                    new()
                     {
                         Field = QueryAllowedFields.Show,
                         Operator = QueryAllowedOperators.Equals,
                         Value = ShowTitle
                     },
-                    new Entities.QueryFilters
+                    new()
                     {
                         Field = QueryAllowedFields.SeasonNumber,
                         Operator = QueryAllowedOperators.Equals,
                         Value = Season
                     }
-                }
+                ]
             }
         };
     }
 
-    private record EpisodeMeta(int season, int episodeStart, int? episodeEnd);
+    private record EpisodeMeta(int Season, int EpisodeStart, int? EpisodeEnd);
     private static EpisodeMeta? ExtractEpisodeMeta(string fileName)
     {
         if (string.IsNullOrWhiteSpace(fileName))
             return null;
 
         // SxxExx or SxxExx-Exx
-        var sxeMatch = Regex.Match(
-            fileName,
-            @"\b[Ss](\d{1,2})[.\s_-]*[Ee](\d{1,2})(?:-(?:[Ee]?)?(\d{1,2}))?",
-            RegexOptions.IgnoreCase);
+        var sxeMatch = SxeMatch().Match(fileName);
 
         if (sxeMatch.Success)
         {
@@ -143,7 +141,7 @@ public class ShowImporter: IImporter
         }
 
         // Compact 3-digit format (101)
-        var compactMatch = Regex.Match(fileName, @"\b(\d)(\d{2})\b");
+        var compactMatch = CompactMatch().Match(fileName);
 
         if (compactMatch.Success)
         {
@@ -155,7 +153,7 @@ public class ShowImporter: IImporter
         }
 
         // Leading episode only (01 - Title)
-        var leadingMatch = Regex.Match(fileName, @"^(\d{1,2})\s*-");
+        var leadingMatch = LeadingMatch().Match(fileName);
 
         if (leadingMatch.Success)
         {
@@ -168,4 +166,15 @@ public class ShowImporter: IImporter
 
         return null;
     }
+
+    [GeneratedRegex(@"\s\(.*\)$")]
+    private static partial Regex ShowRegex();
+    [GeneratedRegex(@"[^0-9]")]
+    private static partial Regex SeasonNumber();
+    [GeneratedRegex(@"\b(\d)(\d{2})\b")]
+    private static partial Regex CompactMatch();
+    [GeneratedRegex(@"^(\d{1,2})\s*-")]
+    private static partial Regex LeadingMatch();
+    [GeneratedRegex(@"\b[Ss](\d{1,2})[.\s_-]*[Ee](\d{1,2})(?:-(?:[Ee]?)?(\d{1,2}))?", RegexOptions.IgnoreCase, "en-US")]
+    private static partial Regex SxeMatch();
 }

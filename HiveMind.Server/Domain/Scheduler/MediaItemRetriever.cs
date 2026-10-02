@@ -4,13 +4,9 @@ using HiveMind.Server.Services;
 
 namespace HiveMind.Server.Domain.Scheduler;
 
-public class MediaItemRetriever
+public class MediaItemRetriever(QueryService queryService)
 {
-    private readonly QueryService _QueryService;
-    public MediaItemRetriever(QueryService queryService)
-    {
-        _QueryService = queryService;
-    }
+    private readonly QueryService _QueryService = queryService;
 
     public List<MediaItem> GetMedia(int queryId, RetreiverType retrieverType, int count = 1, List<(string, string, string)>? customFilters = null)
     {
@@ -18,13 +14,13 @@ public class MediaItemRetriever
         {
             case RetreiverType.Random:
             var query = _QueryService.GetMediaItemsByQueryId(queryId, customFilters);
-            return query.OrderBy(r => Guid.NewGuid()).Take(count).ToList();
+            return [.. query.OrderBy(r => Guid.NewGuid()).Take(count)];
             case RetreiverType.Sequential:
-                return _QueryService.GetMediaItemsByQueryId(queryId, customFilters).Take(count).ToList();
+                return [.. _QueryService.GetMediaItemsByQueryId(queryId, customFilters).Take(count)];
             case RetreiverType.Shuffle:
-                return _QueryService.GetMediaItemsByQueryId(queryId, customFilters).Take(count).ToList();   
+                return [.. _QueryService.GetMediaItemsByQueryId(queryId, customFilters).Take(count)];   
             default:
-            return new List<MediaItem>();
+            return [];
         }
     }
 
@@ -34,20 +30,20 @@ public class MediaItemRetriever
 
         if (queryId == null)
         {
-            return new List<MediaItem>();
+            return [];
         }
 
         switch (retrieverType)
         {
             case RetreiverType.Random:
                 var query = _QueryService.GetMediaItemsByQueryId(queryId.Value, customFilters);
-                return query.OrderBy(r => Guid.NewGuid()).Take(count).ToList();
+                return [.. query.OrderBy(r => Guid.NewGuid()).Take(count)];
             case RetreiverType.Sequential:
-                return _QueryService.GetMediaItemsByQueryId(queryId.Value, customFilters).Take(count).ToList();
+                return [.. _QueryService.GetMediaItemsByQueryId(queryId.Value, customFilters).Take(count)];
             case RetreiverType.Shuffle:
-                return _QueryService.GetMediaItemsByQueryId(queryId.Value, customFilters).Take(count).ToList();
+                return [.. _QueryService.GetMediaItemsByQueryId(queryId.Value, customFilters).Take(count)];
             default:
-                return new List<MediaItem>();
+                return [];
         }
     }
 
@@ -70,13 +66,13 @@ public class MediaItemRetriever
         {
             case RetreiverType.Random:
                 var results = _QueryService.GetMediaItemsByQueries(query);
-                return results.OrderBy(r => Guid.NewGuid()).Take(count).ToList();
+                return [.. results.OrderBy(r => Guid.NewGuid()).Take(count)];
             case RetreiverType.Sequential:
-                return _QueryService.GetMediaItemsByQueries(query).Take(count).ToList();
+                return [.. _QueryService.GetMediaItemsByQueries(query).Take(count)];
             case RetreiverType.Shuffle:
-                return _QueryService.GetMediaItemsByQueries(query).Take(count).ToList();
+                return [.. _QueryService.GetMediaItemsByQueries(query).Take(count)];
             default:
-                return new List<MediaItem>();
+                return [];
         }
     }
 
@@ -94,7 +90,7 @@ public class MediaItemRetriever
                 var queryParts = source.Value.Split("| ");
                 return GetMedia(queryParts, retrieverType, count, customFilters);
             default:
-                return new List<MediaItem>();
+                return [];
         }
     }
 }

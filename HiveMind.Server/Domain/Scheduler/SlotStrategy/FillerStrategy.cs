@@ -24,7 +24,7 @@ public class FillerStrategy : ISlotStrategy
 
             var mediaItems = retriever.GetMedia(source, retreiverType, 1, customFilter);
 
-            if(mediaItems.Any())
+            if(mediaItems.Count != 0)
             {
                 var selectedMedia = mediaItems.First();
                 remainingDuration -= selectedMedia.Duration;

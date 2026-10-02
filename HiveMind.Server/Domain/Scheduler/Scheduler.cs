@@ -13,6 +13,11 @@ public class Scheduler
 
     private readonly MediaItemRetriever _retriever;
 
+    private readonly JsonSerializerOptions options = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
     public Scheduler(IServiceScope scope)
     {
         _scope = scope;
@@ -31,25 +36,20 @@ public class Scheduler
 
         if (lineup != null)
         {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
             options.Converters.Add(new JsonStringEnumConverter());
 
-            scheduleNodes.AddRange(JsonSerializer.Deserialize<List<INode>>(lineup.JsonData, options) ?? new List<INode>());
+            scheduleNodes.AddRange(JsonSerializer.Deserialize<List<INode>>(lineup.JsonData, options) ?? [.. new List<INode>()]);
         }
 
-        var scheduleContext = new ScheduleContext() { date = scheduledDate, ProgramId = programStrategyID };
+        var scheduleContext = new ScheduleContext() { Date = scheduledDate, ProgramId = programStrategyID };
 
-        if (scheduleNodes.Any())
+        if (scheduleNodes.Count != 0)
         {
             var result = ExecuteSchedule(scheduleNodes, scheduleContext);
 
             if (result != null)
             {
-               var sheduleResultLocation = WriteOutSchedule(scheduledDate.ToString("MMddyyyy", CultureInfo.InvariantCulture), result.outputLoc, programStrategyID.ToString(), JsonSerializer.Serialize(result));
+               var sheduleResultLocation = WriteOutSchedule(scheduledDate.ToString("MMddyyyy", CultureInfo.InvariantCulture), result.OutputLoc, programStrategyID.ToString(), JsonSerializer.Serialize(result));
                 var scheduleResult = new SchedulingResult()
                 {
                     Date = scheduledDate,
@@ -64,7 +64,7 @@ public class Scheduler
         }
     }
 
-    public record GenerationResult(string outputLoc, List<ScheduleItemResult> items, TimeOnly startTime);
+    public record GenerationResult(string OutputLoc, List<ScheduleItemResult> Items, TimeOnly StartTime);
 
     public GenerationResult ExecuteSchedule(List<INode> scheduleNodes, ScheduleContext scheduleData)
     {
@@ -80,7 +80,7 @@ public class Scheduler
 
         var results = new List<GenerationResultItem>();
 
-        for (var i = scheduleNodes.Count() - 1; i >= 0 ; i--)
+        for (var i = scheduleNodes.Count - 1; i >= 0 ; i--)
         {
             var node = scheduleNodes[i];
 
@@ -93,7 +93,7 @@ public class Scheduler
 
         var outPutLocation = generationContext.Settings["Export_Location"];
 
-        var generationResult = new GenerationResult(outPutLocation, results.Select(x => new ScheduleItemResult("", x.MediaItem.FilePath, x.MediaItem.Title, x.Duration(), x.StartTime, x.EndTime, x.MediaItem.HasBlackBars, x.MediaItem.Resolution, x.MediaItem?.Show?.Rating.ToString() ?? "")).ToList(), TimeOnly.MinValue);
+        var generationResult = new GenerationResult(outPutLocation, [.. results.Select(x => new ScheduleItemResult("", x.MediaItem.FilePath, x.MediaItem.Title, x.Duration(), x.StartTime, x.EndTime, x.MediaItem.HasBlackBars, x.MediaItem.Resolution, x.MediaItem?.Show?.Rating.ToString() ?? ""))], TimeOnly.MinValue);
 
         return generationResult;
     }
@@ -105,7 +105,7 @@ public class Scheduler
         var programEventService = _scope.ServiceProvider.GetRequiredService<ProgramEventService>();
         var upcomingEvents = programEventService.GetUpComingEvents(programStrategyID, currentDate);
 
-        return upcomingEvents.Select(e => new SourceItem() {Type = SourceType.Id, Value = e.QueryId.ToString()}).ToList();
+        return [.. upcomingEvents.Select(e => new SourceItem() {Type = SourceType.Id, Value = e.QueryId.ToString()})];
     }
 
     public string WriteOutSchedule(string fileName, string path, string programFolder, string json)
@@ -114,7 +114,7 @@ public class Scheduler
 
         string fullPath = Path.Combine(defaultPath, programFolder, fileName + ".json") ?? "./";
         string directory = Path.GetDirectoryName(fullPath) ?? "./";
-        var outDir = Directory.CreateDirectory(directory);
+        Directory.CreateDirectory(directory);
         File.WriteAllText(fullPath, json);
 
         return fullPath;

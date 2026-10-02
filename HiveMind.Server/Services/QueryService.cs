@@ -5,10 +5,8 @@ namespace HiveMind.Server.Services;
 using HiveMind.Server.Domain.Enums;
 using HiveMind.Server.QueryEngine;
 
-public class QueryService: BaseService
+public class QueryService(SqliteDBContext context) : BaseService(context)
 {
-    public QueryService(sqliteDBContext context) : base(context) { }
-
     public IEnumerable<Query> GetAllQueries()
     {
         return _context.Queries.Include(c => c.Filters);
@@ -60,30 +58,30 @@ public class QueryService: BaseService
 
         var queryRequest = new QueryRequest
         {
-            Filters = query.Filters.Select(f => new FilterRule(f.Field, f.Operator, f.Value)).ToList()
+            Filters = [.. query.Filters.Select(f => new FilterRule(f.Field, f.Operator, f.Value))]
         };
 
-        if(customFilters != null && customFilters.Any())
+        if(customFilters != null && customFilters.Count > 0)
         {
-            queryRequest.Filters.AddRange(customFilters.Select(f => new FilterRule(Enum.Parse<QueryEnums.QueryAllowedFields>(f.Item1), Enum.Parse<QueryEnums.QueryAllowedOperators>(f.Item2), f.Item3)).ToList());
+            queryRequest.Filters.AddRange([.. customFilters.Select(f => new FilterRule(Enum.Parse<QueryEnums.QueryAllowedFields>(f.Item1), Enum.Parse<QueryEnums.QueryAllowedOperators>(f.Item2), f.Item3))]);
         }
 
         var mediaItemsQuery = _context.MediaItems.AsQueryable();
         mediaItemsQuery = MediaQueryBuilder.Apply(mediaItemsQuery, queryRequest);
 
-        return mediaItemsQuery.ToList();
+        return [.. mediaItemsQuery];
     }
 
     public ICollection<MediaItem> GetMediaItemsByQueryGroup(ICollection<int> queryIds, List<(string, string, string)>? customFilters = null)
     {
         var queries = _context.Queries.Include(q => q.Filters).Where(q => queryIds.Contains(q.QueryId)).ToList();
 
-        if (queries == null || !queries.Any())
+        if (queries == null || !(queries.Count > 0))
         {
             return Array.Empty<MediaItem>();
         }
 
-        var filtersList = queries.Select(q => q.Filters?.Select(f => new FilterRule(f.Field, f.Operator, f.Value)).ToList() ?? new List<FilterRule>()).ToList();
+        var filtersList = queries.Select(q => q.Filters?.Select(f => new FilterRule(f.Field, f.Operator, f.Value)).ToList() ?? []).ToList();
 
         if (customFilters != null)
         {
@@ -94,7 +92,7 @@ public class QueryService: BaseService
 
         var mediaItemsQuery = MediaQueryBuilder.ApplyWithUnion(_context.MediaItems, queryUnionRequest);
 
-        return mediaItemsQuery.ToList();
+        return [.. mediaItemsQuery];
     }
 
     public ICollection<MediaItem> GetMediaItemsByQueries(List<(string, string, string)> customFilters)
@@ -108,7 +106,7 @@ public class QueryService: BaseService
 
         var mediaItemsQuery = MediaQueryBuilder.ApplyWithUnion(_context.MediaItems, queryUnionRequest);
 
-        return mediaItemsQuery.ToList();
+        return [.. mediaItemsQuery];
     }
 
     public void Create(List<Query> queries)

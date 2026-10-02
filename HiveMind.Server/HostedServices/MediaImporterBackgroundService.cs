@@ -6,18 +6,11 @@ using System.Text.RegularExpressions;
 
 namespace HiveMind.Server.HostedServices;
 
-public class MediaImporterBackgroundService : BackgroundService
+public partial class MediaImporterBackgroundService(IServiceProvider serviceProvider, ILogger<MediaImporterBackgroundService> logger) : BackgroundService
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<MediaImporterBackgroundService> _logger;
-
-    public MediaImporterBackgroundService(IServiceProvider serviceProvider, ILogger<MediaImporterBackgroundService> logger)
-    {
-        _serviceProvider = serviceProvider;
-        _logger = logger;
-    }
-
-    private string fileFormats = "mp4|avi|mkv|mov|wmv|flv|webm|m4v";
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private readonly ILogger<MediaImporterBackgroundService> _logger = logger;
+    private readonly string fileFormats = "mp4|avi|mkv|mov|wmv|flv|webm|m4v";
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -64,7 +57,7 @@ public class MediaImporterBackgroundService : BackgroundService
                             files.AddRange(
                                 Directory.GetFiles(mountedPath + targetLibary.LibraryPath, "*.*", SearchOption.AllDirectories)
                                 .Where(x => Regex.IsMatch(x, $".*[.]({fileFormats})$"))
-                                .Where(x => pathsToIgnore.Count() == 0 || !pathsToIgnore.Any(path => x.Contains(path)))
+                                .Where(x => pathsToIgnore.Length == 0 || !pathsToIgnore.Any(path => x.Contains(path)))
                                 );
                         }
                         catch (Exception e)
@@ -72,9 +65,9 @@ public class MediaImporterBackgroundService : BackgroundService
                             _logger.LogError(e, "Error while getting files from library path: {LibraryPath}", targetLibary.LibraryPath);
                         }
 
-                        _logger.LogInformation("Found files: {Count}", files.Count());
+                        //_logger.LogInformation("Found files: {Count}", files.Count);
 
-                        mediaItemsToDelete = currentMediaItems.ExceptBy(files, x => x.FilePath).ToList();
+                        mediaItemsToDelete = [.. currentMediaItems.ExceptBy(files, x => x.FilePath)];
 
                         var importer = ImporterFactory.Resolve(targetLibary.LibraryType);
 
@@ -82,7 +75,7 @@ public class MediaImporterBackgroundService : BackgroundService
                         var showService = scope.ServiceProvider.GetRequiredService<ShowService>();
                         var queryService = scope.ServiceProvider.GetRequiredService<QueryService>();
 
-                        var importerResults = importer.Generate(files.Where(x => !currentMediaItems.Any(y => y.FilePath == x)).ToList(), mountedPath, targetLibary.LibraryPath, showService, tagService, queryService);
+                        var importerResults = importer.Generate([.. files.Where(x => !currentMediaItems.Any(y => y.FilePath == x))], mountedPath, targetLibary.LibraryPath, showService, tagService, queryService);
 
                         foreach (var importerResult in importerResults)
                         {
@@ -97,10 +90,10 @@ public class MediaImporterBackgroundService : BackgroundService
                             }
                             else
                             {
-                                _logger.LogInformation($"Skipping file: {importerResult.Path}: No video stream");
+                                _logger.LogInformation("Skipping file: {FilePath}: No video stream", importerResult.Path);
                             }
 
-                            var needsCropping = await DetectCropAsync(importerResult.FullPath);
+                            var needsCropping = await DetectCropAsync(importerResult.FullPath, stoppingToken);
                             
                             if(needsCropping != null && needsCropping.X > 40) importerResult.HasBlackBars = true;
 
@@ -112,7 +105,7 @@ public class MediaImporterBackgroundService : BackgroundService
 
                     mediaItemService.AddMediaItems(mediaItems.Select(x => ConvertMetaToMediaItem(x, targetLibary.LibraryId)));    
 
-                    if(mediaItemsToDelete.Any())
+                    if(mediaItemsToDelete.Count != 0)
                     {
                         mediaItemService.DeleteMany(mediaItemsToDelete);
                     }
@@ -126,7 +119,7 @@ public class MediaImporterBackgroundService : BackgroundService
         }
     }
 
-    private Entities.MediaItem ConvertMetaToMediaItem(VideoMeta meta, int libraryId)
+    private static Entities.MediaItem ConvertMetaToMediaItem(VideoMeta meta, int libraryId)
     {
         return new Entities.MediaItem
         {
@@ -222,9 +215,7 @@ public class MediaImporterBackgroundService : BackgroundService
 
     private static CropSettings? ParseCrop(string output)
     {
-        var matches = Regex.Matches(
-            output,
-            @"crop=(\d+):(\d+):(\d+):(\d+)");
+        var matches = CropRegex().Matches(output);
 
         if (matches.Count == 0)
             return null;
@@ -238,4 +229,7 @@ public class MediaImporterBackgroundService : BackgroundService
             int.Parse(match.Groups[3].Value),
             int.Parse(match.Groups[4].Value));
     }
+
+    [GeneratedRegex(@"crop=(\d+):(\d+):(\d+):(\d+)")]
+    private static partial Regex CropRegex();
 }

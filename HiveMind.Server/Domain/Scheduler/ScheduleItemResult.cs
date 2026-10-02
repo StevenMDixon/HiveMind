@@ -2,13 +2,13 @@
 
 public record ScheduleItemResult
 (
-    string logo,
-    string path,
-    string name,
-    int duration,
-    int startTime,
-    int stopTime,
-    bool hasBlackBars,
-    string resolution,
-    string rating
+    string Logo,
+    string Path,
+    string Name,
+    int Duration,
+    int StartTime,
+    int StopTime,
+    bool HasBlackBars,
+    string Resolution,
+    string Rating
 );

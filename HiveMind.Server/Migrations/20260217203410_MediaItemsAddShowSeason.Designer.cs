@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HiveMind.Server.Migrations
 {
-    [DbContext(typeof(sqliteDBContext))]
+    [DbContext(typeof(SqliteDBContext))]
     [Migration("20260217203410_MediaItemsAddShowSeason")]
     partial class MediaItemsAddShowSeason
     {

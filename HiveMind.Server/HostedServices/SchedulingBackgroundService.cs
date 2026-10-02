@@ -5,17 +5,12 @@ using HiveMind.Server.Services;
 
 namespace HiveMind.Server.HostedServices;
 
-public class SchedulingBackgroundService : BackgroundService
+public class SchedulingBackgroundService(IServiceProvider serviceProvider, ILogger<SchedulingBackgroundService> logger) : BackgroundService
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<SchedulingBackgroundService> _logger;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private readonly ILogger<SchedulingBackgroundService> _logger = logger;
 
-    public record ScheduleContext(DateOnly date, ProgramStrategyLineup? programStrategyLineup = null);
-    public SchedulingBackgroundService(IServiceProvider serviceProvider, ILogger<SchedulingBackgroundService> logger)
-    {
-        _serviceProvider = serviceProvider;
-        _logger = logger;
-    }
+    public record ScheduleContext(DateOnly Date, ProgramStrategyLineup? ProgramStrategyLineup = null);
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -62,7 +57,7 @@ public class SchedulingBackgroundService : BackgroundService
         }
     }
 
-    private async Task CreateBatch(ProgramStrategy programStrategy, BatchService batchService, ProgramStrategyService programStrategyService)
+    private static async Task CreateBatch(ProgramStrategy programStrategy, BatchService batchService, ProgramStrategyService programStrategyService)
     {
         var batchItems = new List<ScheduleBatchItem>();
 

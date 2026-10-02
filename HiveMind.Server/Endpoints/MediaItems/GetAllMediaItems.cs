@@ -16,7 +16,7 @@ public class GetAllMediaItems
     public record Library();
 
     public record MediaItem(int MediaItemId, string Title, double Duration, int LibraryId, string? MediaType, string FilePath, int Width, int Height, string Resolution, int EpisodeNumber, int SeasonNumber, Show? Show, IEnumerable<Tag> Tags);
-    public record GetAllMediaItemsResponse(List<MediaItem> mediaItems);
+    public record GetAllMediaItemsResponse(List<MediaItem> MediaItems);
 
     public static Results<Ok<GetAllMediaItemsResponse>, NotFound> Handle(MediaItemService mediaItemService)
     {
@@ -40,6 +40,6 @@ public class GetAllMediaItems
                 )
         );
 
-        return TypedResults.Ok(new GetAllMediaItemsResponse(mappedMediaItems.ToList()));
+        return TypedResults.Ok(new GetAllMediaItemsResponse([.. mappedMediaItems]));
     }
 }

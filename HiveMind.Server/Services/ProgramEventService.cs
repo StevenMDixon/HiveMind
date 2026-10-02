@@ -3,9 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HiveMind.Server.Services;
 
-public class ProgramEventService: BaseService
+public class ProgramEventService(SqliteDBContext context) : BaseService(context)
 {
-    public ProgramEventService(sqliteDBContext context) : base(context) { }
 
     public IEnumerable<ProgramEvent> GetAllProgramEvents()
     {

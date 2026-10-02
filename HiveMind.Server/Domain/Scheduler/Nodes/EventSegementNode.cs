@@ -8,7 +8,7 @@ public class EventSegementNode: INode
 
     public int Duration { get; set; }
 
-    public Dictionary<TransitionSlot, SourceItem> Sources { get; set; } = new Dictionary<TransitionSlot, SourceItem>();
+    public Dictionary<TransitionSlot, SourceItem> Sources { get; set; } = [];
 
     public IEnumerable<GenerationResultItem> Generate(GenerationContext context)
     {

@@ -4,7 +4,7 @@ namespace HiveMind.Server.Services;
 
 public class StationService: BaseService
 {
-    public StationService(sqliteDBContext context) : base(context) { }
+    public StationService(SqliteDBContext context) : base(context) { }
 
     public IEnumerable<Station> GetAllStations()
     {

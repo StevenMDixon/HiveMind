@@ -15,10 +15,10 @@ public class MediaServerNode: INode
             Duration = Duration * 60 * 1000,
         };
 
-        return new List<GenerationResultItem>() { new GenerationResultItem() {
+        return [.. new List<GenerationResultItem>() { new() {
             MediaItem = mediaItem,
             StartTime = 0,
             EndTime = mediaItem.Duration,
-        } };
+        } }];
     }
 }

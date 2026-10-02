@@ -60,9 +60,9 @@ public static class QueryEnums
         };
     }
 
-    public record QueryOptions(string name, string type, Option[] options);
+    public record QueryOptions(string Name, string Type, Option[] Options);
 
-    public record Option(int id, string name);
+    public record Option(int Id, string Name);
 
     public static List<QueryOptions> GetAllowedOptions()
     {

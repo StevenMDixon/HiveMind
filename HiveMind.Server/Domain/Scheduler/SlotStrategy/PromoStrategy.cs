@@ -8,7 +8,7 @@ public class PromoStrategy : ISlotStrategy
 {
     public List<GenerationResultItem> Generate(GenerationContext context, SourceItem source, string showName, int Duration, RetreiverType retreiverType)
     {
-        if(context.PromoQueries.Any())
+        if(context.PromoQueries.Count != 0)
         {
             int randomIndex = Random.Shared.Next(context.PromoQueries.Count);
 
@@ -21,9 +21,9 @@ public class PromoStrategy : ISlotStrategy
 
             var promo = context.Retriever.GetMedia(selectedQuery, retreiverType, 1, customFilter).FirstOrDefault();
 
-            return promo != null ? new List<GenerationResultItem> { new GenerationResultItem() { MediaItem = promo, StartTime = 0, EndTime = promo.Duration, Type = TransitionSlot.Promo } } : new List<GenerationResultItem>();
+            return promo != null ? [new GenerationResultItem() { MediaItem = promo, StartTime = 0, EndTime = promo.Duration, Type = TransitionSlot.Promo }] : [.. new List<GenerationResultItem>()];
         }
 
-        return new List<GenerationResultItem>();
+        return [.. new List<GenerationResultItem>()];
     }
 }

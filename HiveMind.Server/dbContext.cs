@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HiveMind.Server;
 
-public class sqliteDBContext: DbContext
+public class SqliteDBContext(DbContextOptions<SqliteDBContext> options) : DbContext(options)
 {
     public DbSet<Query> Queries { get; set; }
     public DbSet<QueryFilters> QueryFilters { get; set; }
@@ -24,8 +24,6 @@ public class sqliteDBContext: DbContext
     public DbSet<SchedulingResult> SchedulingResults { get; set; }
     public DbSet<Drone> Drones { get; set; }
     public DbSet<ProgramEvent> ProgramEvents { get; set; }
-
-    public sqliteDBContext(DbContextOptions<sqliteDBContext> options) : base(options){ }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

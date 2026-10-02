@@ -24,14 +24,8 @@ public enum TransitionSlot
 
 
 [AttributeUsage(AttributeTargets.Field)]
-public class Weight : Attribute
+public class Weight(string description, int maxUsers) : Attribute
 {
-    public string Description { get; }
-    public int MaxUsers { get; }
-
-    public Weight(string description, int maxUsers)
-    {
-        Description = description;
-        MaxUsers = maxUsers;
-    }
+    public string Description { get; } = description;
+    public int MaxUsers { get; } = maxUsers;
 }

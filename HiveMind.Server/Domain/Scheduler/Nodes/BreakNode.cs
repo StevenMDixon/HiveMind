@@ -36,7 +36,7 @@ public class BreakNode: INode
         return results;
     }
 
-    private List<GenerationResultItem> ResolveSlots(GenerationContext context, int fillDuration, TransitionType type, Dictionary<TransitionSlot, SourceItem> sources, Dictionary<TransitionType, List<TransitionTemplateSlot>> slots)
+    private static List<GenerationResultItem> ResolveSlots(GenerationContext context, int fillDuration, TransitionType type, Dictionary<TransitionSlot, SourceItem> sources, Dictionary<TransitionType, List<TransitionTemplateSlot>> slots)
     {
         var results = new List<GenerationResultItem>();
 
@@ -45,17 +45,17 @@ public class BreakNode: INode
 
         sources[TransitionSlot.Promo] = context.PromoQueries[random];
 
-        var breakSlots = slots.ContainsKey(type) ? slots[type] : new List<TransitionTemplateSlot>();
+        var breakSlots = slots.ContainsKey(type) ? slots[type] : [];
 
-        if (breakSlots.Any())
+        if (breakSlots.Count != 0)
         {
             results.AddRange(GenerateBreak(context, fillDuration, breakSlots, sources));
         }
         else
         {
-            var fillerMedia = new Dictionary<TransitionSlot, SourceItem> { { TransitionSlot.Filler, sources.ContainsKey(TransitionSlot.Filler) ? sources[TransitionSlot.Filler] : new SourceItem() } };
+            var fillerMedia = new Dictionary<TransitionSlot, SourceItem> { { TransitionSlot.Filler, sources.ContainsKey(TransitionSlot.Filler) ? sources[TransitionSlot.Filler] : new() } };
 
-            results.AddRange(GenerateBreak(context, fillDuration, new List<TransitionTemplateSlot> { new TransitionTemplateSlot() { Slot = TransitionSlot.Filler } }, fillerMedia));
+            results.AddRange(GenerateBreak(context, fillDuration, [new() { Slot = TransitionSlot.Filler }], fillerMedia));
         }
 
         return results;
@@ -105,7 +105,7 @@ public class BreakNode: INode
 
             var nodeEvents = slotStrategy.Generate(context, slotMedia[mappedSlot], currentShow, remainingDuration, RetreiverType.Random);
 
-            if (nodeEvents.Any())
+            if (nodeEvents.Count != 0)
             {
                 GenerationResultItem? selectedMedia = null;
 
@@ -113,14 +113,14 @@ public class BreakNode: INode
                 {
                     selectedMedia = nodeEvents.First();
 
-                    if (nodeEvents.Count() > 1 && matchedBumps.Count < slots.Count(x => x.Slot.Equals(TransitionSlot.OutBump)))
+                    if (nodeEvents.Count > 1 && matchedBumps.Count < slots.Count(x => x.Slot.Equals(TransitionSlot.OutBump)))
                     {
                         var inBump = nodeEvents.ElementAt(1);
                         remainingDuration -= inBump.MediaItem.Duration;
                         matchedBumps.Add(inBump);
                     }
                 }
-                else if (slot.Slot.Equals(TransitionSlot.InBump) && matchedBumps.Any())
+                else if (slot.Slot.Equals(TransitionSlot.InBump) && matchedBumps.Count != 0)
                 {
                     selectedMedia = matchedBumps.Last();
                     matchedBumps.RemoveAt(matchedBumps.Count - 1);
@@ -141,17 +141,17 @@ public class BreakNode: INode
         }
 
         // fill in the filler :-)
-        if (fillerLocation.Any())
+        if (fillerLocation.Count != 0)
         {
-            var remainingFillDuration = remainingDuration / fillerLocation.Count();
+            var remainingFillDuration = remainingDuration / fillerLocation.Count;
 
             var refundedTime = 0;
 
-            for (int i = 0; i < fillerLocation.Count(); i++)
+            for (int i = 0; i < fillerLocation.Count; i++)
             {
                 var needingFiller = fillerLocation[i];
 
-                var fillerStrategy = i == fillerLocation.Count() - 1 ? SlotStrategyResolver.Resolve(TransitionSlot.CutFiller) : SlotStrategyResolver.Resolve(TransitionSlot.Filler);
+                var fillerStrategy = i == fillerLocation.Count - 1 ? SlotStrategyResolver.Resolve(TransitionSlot.CutFiller) : SlotStrategyResolver.Resolve(TransitionSlot.Filler);
 
                 var filled = fillerStrategy.Generate(context, slotMedia[TransitionSlot.Filler], currentShow, remainingFillDuration + refundedTime, RetreiverType.Random);
 

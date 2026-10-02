@@ -2,10 +2,8 @@
 
 namespace HiveMind.Server.Services;
 
-public class SettingsService: BaseService
+public class SettingsService(SqliteDBContext context) : BaseService(context)
 {
-    public SettingsService(sqliteDBContext context) : base(context) { }
-
     public IEnumerable<Settings> GetAllSettings()
     {
         return _context.Settings;

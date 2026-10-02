@@ -4,7 +4,7 @@ namespace HiveMind.Server.Services;
 
 public class ShowService:BaseService
 {
-    public ShowService(sqliteDBContext context) : base(context) { }
+    public ShowService(SqliteDBContext context) : base(context) { }
 
     public IEnumerable<Show> GetAllShows()
     {

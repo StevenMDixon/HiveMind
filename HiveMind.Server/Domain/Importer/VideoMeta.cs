@@ -15,5 +15,5 @@ public class VideoMeta
     public int? ShowId { get; set; } = null;
     public int SeasonNumber { get; set; } = 0;
     public int EpisodeNumber { get; set; } = 0;
-    public ICollection<Tags> Tags { get; set; } = new List<Tags>();
+    public ICollection<Tags> Tags { get; set; } = [];
 }

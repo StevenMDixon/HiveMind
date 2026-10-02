@@ -3,10 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HiveMind.Server.Services;
 
-public class LineupService:BaseService
+public class LineupService(SqliteDBContext context) : BaseService(context)
 {
-    public LineupService(sqliteDBContext context) : base(context) { }
-
     public IEnumerable<Lineup> GetAllLineups()
     {
         return _context.Lineups;
