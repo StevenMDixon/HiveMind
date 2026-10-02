@@ -12,7 +12,9 @@ public class GetById
         app.MapGet("/{id:int}", Handle).WithName("GetProgramStrategyById");
     }
 
-    public record ProgramStrategy(int ProgramStrategyId, string Name, int AdvancedDays, bool Active, DateOnly? LastScheduleDate);
+    public record ProgramStrategy(int ProgramStrategyId, string Name, int AdvancedDays, bool Active, DateOnly? LastScheduleDate, List<StrategyLineup> ProgramStrategyItems);
+
+    public record StrategyLineup(int ProgramStrategyLineupId, int? ProgramStrategyId, int? LineUpId, LineupSelectionType SelectionType, String SelectionOption);
 
     public static Results<Ok<ProgramStrategy>, NotFound<string>> Handle(ProgramStrategyService programStrategyService, [FromRoute] int id)
     {
@@ -25,7 +27,9 @@ public class GetById
                 strategy.Name,
                 strategy.AdvancedDays,
                 strategy.Active,
-                strategy.LastScheduleDate            ));
+                strategy.LastScheduleDate,
+                strategy.Lineups?.Select(x => new StrategyLineup(x.ProgramStrategyLineupId, x.ProgramStrategyId, x.LineupId, x.SelectionType, x.SelectionOption)).ToList() ?? []
+                ));
         }
 
         return TypedResults.NotFound($"A strategy with the ID: {id} was not found.");

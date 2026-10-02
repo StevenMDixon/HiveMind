@@ -1,9 +1,8 @@
-﻿using System.Text.RegularExpressions;
-using FFMpegCore;
-using HiveMind.Server.Domain.Enums;
+﻿using FFMpegCore;
+using HiveMind.Server.Domain.Importer;
 using HiveMind.Server.Services;
-using HiveMind.Server.Entities;
-
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace HiveMind.Server.HostedServices;
 
@@ -20,8 +19,6 @@ public class MediaImporterBackgroundService : BackgroundService
 
     private string fileFormats = "mp4|avi|mkv|mov|wmv|flv|webm|m4v";
 
-    private record VideoMeta(string path, string name, double duration, int height, int width, string resolution, int? showId, int seasonNumber, int episodeNumber, ICollection<Tags> tags);
-
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
@@ -31,34 +28,30 @@ public class MediaImporterBackgroundService : BackgroundService
             {
                 var libraryService = scope.ServiceProvider.GetRequiredService<LibraryService>();
                 var mediaItemService = scope.ServiceProvider.GetRequiredService<Services.MediaItemService>();
-                var mediaItemShowService = scope.ServiceProvider.GetRequiredService<Services.ShowService>();
-                var tagService = scope.ServiceProvider.GetRequiredService<TagsService>();
                 var settingsService = scope.ServiceProvider.GetRequiredService<SettingsService>();
-
+                
                 var unprocessedLibraries = libraryService.GetUnprocessedLibraries();
+
                 _logger.LogInformation("MediaImporterBackgroundService is running at: {time}", DateTimeOffset.Now);
                 _logger.LogInformation("Found {Count} Unprocessed Libraries", unprocessedLibraries.Count());
 
                 var targetLibary = unprocessedLibraries.FirstOrDefault();
-
-                var tagDict = tagService.GetAllTags().ToDictionary(t => t.TagName, t => t);
 
                 var mediaItems = new List<VideoMeta>();
                 var mediaItemsToDelete = new List<Entities.MediaItem>();
 
                 var settings = settingsService.GetAllSettings().ToDictionary(x => x.Name, y => y.Value);
 
-                var libraryPath = settings["Import_Location"] ?? "";
+                var mountedPath = settings["Import_Location"] ?? "";
 
                 if (targetLibary != null && !targetLibary.IsProcessed)
                 {
-                    // Get current media items so we can filter out any that have already been added to the database. We can use the file path to check if it has already been added.
                     var currentMediaItems = mediaItemService.GetMediaItemLibraryID(targetLibary.LibraryId);
 
                     if (targetLibary.LibraryPath != null && targetLibary.LibraryPath != string.Empty)
                     {
 
-                        targetLibary.LibraryPath = libraryPath + targetLibary.LibraryPath;
+                        //targetLibary.LibraryPath = mountedPath + targetLibary.LibraryPath;
 
                         _logger.LogInformation("Processing Library: {LibraryName}", targetLibary.LibraryName);
 
@@ -69,7 +62,7 @@ public class MediaImporterBackgroundService : BackgroundService
                             var pathsToIgnore = targetLibary.PathsToIgnore == string.Empty ? [] : targetLibary.PathsToIgnore.Split(';');
 
                             files.AddRange(
-                                Directory.GetFiles(targetLibary.LibraryPath, "*.*", SearchOption.AllDirectories)
+                                Directory.GetFiles(mountedPath + targetLibary.LibraryPath, "*.*", SearchOption.AllDirectories)
                                 .Where(x => Regex.IsMatch(x, $".*[.]({fileFormats})$"))
                                 .Where(x => pathsToIgnore.Count() == 0 || !pathsToIgnore.Any(path => x.Contains(path)))
                                 );
@@ -83,106 +76,38 @@ public class MediaImporterBackgroundService : BackgroundService
 
                         mediaItemsToDelete = currentMediaItems.ExceptBy(files, x => x.FilePath).ToList();
 
-                        var showCache = new Dictionary<string, Entities.Show>();
+                        var importer = ImporterFactory.Resolve(targetLibary.LibraryType);
 
-                        foreach (string file in files)
+                        var tagService = scope.ServiceProvider.GetRequiredService<TagsService>();
+                        var showService = scope.ServiceProvider.GetRequiredService<ShowService>();
+                        var queryService = scope.ServiceProvider.GetRequiredService<QueryService>();
+
+                        var importerResults = importer.Generate(files.Where(x => !currentMediaItems.Any(y => y.FilePath == x)).ToList(), mountedPath, targetLibary.LibraryPath, showService, tagService, queryService);
+
+                        foreach (var importerResult in importerResults)
                         {
-                            
-                            if(currentMediaItems.Any(x => x.FilePath == file))
+                            var mediaInfo = await FFProbe.AnalyseAsync(importerResult.FullPath);
+
+                            if (mediaInfo.PrimaryVideoStream != null)
                             {
-                                _logger.LogInformation("Skipping file: {FileName}: Already exists in database", file);
-                                continue;
+                                importerResult.Duration = mediaInfo.Duration.TotalMilliseconds;
+                                importerResult.Height = mediaInfo.VideoStreams[0].Height;
+                                importerResult.Width = mediaInfo.VideoStreams[0].Width;
+                                importerResult.Resolution = mediaInfo.VideoStreams[0].DisplayAspectRatio.ToString();
                             }
-
-                            _logger.LogInformation("Found file: {FileName}", file);
-
-                            var mediaInfo = await FFProbe.AnalyseAsync(file);
-
-                            var duration = mediaInfo.Duration.TotalMilliseconds;
-                            var fileName = Path.GetFileNameWithoutExtension(file);
-                            var normalizedFile = file.Replace(libraryPath, String.Empty); 
-                            var fileNameWithExt = Path.GetFileName(file);
-                            var width = 0;
-                            var height = 0;
-                            var res = "";
-
-                            if(mediaInfo.PrimaryVideoStream != null)
-                            {
-                                height = mediaInfo.VideoStreams[0].Height;
-                                width = mediaInfo.VideoStreams[0].Width;
-                                res = mediaInfo.VideoStreams[0].DisplayAspectRatio.ToString();
-                            } 
                             else
                             {
-                                _logger.LogInformation("Skipping file: {FileName}: No video stream", fileName);
-                                continue;
+                                _logger.LogInformation($"Skipping file: {importerResult.Path}: No video stream");
                             }
 
-                            var tags = file.Replace(targetLibary.LibraryPath, String.Empty).Split('/').ToList().Where(x => x != "" && x != fileNameWithExt).ToList();
+                            var needsCropping = await DetectCropAsync(importerResult.FullPath);
+                            
+                            if(needsCropping != null && needsCropping.X > 40) importerResult.HasBlackBars = true;
 
-                            int seasonNumber = 0;
-                            int? showId = null;
-                            int episodeNumber = 0;
-
-                            if (targetLibary.LibraryType == LibraryType.Show && tags.Count() > 0)
-                            {
-                                var formattedShowName = Regex.Replace(tags.First(), @"\s\(.*\)$", "").Trim();
-
-                                if (showCache.ContainsKey(formattedShowName))
-                                {
-                                    showId = showCache[formattedShowName].ShowId;
-                                }
-                                else
-                                {
-                                    var existingShow = mediaItemShowService.GetByName(formattedShowName);
-                                    if (existingShow != null)
-                                    {
-                                        showId = existingShow.ShowId;
-                                        showCache[formattedShowName] = existingShow;
-                                    }
-                                    else
-                                    {
-                                        var newShow = new Entities.Show { ShowTitle = formattedShowName };
-                                        showId = mediaItemShowService.AddShow(newShow);
-                                        showCache[formattedShowName] = newShow;
-                                    }
-                                }
-                                    
-                                if (tags.Count() > 1)
-                                {
-                                    var formattedSeasonNumber = Regex.Replace(tags[1], @"[^0-9]", "");
-                                    Int32.TryParse(formattedSeasonNumber, out seasonNumber);
-                                }
-
-                                var r = ExtractEpisodeMeta(fileName);
-                                if (seasonNumber == 0 && r?.season != null) seasonNumber = r.season;
-                                episodeNumber = r?.episodeStart ?? 0;
-                            }
-
-                            var mappedTags = new List<Tags>();
-
-                            if (targetLibary.LibraryType != LibraryType.Show)
-                            {
-                                foreach (var tag in tags)
-                                {
-                                    // Check if already in dictionary
-                                    if (tagDict.ContainsKey(tag))
-                                    {
-                                        mappedTags.Add(tagDict[tag]);
-                                    }
-                                    else
-                                    {
-                                        var newTag = new Tags { TagName = tag };
-                                        tagDict.Add(tag, newTag);
-                                        mappedTags.Add(newTag);
-                                    }
-                                }
-                            }
-
-                            mediaItems.Add(new VideoMeta(normalizedFile, fileName, duration, height, width, res, showId, seasonNumber, episodeNumber, mappedTags));
+                            mediaItems.Add(importerResult);
                         }
 
-                        if (libraryPath != String.Empty) targetLibary.LibraryPath = targetLibary.LibraryPath.Replace(libraryPath, "");
+                        //if (mountedPath != String.Empty) targetLibary.LibraryPath = targetLibary.LibraryPath.Replace(mountedPath, "");
                     }
 
                     mediaItemService.AddMediaItems(mediaItems.Select(x => ConvertMetaToMediaItem(x, targetLibary.LibraryId)));    
@@ -205,68 +130,112 @@ public class MediaImporterBackgroundService : BackgroundService
     {
         return new Entities.MediaItem
         {
-            Title = meta.name,
-            Duration = (int)meta.duration,
-            Width = meta.width,
-            Height = meta.height,
-            Resolution = meta.resolution,
-            ShowId = meta.showId,
-            EpisodeNumber = meta.episodeNumber,
-            SeasonNumber = meta.seasonNumber,
-            FilePath = meta.path,
+            Title = meta.Name,
+            Duration = (int)meta.Duration,
+            Width = meta.Width,
+            Height = meta.Height,
+            Resolution = meta.Resolution,
+            ShowId = meta.ShowId,
+            EpisodeNumber = meta.EpisodeNumber,
+            SeasonNumber = meta.SeasonNumber,
+            FilePath = meta.Path,
             LibraryId = libraryId,
-            Tags = meta.tags
+            Tags = meta.Tags,
+            HasBlackBars = meta.HasBlackBars
         };
     }
 
-    private record EpisodeMeta(int season, int episodeStart, int? episodeEnd);
-    private static EpisodeMeta? ExtractEpisodeMeta(string fileName)
+    public sealed record CropSettings(
+    int Width,
+    int Height,
+    int X,
+    int Y);
+
+    public async Task<CropSettings?> DetectCropAsync(
+    string filePath,
+    CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(fileName))
+        var info = await FFProbe.AnalyseAsync(filePath);
+
+        var video = info.VideoStreams.FirstOrDefault();
+
+        if (video == null)
             return null;
 
-        // 1️⃣ SxxExx or SxxExx-Exx
-        var sxeMatch = Regex.Match(
-            fileName,
-            @"\b[Ss](\d{1,2})[.\s_-]*[Ee](\d{1,2})(?:-(?:[Ee]?)?(\d{1,2}))?",
-            RegexOptions.IgnoreCase);
+        var duration = video.Duration;
 
-        if (sxeMatch.Success)
-        {
-            int season = int.Parse(sxeMatch.Groups[1].Value);
-            int epStart = int.Parse(sxeMatch.Groups[2].Value);
+        var sampleDuration = TimeSpan.FromSeconds(
+            Math.Min(20, duration.TotalSeconds));
 
-            int? epEnd = null;
-            if (sxeMatch.Groups[3].Success)
-                epEnd = int.Parse(sxeMatch.Groups[3].Value);
-
-            return new EpisodeMeta(season, epStart, epEnd);
-        }
-
-        // 2️⃣ Compact 3-digit format (101)
-        var compactMatch = Regex.Match(fileName, @"\b(\d)(\d{2})\b");
-
-        if (compactMatch.Success)
-        {
-            return new EpisodeMeta(
-                int.Parse(compactMatch.Groups[1].Value),
-                int.Parse(compactMatch.Groups[2].Value),
-                null
-            );
-        }
-
-        // 3️⃣ Leading episode only (01 - Title)
-        var leadingMatch = Regex.Match(fileName, @"^(\d{1,2})\s*-");
-
-        if (leadingMatch.Success)
-        {
-            return new EpisodeMeta(
+        var start = TimeSpan.FromSeconds(
+            Math.Max(
                 0,
-                int.Parse(leadingMatch.Groups[1].Value),
-                null
-            );
-        }
+                duration.TotalSeconds / 2 -
+                sampleDuration.TotalSeconds / 2));
 
-        return null;
+        var psi = new ProcessStartInfo
+        {
+            FileName = GlobalFFOptions.GetFFMpegBinaryPath(),
+            UseShellExecute = false,
+            RedirectStandardError = true,
+            RedirectStandardOutput = true,
+            CreateNoWindow = true
+        };
+
+        psi.ArgumentList.Add("-ss");
+        psi.ArgumentList.Add(
+            start.TotalSeconds.ToString(
+                System.Globalization.CultureInfo.InvariantCulture));
+
+        psi.ArgumentList.Add("-i");
+        psi.ArgumentList.Add(filePath);
+
+        psi.ArgumentList.Add("-t");
+        psi.ArgumentList.Add(
+            sampleDuration.TotalSeconds.ToString(
+                System.Globalization.CultureInfo.InvariantCulture));
+
+        psi.ArgumentList.Add("-vf");
+        psi.ArgumentList.Add(
+            "cropdetect=limit=40:round=2:reset=300," +
+            "metadata=mode=print");
+
+        psi.ArgumentList.Add("-f");
+        psi.ArgumentList.Add("null");
+
+        psi.ArgumentList.Add("-");
+
+        using var process = new Process
+        {
+            StartInfo = psi
+        };
+
+        process.Start();
+
+        var stderr = await process.StandardError.ReadToEndAsync(
+            cancellationToken);
+
+        await process.WaitForExitAsync(cancellationToken);
+
+        return ParseCrop(stderr);
+    }
+
+    private static CropSettings? ParseCrop(string output)
+    {
+        var matches = Regex.Matches(
+            output,
+            @"crop=(\d+):(\d+):(\d+):(\d+)");
+
+        if (matches.Count == 0)
+            return null;
+
+        // Last detection is the final crop recommendation.
+        var match = matches[^1];
+
+        return new CropSettings(
+            int.Parse(match.Groups[1].Value),
+            int.Parse(match.Groups[2].Value),
+            int.Parse(match.Groups[3].Value),
+            int.Parse(match.Groups[4].Value));
     }
 }

@@ -26,8 +26,15 @@ public class QueryService: BaseService
         return _context.Queries.Include(x => x.Filters).FirstOrDefault(x => x.QueryId == id);
     }
 
+    public Query? GetQueryByName(string name)
+    {
+        return _context.Queries.Include(x => x.Filters).FirstOrDefault(x => x.Name == name);
+    }
+
     public void Update(Query query)
     {
+        Console.WriteLine(_context.Entry(query).State);
+
         _context.Queries.Update(query);
         _context.SaveChanges();
     }
@@ -102,5 +109,11 @@ public class QueryService: BaseService
         var mediaItemsQuery = MediaQueryBuilder.ApplyWithUnion(_context.MediaItems, queryUnionRequest);
 
         return mediaItemsQuery.ToList();
+    }
+
+    public void Create(List<Query> queries)
+    {
+        _context.Queries.AddRange(queries);
+        _context.SaveChanges();
     }
 }

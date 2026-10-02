@@ -1,4 +1,4 @@
-﻿using HiveMind.Server.Entities;
+﻿
 using HiveMind.Server.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -14,17 +14,23 @@ public class GetScheduleData
             .WithName("GetScheduleData");
     }
 
-    public record DroneScheduleResults(string StationNumber, SchedulingResult SchedulingResult);
+    public record DroneScheduleResults(string StationNumber, string ScheduleJson);
 
-    public static Results<Ok<List<DroneScheduleResults>>, NoContent, ValidationProblem> Handle(DroneService droneService, [FromRoute] int id)
+    public static Results<Ok<List<DroneScheduleResults>>, NoContent, ValidationProblem> Handle(DroneService droneService, [FromRoute] int id, [FromQuery] DateTime? date)
     {
-        var droneScheduleData = droneService.GetDroneSchedule(id);
+        Console.WriteLine(date);
+        
+        var requestedDate = date ?? DateTime.Today;
+
+        var currentDateOnly = DateOnly.FromDateTime(requestedDate);
+
+        var droneScheduleData = droneService.GetDroneSchedule(id, currentDateOnly);
 
         if (droneScheduleData.Count == 0)
         {
             return TypedResults.NoContent();
         }
 
-        return TypedResults.Ok(droneScheduleData);
+        return TypedResults.Ok(droneScheduleData.Select(x => new DroneScheduleResults(x.Item1, x.Item2)).ToList());
     }
 }

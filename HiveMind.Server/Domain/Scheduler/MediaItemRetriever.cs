@@ -28,6 +28,29 @@ public class MediaItemRetriever
         }
     }
 
+    public List<MediaItem> GetMedia(string queryName, RetreiverType retrieverType, int count = 1, List<(string, string, string)>? customFilters = null)
+    {
+        var queryId = _QueryService.GetQueryByName(queryName)?.QueryId;
+
+        if (queryId == null)
+        {
+            return new List<MediaItem>();
+        }
+
+        switch (retrieverType)
+        {
+            case RetreiverType.Random:
+                var query = _QueryService.GetMediaItemsByQueryId(queryId.Value, customFilters);
+                return query.OrderBy(r => Guid.NewGuid()).Take(count).ToList();
+            case RetreiverType.Sequential:
+                return _QueryService.GetMediaItemsByQueryId(queryId.Value, customFilters).Take(count).ToList();
+            case RetreiverType.Shuffle:
+                return _QueryService.GetMediaItemsByQueryId(queryId.Value, customFilters).Take(count).ToList();
+            default:
+                return new List<MediaItem>();
+        }
+    }
+
     public List<MediaItem> GetMedia(string[] queries, RetreiverType retrieverType, int count = 1, List<(string, string, string)>? customFilters = null)
     {
         var query = new List<(string, string, string)>();
@@ -52,6 +75,24 @@ public class MediaItemRetriever
                 return _QueryService.GetMediaItemsByQueries(query).Take(count).ToList();
             case RetreiverType.Shuffle:
                 return _QueryService.GetMediaItemsByQueries(query).Take(count).ToList();
+            default:
+                return new List<MediaItem>();
+        }
+    }
+
+    public List<MediaItem> GetMedia(SourceItem source, RetreiverType retrieverType, int count = 1, List<(string, string, string)>? customFilters = null)
+    {
+        var type = source.Type;
+
+        switch(type)
+        {
+            case SourceType.Id:
+                return GetMedia(int.Parse(source.Value), retrieverType, count, customFilters);
+            case SourceType.Name:
+                return GetMedia(source.Value, retrieverType, count, customFilters);
+            case SourceType.Custom:
+                var queryParts = source.Value.Split("| ");
+                return GetMedia(queryParts, retrieverType, count, customFilters);
             default:
                 return new List<MediaItem>();
         }

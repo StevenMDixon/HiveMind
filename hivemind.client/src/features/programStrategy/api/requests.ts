@@ -1,4 +1,4 @@
-import type { ProgramStrategy } from "../types";
+import type { ProgramStrategy, Lineup } from "../types";
 
 
 export const getProgramStrategy = async (strategyId: number): Promise<ProgramStrategy> => {
@@ -40,6 +40,7 @@ export const deleteProgramStrategy = async (strategyId: number) => {
 };
 
 export const updateProgramStrategy = async (strategy: ProgramStrategy) => {
+    console.log(strategy)
     const result = await fetch('/api/strategies/' + strategy.programStrategyId, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -48,3 +49,24 @@ export const updateProgramStrategy = async (strategy: ProgramStrategy) => {
 
     return result;
 }
+
+export const getLineupSelectionTypes = async () => {
+    const response = await fetch('api/enums/lineupselection')
+
+    if (response.ok) {
+        const data = await response.json();
+        console.log(data)
+        return data.options;
+    }
+}
+
+export const getLineups = async (): Promise<Lineup[]> => {
+    const response = await fetch('/api/lineups');
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch lineups: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.lineups;
+};

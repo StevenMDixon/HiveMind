@@ -13,7 +13,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useProgramStrategyCreateHook, useProgramStrategyDeleteHook } from '../hooks/programStrategyHooks';
 
-const ProgramStrategy = () => {
+const ProgramStrategyPage = () => {
 
     const { data: programStrategies, refetch: refetchProgramStrategies, isLoading } = useQuery(programStrategyQueryOptions());
 
@@ -62,4 +62,4 @@ const ProgramStrategy = () => {
     )
 }
 
-export default ProgramStrategy;
+export default ProgramStrategyPage;

@@ -22,6 +22,8 @@ import ShowsPage from './features/shows/pages/Shows';
 import SettingsPage from './features/settings/pages/Settings';
 import ProgramStrategyPage from './features/programStrategy/pages/ProgramStrategy';
 import ProgramStrategyDetail from './features/programStrategy/pages/ProgramStrategyDetail';
+import DronePage from './features/drones/pages/drones';
+
 
 const darkTheme = createTheme({
     palette: {
@@ -60,6 +62,7 @@ const App = () => {
                             <Route path="system-settings" element={<SettingsPage />} />
                             <Route path="programstrategy/" element={<ProgramStrategyPage />} />
                             <Route path="programstrategy/:id" element={<ProgramStrategyDetail />} />
+                            <Route path="drones" element={<DronePage />} />
                         </Route>
                 </Routes>
                 </HashRouter>

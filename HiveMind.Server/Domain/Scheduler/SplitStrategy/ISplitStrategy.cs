@@ -1,6 +1,4 @@
-﻿using HiveMind.Server.Domain.Scheduler.Nodes;
-
-namespace HiveMind.Server.Domain.Scheduler.splitter;
+﻿namespace HiveMind.Server.Domain.Scheduler.splitter;
 
 public interface ISplitStrategy
 {

@@ -9,7 +9,7 @@ public class DroneService: BaseService
 
     public List<Drone> GetAll()
     {
-        return _context.Drones.ToList();
+        return _context.Drones.Include(x => x.Stations).ToList();
     }
 
     public Drone? GetByHostName(string hostName)
@@ -19,20 +19,42 @@ public class DroneService: BaseService
         return drone;
     }
 
-    public void Create(string name, string hostName)
+    public Drone? GetById(int id)
     {
-        _context.Drones.Add(new Drone() { Name = name, HostName = hostName });
+        var drone = _context.Drones.Where(x => x.DroneId == id).Include(x => x.Stations).FirstOrDefault();
+        return drone;
+    }
+
+    public void Create(string name, string hostName, int stationSlots)
+    {
+        _context.Drones.Add(new Drone() { Name = name, HostName = hostName, StationSlots = stationSlots });
         _context.SaveChanges();
     }
 
-    public List<(string, SchedulingResult)> GetDroneSchedule(int droneId)
+    public void Update(Drone drone)
+    {
+        _context.Drones.Update(drone);
+        _context.SaveChanges();
+    }
+
+    public void Delete(int id)
+    {
+        var drone = _context.Drones.Find(id);
+        if (drone != null)
+        {
+            _context.Drones.Remove(drone);
+            _context.SaveChanges();
+        }
+    }
+
+    public List<(string, string)> GetDroneSchedule(int droneId, DateOnly date)
     {
         var drone = _context.Drones.Where(x => x.DroneId == droneId).Include(x => x.Stations).ThenInclude(x => x.Strategy).FirstOrDefault();
-        var currentDateOnly = DateOnly.FromDateTime(DateTime.Today);
+        
 
         if (drone != null)
         {
-            var schedules = new List<(string, SchedulingResult)>();
+            var schedules = new List<(string, string)>();
 
             foreach(var station in drone.Stations)
             {
@@ -40,17 +62,20 @@ public class DroneService: BaseService
 
                 if(currentStrategy != null)
                 {
-                    var schedulingResult = _context.SchedulingResults.Where(x => x.ProgramStrategyId == currentStrategy.ProgramStrategyId && x.Date == currentDateOnly).FirstOrDefault();
+                    var schedulingResult = _context.SchedulingResults.Where(x => x.ProgramStrategyId == currentStrategy.ProgramStrategyId && x.Date == date).FirstOrDefault();
 
                     if(schedulingResult != null)
                     {
-                        schedules.Add((station.StationNumber.ToString(), schedulingResult));
+                        string filePath = schedulingResult.Path;
+                        string fileContents = System.IO.File.ReadAllText(filePath);
+
+                        schedules.Add((station.StationNumber.ToString(), fileContents));
                     }
                 }
             }
             return schedules;
         }
 
-        return new List<(string, SchedulingResult)>();
+        return new List<(string, string)>();
     }
 }

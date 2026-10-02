@@ -9,5 +9,9 @@ public enum QueryType
     Media,
     Promos,
     Idents,
-    Interstitials
+    Interstitials,
+    Bumpers,
+    Pods,
+    Show,
+    ShowAndSeason
 }

@@ -10,5 +10,8 @@ public class EndPoints
         GetScheduleData.Map(endpoints);
         Create.Map(endpoints);
         Get.Map(endpoints);
+        Update.Map(endpoints);
+        Delete.Map(endpoints);
+        RegisterDrone.Map(endpoints);
     }
 }

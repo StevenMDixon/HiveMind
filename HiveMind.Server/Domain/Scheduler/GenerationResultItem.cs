@@ -1,11 +1,11 @@
 ﻿using HiveMind.Server.Domain.Enums;
 using HiveMind.Server.Entities;
 
-namespace HiveMind.Server.Domain.Scheduler.Nodes;
+namespace HiveMind.Server.Domain.Scheduler;
 
-public class GenerationResultItem()
+public class GenerationResultItem
 {
-    public MediaItem MediaItem { get; set; } = null!;
+    public MediaItem MediaItem { get; set; } = new MediaItem();
 
     public TransitionSlot Type { get; set; } = TransitionSlot.Media;
 

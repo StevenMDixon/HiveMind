@@ -11,7 +11,7 @@ public class GetAllMediaItems
     }
 
     public record Tag(int TagId, string TagName);
-    public record Show(int ShowId, string Name);
+    public record Show(int ShowId, string Name, string Rating);
 
     public record Library();
 
@@ -35,7 +35,7 @@ public class GetAllMediaItems
                 x.Resolution,
                 x.EpisodeNumber,
                 x.SeasonNumber,
-                x.Show is not null ? new Show(x.Show.ShowId, x.Show.ShowTitle) : null,
+                x.Show is not null ? new Show(x.Show.ShowId, x.Show.ShowTitle, x.Show.Rating.ToString()) : null,
                 x.Tags is not null ? x.Tags.Select(y => new Tag(y.TagId, y.TagName)) : []
                 )
         );

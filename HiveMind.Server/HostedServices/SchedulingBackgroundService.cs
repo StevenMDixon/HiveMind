@@ -25,6 +25,15 @@ public class SchedulingBackgroundService : BackgroundService
             using (var scope = _serviceProvider.CreateScope())
             {
                 var batchService = scope.ServiceProvider.GetRequiredService<BatchService>();
+                var libraryService = scope.ServiceProvider.GetRequiredService<LibraryService>();
+
+                var unprocessedLibraries = libraryService.GetUnprocessedLibraries();
+
+                if (unprocessedLibraries != null && unprocessedLibraries.Any())
+                {
+                    await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken); // Example delay
+                    continue; // Skip processing if there are unprocessed libraries
+                }
 
                 var openBatches = batchService.GetUnprocessedBatches();
 
@@ -59,6 +68,13 @@ public class SchedulingBackgroundService : BackgroundService
 
         var startDate = DateOnly.FromDateTime(DateTime.Now);
         var endDate = DateOnly.FromDateTime(DateTime.Now.AddDays(programStrategy.AdvancedDays));
+
+        if (programStrategy.LastScheduleDate != null)
+        {
+            startDate = programStrategy.LastScheduleDate.Value.AddDays(1);
+            // Probably want to do this so that if a schedule gets out of sync we still schedule those days
+            // For Sequential items...?
+        }
 
         for (var date = startDate; date <= endDate; date = date.AddDays(1))
         {

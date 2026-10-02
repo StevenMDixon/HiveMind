@@ -5,7 +5,15 @@ export interface ProgramStrategy {
     active: boolean;
     startDate?: string;
     endDate?: string;
-    lineups?: Lineup[];
+    programStrategyItems?: ProgramStrategyLineup[];
+}
+
+export interface ProgramStrategyLineup {
+    programStrategyLineupId: number,
+    programStrategyId: number,
+    lineUpId: number,
+    selectionOption: string,
+    selectionType: number
 }
 
 export interface Lineup {

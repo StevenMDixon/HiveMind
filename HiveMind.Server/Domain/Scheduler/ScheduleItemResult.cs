@@ -7,5 +7,8 @@ public record ScheduleItemResult
     string name,
     int duration,
     int startTime,
-    int stopTime
+    int stopTime,
+    bool hasBlackBars,
+    string resolution,
+    string rating
 );

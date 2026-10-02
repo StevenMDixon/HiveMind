@@ -5,4 +5,6 @@ namespace HiveMind.Server.Domain.Scheduler;
 public class ScheduleContext
 {
     public DateOnly date { get; set; }
+
+    public int ProgramId { get; set; }
 }

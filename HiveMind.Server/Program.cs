@@ -1,7 +1,6 @@
 using FluentValidation;
 using HiveMind.Server;
 using HiveMind.Server.Endpoints;
-using HiveMind.Server.Entities;
 using HiveMind.Server.HostedServices;
 using HiveMind.Server.Services;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +28,7 @@ builder.Services.AddTransient<ProgramStrategyLineupService>();
 builder.Services.AddTransient<TransitionTemplateService>();
 builder.Services.AddTransient<ScheduleService>();
 builder.Services.AddTransient<DroneService>();
+builder.Services.AddTransient<ProgramEventService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using HiveMind.Server.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace HiveMind.Server.Entities;
 
@@ -14,6 +15,7 @@ public class MediaItem
     public int Width { get; set; }
     public int Height { get; set; }
     public string Resolution { get; set; } = string.Empty;
+    public bool HasBlackBars { get; set; } = false;
     public int EpisodeNumber { get; set; } = 0;
     public int SeasonNumber { get; set; } = 0;
     public string? Group { get; set; }

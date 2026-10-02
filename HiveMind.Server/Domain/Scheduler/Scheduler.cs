@@ -19,7 +19,6 @@ public class Scheduler
         _retriever = new MediaItemRetriever(_scope.ServiceProvider.GetRequiredService<QueryService>());
     }
 
-
     public async Task GenerateSchedule(int lineUpId, int programStrategyID, DateOnly scheduledDate)
     {
         var lineupService = _scope.ServiceProvider.GetRequiredService<LineupService>();
@@ -28,7 +27,7 @@ public class Scheduler
          
         var lineup = lineupService.GetLineupByID(lineUpId);
 
-        var scheduleNodes = new List<IBlock>();
+        var scheduleNodes = new List<INode>();
 
         if (lineup != null)
         {
@@ -39,10 +38,10 @@ public class Scheduler
 
             options.Converters.Add(new JsonStringEnumConverter());
 
-            scheduleNodes.AddRange(JsonSerializer.Deserialize<List<IBlock>>(lineup.JsonData, options) ?? new List<IBlock>());
+            scheduleNodes.AddRange(JsonSerializer.Deserialize<List<INode>>(lineup.JsonData, options) ?? new List<INode>());
         }
 
-        var scheduleContext = new ScheduleContext() { date = scheduledDate };
+        var scheduleContext = new ScheduleContext() { date = scheduledDate, ProgramId = programStrategyID };
 
         if (scheduleNodes.Any())
         {
@@ -50,7 +49,7 @@ public class Scheduler
 
             if (result != null)
             {
-               var sheduleResultLocation = WriteOutSchedule(programStrategyID.ToString(), result.outputLoc, scheduledDate.ToString("MMddyyyy", CultureInfo.InvariantCulture), JsonSerializer.Serialize(result));
+               var sheduleResultLocation = WriteOutSchedule(scheduledDate.ToString("MMddyyyy", CultureInfo.InvariantCulture), result.outputLoc, programStrategyID.ToString(), JsonSerializer.Serialize(result));
                 var scheduleResult = new SchedulingResult()
                 {
                     Date = scheduledDate,
@@ -67,16 +66,16 @@ public class Scheduler
 
     public record GenerationResult(string outputLoc, List<ScheduleItemResult> items, TimeOnly startTime);
 
-    public GenerationResult ExecuteSchedule(List<IBlock> scheduleNodes, ScheduleContext scheduleData)
+    public GenerationResult ExecuteSchedule(List<INode> scheduleNodes, ScheduleContext scheduleData)
     {
         var settingService = _scope.ServiceProvider.GetRequiredService<SettingsService>();
-
 
         var generationContext = new GenerationContext
         {
             Retriever = _retriever,
             Scope = _scope,
             Settings = settingService.GetAllSettings().ToDictionary(x => x.Name, x => x.Value),
+            PromoQueries = GetUpComingEventPromos(scheduleData.ProgramId)
         };
 
         var results = new List<GenerationResultItem>();
@@ -89,14 +88,24 @@ public class Scheduler
 
             generationContext.BlockContext.Add(blockContext);
 
-            results.AddRange(node.Generate(generationContext));
+            results.InsertRange(0, node.Generate(generationContext));
         }
 
         var outPutLocation = generationContext.Settings["Export_Location"];
 
-        var generationResult = new GenerationResult(outPutLocation, results.Select(x => new ScheduleItemResult("", x.MediaItem.FilePath, x.MediaItem.Title, x.Duration(), x.StartTime, x.EndTime)).ToList(), TimeOnly.MinValue);
+        var generationResult = new GenerationResult(outPutLocation, results.Select(x => new ScheduleItemResult("", x.MediaItem.FilePath, x.MediaItem.Title, x.Duration(), x.StartTime, x.EndTime, x.MediaItem.HasBlackBars, x.MediaItem.Resolution, x.MediaItem?.Show?.Rating.ToString() ?? "")).ToList(), TimeOnly.MinValue);
 
         return generationResult;
+    }
+
+    private List<SourceItem> GetUpComingEventPromos(int programStrategyID)
+    {
+        var currentDate = DateTime.Today;
+
+        var programEventService = _scope.ServiceProvider.GetRequiredService<ProgramEventService>();
+        var upcomingEvents = programEventService.GetUpComingEvents(programStrategyID, currentDate);
+
+        return upcomingEvents.Select(e => new SourceItem() {Type = SourceType.Id, Value = e.QueryId.ToString()}).ToList();
     }
 
     public string WriteOutSchedule(string fileName, string path, string programFolder, string json)

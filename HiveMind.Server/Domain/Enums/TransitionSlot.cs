@@ -5,6 +5,7 @@ namespace HiveMind.Server.Domain.Enums;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum TransitionSlot
 {
+
     InBump,
     OutBump,
     Ident,
@@ -17,5 +18,20 @@ public enum TransitionSlot
     Bump,
     UpNext,
     Media,
-    CutFiller
+    CutFiller,
+    ShowOutro
+}
+
+
+[AttributeUsage(AttributeTargets.Field)]
+public class Weight : Attribute
+{
+    public string Description { get; }
+    public int MaxUsers { get; }
+
+    public Weight(string description, int maxUsers)
+    {
+        Description = description;
+        MaxUsers = maxUsers;
+    }
 }

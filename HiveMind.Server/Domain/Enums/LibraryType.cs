@@ -9,5 +9,6 @@ public enum LibraryType
     Bumper,
     Interstitial,
     Idents,
+    Promos,
     Other
 }

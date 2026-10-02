@@ -1,4 +1,6 @@
 ﻿using FluentValidation;
+using HiveMind.Server.Domain.Enums;
+using HiveMind.Server.Entities;
 using HiveMind.Server.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +26,10 @@ public class Update
         }
     }
 
-    public record ProgramStrategyRequest(string? Name, int? AdvancedDays, bool? Active, DateOnly? StartDate, DateOnly? EndDate);
+    public record ProgramStrategyRequest(string? Name, int? AdvancedDays, bool? Active, DateOnly? StartDate, DateOnly? EndDate, ICollection<ProgramStrategyItem> ProgramStrategyItems);
+
+    public record ProgramStrategyItem(int ProgramStrategyLineupId, int? ProgramStrategyId, int? LineUpId, LineupSelectionType SelectionType, String SelectionOption);
+
     public static Results<Ok, NotFound<string>, ValidationProblem> Handle(ProgramStrategyService programStrategyService, [FromRoute] int id, [FromBody] ProgramStrategyRequest request)
     {
         var strategy = programStrategyService.GetProgramStrategyById(id);
@@ -34,6 +39,33 @@ public class Update
             strategy.Name = request.Name ?? strategy.Name;
             strategy.AdvancedDays = request.AdvancedDays ?? strategy.AdvancedDays;
             strategy.Active = request.Active ?? strategy.Active;
+
+
+            var strategyLineupToRemove = strategy.Lineups?.Where(c => !request.ProgramStrategyItems.Any(x => x.ProgramStrategyLineupId == c.ProgramStrategyLineupId)).ToList();
+
+            foreach (var stratToRem in strategyLineupToRemove ?? [])
+            {
+                strategy.Lineups.Remove(stratToRem);
+            }
+
+            foreach(var stratToUpd in strategy.Lineups ?? [])
+            {
+                var reqData = request.ProgramStrategyItems.Where(x => x.ProgramStrategyLineupId == stratToUpd.ProgramStrategyLineupId).FirstOrDefault();
+
+                if(reqData != null)
+                {
+                    stratToUpd.SelectionOption = reqData.SelectionOption;
+                    stratToUpd.SelectionType = reqData.SelectionType;
+                    stratToUpd.LineupId = reqData.LineUpId;
+                }
+            }
+
+            var strategyLineupsToAdd = request.ProgramStrategyItems.Where(x => x.ProgramStrategyLineupId <= 0).ToList();
+
+            foreach(var stratToAdd in strategyLineupsToAdd)
+            {
+                strategy.Lineups?.Add(new ProgramStrategyLineup() { LineupId = stratToAdd.LineUpId == 0 ? null : stratToAdd.LineUpId, ProgramStrategyId = strategy.ProgramStrategyId, SelectionOption = stratToAdd.SelectionOption, SelectionType = stratToAdd.SelectionType });
+            }
 
             programStrategyService.Update(strategy);
             return TypedResults.Ok();

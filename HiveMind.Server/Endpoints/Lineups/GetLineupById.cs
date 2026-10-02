@@ -17,7 +17,7 @@ public static class GetLineupById
 
     public record LineupItem(int LineupItemId, int Index, string Type, string Name, int LineupId, ICollection<QueryLineupItem> Queries);
 
-    public record Lineup(int LineupId, string LineupName, TimeOnly StartTime, string FileLocation);
+    public record Lineup(int LineupId, string LineupName, TimeOnly StartTime, string JsonData);
 
     public static Results<Ok<Lineup>, NotFound<string>> Handle(LineupService lineupService, [FromRoute] int id)
     {

@@ -7,5 +7,4 @@ public class Station
     public string StationName { get; set; } = string.Empty;
     public string StationLogo { get; set; } = string.Empty;
     public ProgramStrategy? Strategy { get; set; }
-    public List<Drone>? Drones { get; set; }
 }

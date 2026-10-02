@@ -6,7 +6,6 @@ namespace HiveMind.Server;
 
 public class sqliteDBContext: DbContext
 {
-    // Might be removing
     public DbSet<Query> Queries { get; set; }
     public DbSet<QueryFilters> QueryFilters { get; set; }
     public DbSet<Station> Stations { get; set; }
@@ -24,6 +23,7 @@ public class sqliteDBContext: DbContext
     public DbSet<TransitionTemplateSlot> TransitionTemplateSlots { get; set; }
     public DbSet<SchedulingResult> SchedulingResults { get; set; }
     public DbSet<Drone> Drones { get; set; }
+    public DbSet<ProgramEvent> ProgramEvents { get; set; }
 
     public sqliteDBContext(DbContextOptions<sqliteDBContext> options) : base(options){ }
 
@@ -49,15 +49,15 @@ public class sqliteDBContext: DbContext
         );
 
         modelBuilder.Entity<TransitionTemplateSlot>().HasData(
-            new TransitionTemplateSlot { TransitionTemplateSlotId = 1, TransitionTemplateId = 1, Slot = TransitionSlot.OutBump},
-            new TransitionTemplateSlot { TransitionTemplateSlotId = 2, TransitionTemplateId = 1, Slot = TransitionSlot.Ident},
-            new TransitionTemplateSlot { TransitionTemplateSlotId = 3, TransitionTemplateId = 1, Slot = TransitionSlot.Filler},
-            new TransitionTemplateSlot { TransitionTemplateSlotId = 4, TransitionTemplateId = 1, Slot = TransitionSlot.Ident},
-            new TransitionTemplateSlot { TransitionTemplateSlotId = 5, TransitionTemplateId = 1, Slot = TransitionSlot.InBump},
-            new TransitionTemplateSlot { TransitionTemplateSlotId = 6, TransitionTemplateId = 2, Slot = TransitionSlot.Ident},
-            new TransitionTemplateSlot { TransitionTemplateSlotId = 7, TransitionTemplateId = 2, Slot = TransitionSlot.Promo},
-            new TransitionTemplateSlot { TransitionTemplateSlotId = 8, TransitionTemplateId = 2, Slot = TransitionSlot.Filler},
-            new TransitionTemplateSlot { TransitionTemplateSlotId = 9, TransitionTemplateId = 2, Slot = TransitionSlot.Ident }
+            new TransitionTemplateSlot { TransitionTemplateSlotId = 1, TransitionTemplateId = 1, Slot = TransitionSlot.OutBump, Index = 0},
+            new TransitionTemplateSlot { TransitionTemplateSlotId = 2, TransitionTemplateId = 1, Slot = TransitionSlot.Ident, Index = 1},
+            new TransitionTemplateSlot { TransitionTemplateSlotId = 3, TransitionTemplateId = 1, Slot = TransitionSlot.Filler, Index = 2},
+            new TransitionTemplateSlot { TransitionTemplateSlotId = 4, TransitionTemplateId = 1, Slot = TransitionSlot.Ident, Index = 3},
+            new TransitionTemplateSlot { TransitionTemplateSlotId = 5, TransitionTemplateId = 1, Slot = TransitionSlot.InBump, Index = 4},
+            new TransitionTemplateSlot { TransitionTemplateSlotId = 6, TransitionTemplateId = 2, Slot = TransitionSlot.Ident, Index = 0},
+            new TransitionTemplateSlot { TransitionTemplateSlotId = 7, TransitionTemplateId = 2, Slot = TransitionSlot.Promo, Index = 1},
+            new TransitionTemplateSlot { TransitionTemplateSlotId = 8, TransitionTemplateId = 2, Slot = TransitionSlot.Filler, Index = 2},
+            new TransitionTemplateSlot { TransitionTemplateSlotId = 9, TransitionTemplateId = 2, Slot = TransitionSlot.Ident, Index = 3}
         );
     }
 

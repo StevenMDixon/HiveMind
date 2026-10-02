@@ -12,11 +12,11 @@ namespace HiveMind.Server.Endpoints.Drone
                 .WithName("Create");
         }
 
-        public record CreateRequest(string hostName, string name);
+        public record CreateRequest(string hostName, string name, int slots);
 
         public static Results<Ok, NoContent, ValidationProblem> Handle(DroneService droneService, [FromBody] CreateRequest createRequest)
         {
-            droneService.Create(createRequest.name, createRequest.hostName);
+            droneService.Create(createRequest.name, createRequest.hostName, createRequest.slots);
             return TypedResults.Ok();
         }
     }

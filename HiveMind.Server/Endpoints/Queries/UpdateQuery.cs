@@ -3,6 +3,8 @@ using HiveMind.Server.Entities;
 using HiveMind.Server.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Xml;
 
 namespace HiveMind.Server.Endpoints.Queries;
 
@@ -30,6 +32,8 @@ public class UpdateQuery
     public static Results<Ok, NotFound<string>, ValidationProblem> Handle(QueryService queryService, [FromRoute] int id, [FromBody] QueryRequest request)
     {
         var query = queryService.GetQueryByID(id);
+
+        
 
         if (query is not null)
         {

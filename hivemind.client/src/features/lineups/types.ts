@@ -24,5 +24,5 @@ export interface Lineup {
     lineupName: string;
     channelId: number | null;
     startTime: string;
-    lineupItems: LineupItem[];
+    jsonData: string;
 }
