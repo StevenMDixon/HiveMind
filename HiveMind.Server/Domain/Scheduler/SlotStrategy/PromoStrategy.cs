@@ -6,7 +6,7 @@ namespace HiveMind.Server.Domain.Scheduler.SlotStrategy;
 
 public class PromoStrategy : ISlotStrategy
 {
-    public List<GenerationResultItem> Generate(GenerationContext context, SourceItem source, string showName, int Duration, RetreiverType retreiverType)
+    public List<GenerationResultItem> Generate(GenerationContext context, SourceItem source, List<string> tags, int duration, RetreiverType retreiverType)
     {
         if(context.PromoQueries.Count != 0)
         {
@@ -16,7 +16,7 @@ public class PromoStrategy : ISlotStrategy
 
             var customFilter = new List<(string, string, string)>()
             {
-                (QueryAllowedFields.Duration.ToString(), QueryAllowedOperators.LessThanEquals.ToString(), Duration.ToString()),
+                (QueryAllowedFields.Duration.ToString(), QueryAllowedOperators.LessThanEquals.ToString(), duration.ToString()),
             };
 
             var promo = context.Retriever.GetMedia(selectedQuery, retreiverType, 1, customFilter).FirstOrDefault();

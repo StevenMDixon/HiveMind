@@ -77,7 +77,9 @@ public class BreakNode: INode
 
         var currentProgram = currentBlockContext.ProgramContexts.Last();
 
-        var currentShow = currentProgram.UseBlockName ? currentBlockContext.Name : currentProgram.ProgramName;
+        var searchTags = new List<string>() { currentProgram.ProgramName };
+        
+        if(currentProgram.UseBlockName) searchTags.Add(currentBlockContext.Name);
 
         for (var i = 0; i < slots.Count; i++)
         {
@@ -103,7 +105,7 @@ public class BreakNode: INode
             // figure out how to get Coming up next promos
             var slotStrategy = SlotStrategyResolver.Resolve(slot.Slot);
 
-            var nodeEvents = slotStrategy.Generate(context, slotMedia[mappedSlot], currentShow, remainingDuration, RetreiverType.Random);
+            var nodeEvents = slotStrategy.Generate(context, slotMedia[mappedSlot], searchTags, remainingDuration, RetreiverType.Random);
 
             if (nodeEvents.Count != 0)
             {
@@ -153,7 +155,7 @@ public class BreakNode: INode
 
                 var fillerStrategy = i == fillerLocation.Count - 1 ? SlotStrategyResolver.Resolve(TransitionSlot.CutFiller) : SlotStrategyResolver.Resolve(TransitionSlot.Filler);
 
-                var filled = fillerStrategy.Generate(context, slotMedia[TransitionSlot.Filler], currentShow, remainingFillDuration + refundedTime, RetreiverType.Random);
+                var filled = fillerStrategy.Generate(context, slotMedia[TransitionSlot.Filler], searchTags, remainingFillDuration + refundedTime, RetreiverType.Random);
 
                 // Unused time is refunded on normal filler blocks so that there are no odd cuts in the middle of a filler block.  CutFiller blocks do not refund time as they are the last filler block and should be filled to the end of the break.
                 refundedTime = remainingFillDuration - filled.Sum(x => x.EndTime - x.StartTime);

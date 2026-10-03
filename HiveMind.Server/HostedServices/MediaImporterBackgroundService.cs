@@ -67,7 +67,7 @@ public partial class MediaImporterBackgroundService(IServiceProvider serviceProv
 
                         //_logger.LogInformation("Found files: {Count}", files.Count);
 
-                        mediaItemsToDelete = [.. currentMediaItems.ExceptBy(files, x => x.FilePath)];
+                        mediaItemsToDelete = [.. currentMediaItems.ExceptBy(files, x => mountedPath + x.FilePath)];
 
                         var importer = ImporterFactory.Resolve(targetLibary.LibraryType);
 

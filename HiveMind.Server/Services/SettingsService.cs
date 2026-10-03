@@ -15,6 +15,11 @@ public class SettingsService(SqliteDBContext context) : BaseService(context)
         _context.SaveChanges();
     }
 
+    public Settings? GetByName(string Name)
+    {
+        return _context.Settings.FirstOrDefault(s => s.Name == Name);
+    }
+
     public Settings? GetById(int Id)
     {
         return _context.Settings.Find(Id);

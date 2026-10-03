@@ -6,11 +6,11 @@ namespace HiveMind.Server.Domain.Scheduler.SlotStrategy;
 
 public class CutFillerStrategy : ISlotStrategy
 {
-    public List<GenerationResultItem> Generate(GenerationContext context, SourceItem source, string showName, int Duration, RetreiverType retreiverType)
+    public List<GenerationResultItem> Generate(GenerationContext context, SourceItem source, List<string> tags, int duration, RetreiverType retreiverType)
     {
         var retriever = context.Retriever;
 
-        var remainingDuration = Duration;
+        var remainingDuration = duration;
 
         var results = new List<GenerationResultItem>();
 

@@ -5,14 +5,16 @@ namespace HiveMind.Server.Domain.Scheduler.SlotStrategy;
 
 public class DefaultStrategy: ISlotStrategy
 {
-    public List<GenerationResultItem> Generate(GenerationContext context, SourceItem source, string showName, int Duration, RetreiverType retreiverType)
+    public List<GenerationResultItem> Generate(GenerationContext context, SourceItem source, List<string> tags, int duration, RetreiverType retreiverType)
     {
         var retriever = context.Retriever;
 
         var customFilter = new List<(string, string, string)>()
         {
-            ("Duration", "LessThan", Duration.ToString())
+            ("Duration", "LessThan", duration.ToString())
         };
+        
+        if(tags.Count > 0) customFilter.AddRange(tags.Select(x => ("Tag", "Equals", x)));
 
         var mediaItems = retriever.GetMedia(source, retreiverType, 1, customFilter);
 

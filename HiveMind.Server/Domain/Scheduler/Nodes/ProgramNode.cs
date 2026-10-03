@@ -1,6 +1,5 @@
 ﻿using HiveMind.Server.Domain.Enums;
 using HiveMind.Server.Entities;
-using System.Reflection.Metadata.Ecma335;
 
 namespace HiveMind.Server.Domain.Scheduler.Nodes;
 
@@ -33,15 +32,22 @@ public class ProgramNode: INode
         MediaItem? outro = null;
 
         // Have program go ahead and pull the program intro:
-        // @Todo: These need to be updated to respect blockName and show Name
+        // @Todo: These need to be updated to respect blockName
+        var customFilters = new List<(string, string, string)>
+        {
+            ("Tag", "Equals", $"{ProgramName}")
+        };
+
+        if (UseBlockName) customFilters.Add(("Tag", "Contains", $"{bContext.Name}"));
+
         if (bContext.Sources.ContainsKey(TransitionSlot.ShowIntro))
         {
-            intro = context.Retriever.GetMedia(bContext.Sources[TransitionSlot.ShowIntro], RetreiverType.Random).FirstOrDefault();
+            intro = context.Retriever.GetMedia(bContext.Sources[TransitionSlot.ShowIntro], RetreiverType.Random, 1, customFilters).FirstOrDefault();
         }
 
         if (bContext.Sources.ContainsKey(TransitionSlot.ShowOutro))
         {
-            outro = context.Retriever.GetMedia(bContext.Sources[TransitionSlot.ShowOutro], RetreiverType.Random).FirstOrDefault();
+            outro = context.Retriever.GetMedia(bContext.Sources[TransitionSlot.ShowOutro], RetreiverType.Random, 1, customFilters).FirstOrDefault();
         }
 
         // Peel off show related durations from remaining duration

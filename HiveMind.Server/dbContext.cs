@@ -38,7 +38,8 @@ public class SqliteDBContext(DbContextOptions<SqliteDBContext> options) : DbCont
             new Settings { SettingsId = 2, Name = "Export_Location", Value = "/" },
             new Settings { SettingsId = 3, Name = "Bump In Tag", Value = "In" },
             new Settings { SettingsId = 4, Name = "Bump Out Tag", Value = "Out" },
-            new Settings { SettingsId = 5, Name = "Bump Generic Tag", Value = "Generic" }
+            new Settings { SettingsId = 5, Name = "Bump Generic Tag", Value = "Generic" },
+            new Settings { SettingsId = 6, Name = "Schedule Retention Days", Value = "7" }
         );
 
         modelBuilder.Entity<TransitionTemplate>().HasData(

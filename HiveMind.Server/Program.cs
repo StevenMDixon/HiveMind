@@ -34,6 +34,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 builder.Services.AddHostedService<SchedulingBackgroundService>();
 builder.Services.AddHostedService<MediaImporterBackgroundService>();
+builder.Services.AddHostedService<CleanupService>();
 
 var app = builder.Build();
 

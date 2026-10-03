@@ -7,11 +7,11 @@ namespace HiveMind.Server.Domain.Scheduler.SlotStrategy;
 
 public class FillerStrategy : ISlotStrategy
 {
-    public List<GenerationResultItem> Generate(GenerationContext context, SourceItem source, string showName, int Duration, RetreiverType retreiverType)
+    public List<GenerationResultItem> Generate(GenerationContext context, SourceItem source, List<string> tags, int duration, RetreiverType retreiverType)
     {
         var retriever = context.Retriever;
 
-        var remainingDuration = Duration;
+        var remainingDuration = duration;
 
         var results = new List<GenerationResultItem>();
 
@@ -19,7 +19,7 @@ public class FillerStrategy : ISlotStrategy
         {
             var customFilter = new List<(string, string, string)>()
             {
-                (QueryAllowedFields.Duration.ToString(), QueryAllowedOperators.LessThanEquals.ToString(), Duration.ToString()),
+                (QueryAllowedFields.Duration.ToString(), QueryAllowedOperators.LessThanEquals.ToString(), duration.ToString()),
             };
 
             var mediaItems = retriever.GetMedia(source, retreiverType, 1, customFilter);

@@ -16,6 +16,11 @@ public class BatchService(SqliteDBContext context) : BaseService(context)
         return _context.ScheduleBatches.Where(b => b.Status == BatchStatus.New).Include(x => x.ScheduleBatchItems).Include(y => y.ProgramStrategy);
     }
 
+    public IEnumerable<ScheduleBatch> GetBatchesBeforeDate(DateOnly date)
+    {
+        return _context.ScheduleBatches.Where(b => b.StartDate <= date).Include(x => x.ScheduleBatchItems).Include(y => y.ScheduleBatchItems);
+    }
+
     public void AddBatch(ScheduleBatch batch)
     {
         _context.ScheduleBatches.Add(batch);
@@ -52,6 +57,12 @@ public class BatchService(SqliteDBContext context) : BaseService(context)
     public void UpdateBatchItem(ScheduleBatchItem item)
     {
         _context.ScheduleBatchItems.Update(item);
+        _context.SaveChanges();
+    }
+
+    public void DeleteBatchItems(List<ScheduleBatch> items)
+    {
+        _context.ScheduleBatches.RemoveRange(items);
         _context.SaveChanges();
     }
 }

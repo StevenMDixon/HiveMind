@@ -6,14 +6,16 @@ namespace HiveMind.Server.Domain.Scheduler.SlotStrategy;
 
 public class BumpStrategy : ISlotStrategy
 {
-    public List<GenerationResultItem> Generate(GenerationContext context, SourceItem source, string showName, int Duration, RetreiverType retreiverType)
+    public List<GenerationResultItem> Generate(GenerationContext context, SourceItem source, List<string> tags, int duration, RetreiverType retreiverType)
     {
         var retriever = context.Retriever;
 
         var customFilter = new List<(string, string, string)>()
         {
-            (QueryAllowedFields.Duration.ToString(), QueryAllowedOperators.LessThanEquals.ToString(), Duration.ToString())
+            (QueryAllowedFields.Duration.ToString(), QueryAllowedOperators.LessThanEquals.ToString(), duration.ToString())
         };
+
+        if(tags.Count > 0) customFilter.AddRange(tags.Select(x => (QueryAllowedFields.Tag.ToString(), QueryAllowedOperators.Equals.ToString(), x)));
 
         var mediaItems = retriever.GetMedia(source, retreiverType, 1, customFilter);
 

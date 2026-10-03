@@ -5,17 +5,19 @@ namespace HiveMind.Server.Domain.Scheduler.SlotStrategy;
 
 public class InBumpStrategy: ISlotStrategy
 {
-    public List<GenerationResultItem> Generate(GenerationContext context, SourceItem source, string showName, int Duration, RetreiverType retreiverType)
+    public List<GenerationResultItem> Generate(GenerationContext context, SourceItem source, List<string> tags, int duration, RetreiverType retreiverType)
     { 
-    var retriever = context.Retriever;
+        var retriever = context.Retriever;
 
-    var customFilter = new List<(string, string, string)>()
+        var customFilter = new List<(string, string, string)>()
         {
-            ("Duration", "LessThan", Duration.ToString())
+            ("Duration", "LessThan", duration.ToString())
         };
 
-    var mediaItems = retriever.GetMedia(source, retreiverType, 1, customFilter);
+        if(tags.Count > 0) customFilter.AddRange(tags.Select(x => ("Tag", "Equals", x)));
 
-    return [.. mediaItems.Select(x => new GenerationResultItem() { MediaItem = x, Type = TransitionSlot.InBump, StartTime = 0, EndTime = x.Duration })];
+        var mediaItems = retriever.GetMedia(source, retreiverType, 1, customFilter);
+
+        return [.. mediaItems.Select(x => new GenerationResultItem() { MediaItem = x, Type = TransitionSlot.InBump, StartTime = 0, EndTime = x.Duration })];
     }
 }

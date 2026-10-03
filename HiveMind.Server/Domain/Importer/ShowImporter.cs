@@ -13,6 +13,8 @@ public partial class ShowImporter: IImporter
 
         var showDict = showService.GetAllShows().ToDictionary(t => t.ShowTitle, t => t);
 
+        var queryDict = queryService.GetAllQueries().ToDictionary(t => t.Name, t => t);
+
         var newQueries = new Dictionary<string, HashSet<string>>();
 
         foreach (var file in files)
@@ -31,10 +33,6 @@ public partial class ShowImporter: IImporter
             {
                 var formattedShowName = ShowRegex().Replace(tags.First(), "").Trim();
 
-                if(!newQueries.ContainsKey(formattedShowName)) {
-                    newQueries[formattedShowName] = [];
-                }
-
                 if (showDict.ContainsKey(formattedShowName))
                 {
                     showId = showDict[formattedShowName].ShowId;
@@ -44,6 +42,12 @@ public partial class ShowImporter: IImporter
                     var newShow = new Entities.Show { ShowTitle = formattedShowName };
                     showId = showService.AddShow(newShow);
                     showDict[formattedShowName] = newShow;
+
+                    // do we need to create a query for the show?
+                    if (!queryDict.ContainsKey(formattedShowName))
+                    {
+                        if(!newQueries.ContainsKey(formattedShowName)) newQueries[formattedShowName] = new HashSet<string>() { "" };
+                    }
                 }
 
                 if (tags.Count > 1)
@@ -52,7 +56,16 @@ public partial class ShowImporter: IImporter
                     var success = Int32.TryParse(formattedSeasonNumber, out seasonNumber);
                     if(!success) seasonNumber = 0;
 
-                    newQueries[formattedShowName].Add(formattedSeasonNumber);
+                    if(seasonNumber > 0)
+                    {
+                        // do we need to create a query for the show and season?
+                        var queryName = formattedShowName + " - Season " + seasonNumber;
+                        if (!queryDict.ContainsKey(queryName))
+                        {
+                            if (!newQueries.ContainsKey(formattedShowName)) newQueries[formattedShowName] = new HashSet<string>();
+                            newQueries[formattedShowName].Add(seasonNumber.ToString());
+                        }
+                    }
                 }
 
                 var r = ExtractEpisodeMeta(fileName);
@@ -71,34 +84,20 @@ public partial class ShowImporter: IImporter
             }
         }
 
-        var queriesToCreate = newQueries.SelectMany(kvp => kvp.Value.SelectMany(x => ConvertToQuery(kvp.Key, x))).ToList();
+        var queriesToCreate = newQueries.SelectMany(kvp => kvp.Value.Select(x => ConvertToQuery(kvp.Key, x))).ToList();
 
         if (queriesToCreate.Count > 0) queryService.Create(queriesToCreate);
 
         return results;
     }
 
-    private static List<Entities.Query> ConvertToQuery(string ShowTitle, string Season)
+    private static Entities.Query ConvertToQuery(string showTitle, string season)
     {
-        return new List<Entities.Query>
+        if(season != string.Empty)
         {
-            new Entities.Query()
+            return new Entities.Query()
             {
-                Name= ShowTitle,
-                QueryType = QueryType.Show,
-                Filters =
-                [
-                    new()
-                    {
-                        Field = QueryAllowedFields.Show,
-                        Operator = QueryAllowedOperators.Equals,
-                        Value = ShowTitle
-                    }
-                ]
-            },
-            new Entities.Query()
-            {
-                Name = ShowTitle + " - Season " + Season,
+                Name = showTitle + " - Season " + season,
                 QueryType = QueryType.ShowAndSeason,
                 Filters =
                 [
@@ -106,17 +105,34 @@ public partial class ShowImporter: IImporter
                     {
                         Field = QueryAllowedFields.Show,
                         Operator = QueryAllowedOperators.Equals,
-                        Value = ShowTitle
+                        Value = showTitle
                     },
                     new()
                     {
                         Field = QueryAllowedFields.SeasonNumber,
                         Operator = QueryAllowedOperators.Equals,
-                        Value = Season
+                        Value = season
                     }
                 ]
-            }
-        };
+            };
+        }
+        else
+        {
+            return new Entities.Query()
+            {
+                Name = showTitle,
+                QueryType = QueryType.Show,
+                Filters =
+                [
+                    new()
+                    {
+                        Field = QueryAllowedFields.Show,
+                        Operator = QueryAllowedOperators.Equals,
+                        Value = showTitle
+                    }
+                ]
+            };
+        }
     }
 
     private record EpisodeMeta(int Season, int EpisodeStart, int? EpisodeEnd);

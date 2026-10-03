@@ -19,7 +19,6 @@ public class AssignStation
         // Implement the logic to assign stations to the drone using the droneService
 
 
-
         return TypedResults.Ok();
     }
 }

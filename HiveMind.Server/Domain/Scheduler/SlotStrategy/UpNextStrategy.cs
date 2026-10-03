@@ -7,7 +7,7 @@ namespace HiveMind.Server.Domain.Scheduler.SlotStrategy;
 
 public class UpNextStrategy: ISlotStrategy
 {
-    public List<GenerationResultItem> Generate(GenerationContext context, SourceItem source, string showName, int Duration, RetreiverType retreiverType)
+    public List<GenerationResultItem> Generate(GenerationContext context, SourceItem source, List<string> tags, int duration, RetreiverType retreiverType)
     {
         var results = new List<MediaItem>();
 
@@ -15,7 +15,7 @@ public class UpNextStrategy: ISlotStrategy
 
         var customFilter = new List<(string, string, string)>()
         {
-            (QueryAllowedFields.Duration.ToString(), QueryAllowedOperators.LessThanEquals.ToString(), Duration.ToString()),
+            (QueryAllowedFields.Duration.ToString(), QueryAllowedOperators.LessThanEquals.ToString(), duration.ToString()),
         };
 
         var mediaItems = retriever.GetMedia(source, retreiverType, 1, customFilter);

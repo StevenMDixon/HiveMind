@@ -11,4 +11,15 @@ public class ScheduleService : BaseService
         _context.SchedulingResults.Add(item);
         _context.SaveChanges();
     }
+
+    public void Delete(SchedulingResult item)
+    {
+        _context.SchedulingResults.Remove(item);
+        _context.SaveChanges();
+    }
+
+    public List<SchedulingResult> GetSchedulingResults(DateOnly date)
+    {
+        return _context.SchedulingResults.Where(sr => sr.Date <= date).ToList();
+    }
 }
