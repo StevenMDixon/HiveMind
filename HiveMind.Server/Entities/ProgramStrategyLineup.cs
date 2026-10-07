@@ -4,7 +4,7 @@ namespace HiveMind.Server.Entities;
 
 public class ProgramStrategyLineup
 {
-    public int ProgramStrategyLineupId { get; set; }
+    public int Id { get; set; }
 
     public int? ProgramStrategyId { get; set; } = null;
 

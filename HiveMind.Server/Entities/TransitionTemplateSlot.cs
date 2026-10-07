@@ -4,7 +4,7 @@ namespace HiveMind.Server.Entities;
 
 public class TransitionTemplateSlot
 {
-    public int TransitionTemplateSlotId { get; set; }
+    public int Id { get; set; }
     public TransitionSlot Slot { get; set; }    
     public int TransitionTemplateId { get; set; }
     public int Index { get; set; } = 0;

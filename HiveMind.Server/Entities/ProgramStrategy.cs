@@ -4,7 +4,7 @@ namespace HiveMind.Server.Entities;
 
 public class ProgramStrategy
 {
-    public int ProgramStrategyId { get; set; }
+    public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
 
     // Does the scheduler need to create a schedule for this item?

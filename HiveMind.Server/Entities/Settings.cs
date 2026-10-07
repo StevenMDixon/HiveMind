@@ -2,7 +2,7 @@
 
 public class Settings
 {
-    public int SettingsId { get; set; }
+    public int Id { get; set; }
     public string Name { get; set; } = null!;
     public string Value { get; set; } = null!;
 }

@@ -11,7 +11,7 @@ public partial class ShowImporter: IImporter
     {
         var results = new List<VideoMeta>();
 
-        var showDict = showService.GetAllShows().ToDictionary(t => t.ShowTitle, t => t);
+        var showDict = showService.GetAllShows().ToDictionary(t => t.Name, t => t);
 
         var queryDict = queryService.GetAllQueries().ToDictionary(t => t.Name, t => t);
 
@@ -35,12 +35,12 @@ public partial class ShowImporter: IImporter
 
                 if (showDict.ContainsKey(formattedShowName))
                 {
-                    showId = showDict[formattedShowName].ShowId;
+                    showId = showDict[formattedShowName].Id;
                 }
                 else
                 {
-                    var newShow = new Entities.Show { ShowTitle = formattedShowName };
-                    showId = showService.AddShow(newShow);
+                    var newShow = new Entities.Show { Name = formattedShowName };
+                    showId = showService.AddShow(newShow).Id;
                     showDict[formattedShowName] = newShow;
 
                     // do we need to create a query for the show?
@@ -98,7 +98,7 @@ public partial class ShowImporter: IImporter
             return new Entities.Query()
             {
                 Name = showTitle + " - Season " + season,
-                QueryType = QueryType.ShowAndSeason,
+                Type = QueryType.ShowAndSeason,
                 Filters =
                 [
                     new()
@@ -121,7 +121,7 @@ public partial class ShowImporter: IImporter
             return new Entities.Query()
             {
                 Name = showTitle,
-                QueryType = QueryType.Show,
+                Type = QueryType.Show,
                 Filters =
                 [
                     new()

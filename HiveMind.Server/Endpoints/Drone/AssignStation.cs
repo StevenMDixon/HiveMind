@@ -16,7 +16,7 @@ public class AssignStation
 
     public static Results<Ok, NoContent, ValidationProblem> Handle(DroneService droneService, [FromBody] StationAssigmentRequest stationAssigmentRequest)
     {
-        // Implement the logic to assign stations to the drone using the droneService
+        
 
 
         return TypedResults.Ok();

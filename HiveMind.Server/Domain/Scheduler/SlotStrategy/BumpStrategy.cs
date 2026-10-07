@@ -15,7 +15,7 @@ public class BumpStrategy : ISlotStrategy
             (QueryAllowedFields.Duration.ToString(), QueryAllowedOperators.LessThanEquals.ToString(), duration.ToString())
         };
 
-        if(tags.Count > 0) customFilter.AddRange(tags.Select(x => (QueryAllowedFields.Tag.ToString(), QueryAllowedOperators.Equals.ToString(), x)));
+        if(tags.Count > 0) customFilter.AddRange(tags.Select(x => (QueryAllowedFields.Tag.ToString(), QueryAllowedOperators.Contains.ToString(), x)));
 
         var mediaItems = retriever.GetMedia(source, retreiverType, 1, customFilter);
 

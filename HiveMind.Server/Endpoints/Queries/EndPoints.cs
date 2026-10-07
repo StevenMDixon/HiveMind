@@ -6,12 +6,12 @@ public static class EndPoints
     public static void Map(IEndpointRouteBuilder app)
     {
         var endpoints = app.MapGroup("queries");
-        GetAllQueries.Map(endpoints);
-        GetQueryById.Map(endpoints);
+        GetAll.Map(endpoints);
+        Get.Map(endpoints);
         GetQueryTypes.Map(endpoints);
-        CreateQuery.Map(endpoints);
-        UpdateQuery.Map(endpoints);
-        DeleteQuery.Map(endpoints);
+        Create.Map(endpoints);
+        Update.Map(endpoints);
+        Delete.Map(endpoints);
         QueryTest.Map(endpoints);
     }
 }

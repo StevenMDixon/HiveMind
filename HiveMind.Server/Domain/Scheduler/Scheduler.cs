@@ -9,7 +9,7 @@ namespace HiveMind.Server.Domain.Scheduler;
 
 public class Scheduler
 {
-    private readonly IServiceScope _scope;
+    private readonly IServiceProvider _serviceProvider;
 
     private readonly MediaItemRetriever _retriever;
 
@@ -18,17 +18,30 @@ public class Scheduler
         PropertyNameCaseInsensitive = true
     };
 
-    public Scheduler(IServiceScope scope)
+    public Scheduler(IServiceProvider serviceProvider)
     {
-        _scope = scope;
-        _retriever = new MediaItemRetriever(_scope.ServiceProvider.GetRequiredService<QueryService>());
+        _serviceProvider = serviceProvider;
+        _retriever = new MediaItemRetriever(_serviceProvider.GetRequiredService<QueryService>());
+    }
+
+    public async Task<GenerationResult> GenerateTestSchedule(string jsonData)
+    {
+        var scheduleContext = new ScheduleContext() { Date = DateOnly.FromDateTime(DateTime.Today), ProgramId = 0 };
+
+        options.Converters.Add(new JsonStringEnumConverter());
+
+        var scheduleNodes = JsonSerializer.Deserialize<List<INode>>(jsonData, options) ?? [.. new List<INode>()];
+
+        var result = ExecuteSchedule(scheduleNodes, scheduleContext);
+
+        return result;
     }
 
     public async Task GenerateSchedule(int lineUpId, int programStrategyID, DateOnly scheduledDate)
     {
-        var lineupService = _scope.ServiceProvider.GetRequiredService<LineupService>();
-
         if (lineUpId == 0) return;
+        
+        var lineupService = _serviceProvider.GetRequiredService<LineupService>();
          
         var lineup = lineupService.GetLineupByID(lineUpId);
 
@@ -57,7 +70,7 @@ public class Scheduler
                     ProgramStrategyId = programStrategyID
                 };
 
-                var scheduleService = _scope.ServiceProvider.GetRequiredService<ScheduleService>();
+                var scheduleService = _serviceProvider.GetRequiredService<ScheduleService>();
 
                 scheduleService.Create(scheduleResult);
             }
@@ -68,12 +81,12 @@ public class Scheduler
 
     public GenerationResult ExecuteSchedule(List<INode> scheduleNodes, ScheduleContext scheduleData)
     {
-        var settingService = _scope.ServiceProvider.GetRequiredService<SettingsService>();
+        var settingService = _serviceProvider.GetRequiredService<SettingsService>();
 
         var generationContext = new GenerationContext
         {
             Retriever = _retriever,
-            Scope = _scope,
+            ServiceProvider = _serviceProvider,
             Settings = settingService.GetAllSettings().ToDictionary(x => x.Name, x => x.Value),
             PromoQueries = GetUpComingEventPromos(scheduleData.ProgramId)
         };
@@ -102,7 +115,7 @@ public class Scheduler
     {
         var currentDate = DateTime.Today;
 
-        var programEventService = _scope.ServiceProvider.GetRequiredService<ProgramEventService>();
+        var programEventService = _serviceProvider.GetRequiredService<ProgramEventService>();
         var upcomingEvents = programEventService.GetUpComingEvents(programStrategyID, currentDate);
 
         return [.. upcomingEvents.Select(e => new SourceItem() {Type = SourceType.Id, Value = e.QueryId.ToString()})];

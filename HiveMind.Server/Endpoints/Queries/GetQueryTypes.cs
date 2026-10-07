@@ -10,7 +10,6 @@ public class GetQueryTypes
         app.MapGet("/types", Handle).WithName("GetQueryTypes");
     }
 
-
     public record Response(Dictionary<int, string> Types);
 
     public static Results<Ok<Response>, NotFound<string>> Handle()

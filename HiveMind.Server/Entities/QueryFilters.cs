@@ -6,7 +6,7 @@ namespace HiveMind.Server.Entities;
 public class QueryFilters
 {
     [Key]
-    public int QueryFilterId { get; set; }
+    public int Id { get; set; }
     public QueryAllowedFields Field { get; set; }
     public QueryAllowedOperators Operator { get; set; }
     public string Value { get; set; } = string.Empty;

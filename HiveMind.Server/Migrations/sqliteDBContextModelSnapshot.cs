@@ -19,7 +19,7 @@ namespace HiveMind.Server.Migrations
 
             modelBuilder.Entity("HiveMind.Server.Entities.Drone", b =>
                 {
-                    b.Property<int>("DroneId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -34,43 +34,43 @@ namespace HiveMind.Server.Migrations
                     b.Property<int>("StationSlots")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("DroneId");
+                    b.HasKey("Id");
 
                     b.ToTable("Drones");
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.Library", b =>
                 {
-                    b.Property<int>("LibraryId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsProcessed")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("LibraryName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("LibraryPath")
+                    b.Property<string>("Path")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("LibraryType")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("PathsToIgnore")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("LibraryId");
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
 
                     b.ToTable("Libraries");
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.Lineup", b =>
                 {
-                    b.Property<int>("LineupId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -78,21 +78,21 @@ namespace HiveMind.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("LineupName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<TimeOnly>("StartTime")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("LineupId");
+                    b.HasKey("Id");
 
                     b.ToTable("Lineups");
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.MediaItem", b =>
                 {
-                    b.Property<int>("MediaItemId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -135,7 +135,7 @@ namespace HiveMind.Server.Migrations
                     b.Property<int>("Width")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("MediaItemId");
+                    b.HasKey("Id");
 
                     b.HasIndex("LibraryId");
 
@@ -146,7 +146,7 @@ namespace HiveMind.Server.Migrations
 
             modelBuilder.Entity("HiveMind.Server.Entities.ProgramEvent", b =>
                 {
-                    b.Property<int>("EventId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -166,7 +166,7 @@ namespace HiveMind.Server.Migrations
                     b.Property<int>("QueryId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("EventId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ProgramStrategyId");
 
@@ -177,7 +177,7 @@ namespace HiveMind.Server.Migrations
 
             modelBuilder.Entity("HiveMind.Server.Entities.ProgramStrategy", b =>
                 {
-                    b.Property<int>("ProgramStrategyId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -194,14 +194,14 @@ namespace HiveMind.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("ProgramStrategyId");
+                    b.HasKey("Id");
 
                     b.ToTable("ProgramStrategies");
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.ProgramStrategyLineup", b =>
                 {
-                    b.Property<int>("ProgramStrategyLineupId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -218,7 +218,7 @@ namespace HiveMind.Server.Migrations
                     b.Property<int>("SelectionType")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("ProgramStrategyLineupId");
+                    b.HasKey("Id");
 
                     b.HasIndex("LineupId");
 
@@ -229,7 +229,7 @@ namespace HiveMind.Server.Migrations
 
             modelBuilder.Entity("HiveMind.Server.Entities.Query", b =>
                 {
-                    b.Property<int>("QueryId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -237,17 +237,17 @@ namespace HiveMind.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("QueryType")
+                    b.Property<int>("Type")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("QueryId");
+                    b.HasKey("Id");
 
                     b.ToTable("Queries");
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.QueryFilters", b =>
                 {
-                    b.Property<int>("QueryFilterId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -264,7 +264,7 @@ namespace HiveMind.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("QueryFilterId");
+                    b.HasKey("Id");
 
                     b.HasIndex("QueryId");
 
@@ -273,7 +273,7 @@ namespace HiveMind.Server.Migrations
 
             modelBuilder.Entity("HiveMind.Server.Entities.ScheduleBatch", b =>
                 {
-                    b.Property<int>("ScheduleBatchId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -289,7 +289,7 @@ namespace HiveMind.Server.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("ScheduleBatchId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ProgramStrategyId");
 
@@ -298,7 +298,7 @@ namespace HiveMind.Server.Migrations
 
             modelBuilder.Entity("HiveMind.Server.Entities.ScheduleBatchItem", b =>
                 {
-                    b.Property<int>("ScheduleBatchItemId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -309,7 +309,7 @@ namespace HiveMind.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("ProgramStrategyLineUpId")
+                    b.Property<int?>("ProgramStrategyLineupId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("ScheduleBatchId")
@@ -318,7 +318,7 @@ namespace HiveMind.Server.Migrations
                     b.Property<DateOnly>("ScheduleDate")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("ScheduleBatchItemId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ScheduleBatchId");
 
@@ -327,7 +327,7 @@ namespace HiveMind.Server.Migrations
 
             modelBuilder.Entity("HiveMind.Server.Entities.SchedulingResult", b =>
                 {
-                    b.Property<int>("SchedulingResultId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -341,14 +341,14 @@ namespace HiveMind.Server.Migrations
                     b.Property<int?>("ProgramStrategyId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("SchedulingResultId");
+                    b.HasKey("Id");
 
                     b.ToTable("SchedulingResults");
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.Settings", b =>
                 {
-                    b.Property<int>("SettingsId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -360,44 +360,44 @@ namespace HiveMind.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("SettingsId");
+                    b.HasKey("Id");
 
                     b.ToTable("Settings");
 
                     b.HasData(
                         new
                         {
-                            SettingsId = 1,
+                            Id = 1,
                             Name = "Import_Location",
                             Value = "/"
                         },
                         new
                         {
-                            SettingsId = 2,
+                            Id = 2,
                             Name = "Export_Location",
                             Value = "/"
                         },
                         new
                         {
-                            SettingsId = 3,
+                            Id = 3,
                             Name = "Bump In Tag",
                             Value = "In"
                         },
                         new
                         {
-                            SettingsId = 4,
+                            Id = 4,
                             Name = "Bump Out Tag",
                             Value = "Out"
                         },
                         new
                         {
-                            SettingsId = 5,
+                            Id = 5,
                             Name = "Bump Generic Tag",
                             Value = "Generic"
                         },
                         new
                         {
-                            SettingsId = 6,
+                            Id = 6,
                             Name = "Schedule Retention Days",
                             Value = "7"
                         });
@@ -405,90 +405,90 @@ namespace HiveMind.Server.Migrations
 
             modelBuilder.Entity("HiveMind.Server.Entities.Show", b =>
                 {
-                    b.Property<int>("ShowId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Rating")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("ShowTitle")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ShowId");
+                    b.HasKey("Id");
 
                     b.ToTable("Shows");
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.Station", b =>
                 {
-                    b.Property<int>("StationId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("DroneId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("StationLogo")
+                    b.Property<string>("Logo")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("StationName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("StationNumber")
+                    b.Property<int>("Number")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("StrategyProgramStrategyId")
+                    b.Property<int?>("StrategyId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("StationId");
+                    b.HasKey("Id");
 
                     b.HasIndex("DroneId");
 
-                    b.HasIndex("StrategyProgramStrategyId");
+                    b.HasIndex("StrategyId");
 
                     b.ToTable("Stations");
 
                     b.HasData(
                         new
                         {
-                            StationId = 1,
-                            StationLogo = "",
-                            StationName = "Test1",
-                            StationNumber = 1
+                            Id = 1,
+                            Logo = "",
+                            Name = "Test1",
+                            Number = 1
                         },
                         new
                         {
-                            StationId = 2,
-                            StationLogo = "",
-                            StationName = "Test2",
-                            StationNumber = 2
+                            Id = 2,
+                            Logo = "",
+                            Name = "Test2",
+                            Number = 2
                         },
                         new
                         {
-                            StationId = 3,
-                            StationLogo = "",
-                            StationName = "Test3",
-                            StationNumber = 3
+                            Id = 3,
+                            Logo = "",
+                            Name = "Test3",
+                            Number = 3
                         });
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.Tags", b =>
                 {
-                    b.Property<int>("TagId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("TagName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("TagId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("TagName")
+                    b.HasIndex("Name")
                         .IsUnique();
 
                     b.ToTable("Tags");
@@ -496,7 +496,7 @@ namespace HiveMind.Server.Migrations
 
             modelBuilder.Entity("HiveMind.Server.Entities.TransitionTemplate", b =>
                 {
-                    b.Property<int>("TransitionTemplateId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -507,20 +507,20 @@ namespace HiveMind.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("TransitionTemplateId");
+                    b.HasKey("Id");
 
                     b.ToTable("TransitionTemplates");
 
                     b.HasData(
                         new
                         {
-                            TransitionTemplateId = 1,
+                            Id = 1,
                             MatchShowBumps = true,
                             Name = "Default MidRoll"
                         },
                         new
                         {
-                            TransitionTemplateId = 2,
+                            Id = 2,
                             MatchShowBumps = true,
                             Name = "Default PostRoll"
                         });
@@ -528,7 +528,7 @@ namespace HiveMind.Server.Migrations
 
             modelBuilder.Entity("HiveMind.Server.Entities.TransitionTemplateSlot", b =>
                 {
-                    b.Property<int>("TransitionTemplateSlotId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -541,7 +541,7 @@ namespace HiveMind.Server.Migrations
                     b.Property<int>("TransitionTemplateId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("TransitionTemplateSlotId");
+                    b.HasKey("Id");
 
                     b.HasIndex("TransitionTemplateId");
 
@@ -550,63 +550,63 @@ namespace HiveMind.Server.Migrations
                     b.HasData(
                         new
                         {
-                            TransitionTemplateSlotId = 1,
+                            Id = 1,
                             Index = 0,
                             Slot = 1,
                             TransitionTemplateId = 1
                         },
                         new
                         {
-                            TransitionTemplateSlotId = 2,
+                            Id = 2,
                             Index = 1,
                             Slot = 2,
                             TransitionTemplateId = 1
                         },
                         new
                         {
-                            TransitionTemplateSlotId = 3,
+                            Id = 3,
                             Index = 2,
                             Slot = 4,
                             TransitionTemplateId = 1
                         },
                         new
                         {
-                            TransitionTemplateSlotId = 4,
+                            Id = 4,
                             Index = 3,
                             Slot = 2,
                             TransitionTemplateId = 1
                         },
                         new
                         {
-                            TransitionTemplateSlotId = 5,
+                            Id = 5,
                             Index = 4,
                             Slot = 0,
                             TransitionTemplateId = 1
                         },
                         new
                         {
-                            TransitionTemplateSlotId = 6,
+                            Id = 6,
                             Index = 0,
                             Slot = 2,
                             TransitionTemplateId = 2
                         },
                         new
                         {
-                            TransitionTemplateSlotId = 7,
+                            Id = 7,
                             Index = 1,
                             Slot = 5,
                             TransitionTemplateId = 2
                         },
                         new
                         {
-                            TransitionTemplateSlotId = 8,
+                            Id = 8,
                             Index = 2,
                             Slot = 4,
                             TransitionTemplateId = 2
                         },
                         new
                         {
-                            TransitionTemplateSlotId = 9,
+                            Id = 9,
                             Index = 3,
                             Slot = 2,
                             TransitionTemplateId = 2
@@ -618,12 +618,12 @@ namespace HiveMind.Server.Migrations
                     b.Property<int>("MediaItemId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("TagsTagId")
+                    b.Property<int>("TagsId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("MediaItemId", "TagsTagId");
+                    b.HasKey("MediaItemId", "TagsId");
 
-                    b.HasIndex("TagsTagId");
+                    b.HasIndex("TagsId");
 
                     b.ToTable("MediaItemTags");
                 });
@@ -714,7 +714,7 @@ namespace HiveMind.Server.Migrations
 
                     b.HasOne("HiveMind.Server.Entities.ProgramStrategy", "Strategy")
                         .WithMany()
-                        .HasForeignKey("StrategyProgramStrategyId");
+                        .HasForeignKey("StrategyId");
 
                     b.Navigation("Strategy");
                 });
@@ -738,7 +738,7 @@ namespace HiveMind.Server.Migrations
 
                     b.HasOne("HiveMind.Server.Entities.Tags", null)
                         .WithMany()
-                        .HasForeignKey("TagsTagId")
+                        .HasForeignKey("TagsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

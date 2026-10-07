@@ -2,46 +2,39 @@
 
 namespace HiveMind.Server.Services;
 
-public class ShowService:BaseService
+public class ShowService(SqliteDBContext context) : BaseService<Show>(context)
 {
-    public ShowService(SqliteDBContext context) : base(context) { }
-
     public IEnumerable<Show> GetAllShows()
     {
-        return _context.Shows;
+        return Get();
     }
 
-    public int AddShow(Show mediaItemShow)
+    public Show AddShow(Show mediaItemShow)
     {
-        _context.Shows.Add(mediaItemShow);
-        _context.SaveChanges();
-
-        return mediaItemShow.ShowId;
+        return Create(mediaItemShow);
     }
 
     public Show? GetShowByID(int id)
     {
-        return _context.Shows.Find(id);
+        return Get().FirstOrDefault(s => s.Id == id);
     }
 
     public Show? GetByName(string name)
     {
-        return _context.Shows.FirstOrDefault(s => s.ShowTitle == name);
+        return Get().FirstOrDefault(s => s.Name == name);
     }
 
-    public void Update(Show show)
+    public Show UpdateShow(Show show)
     {
-        _context.Shows.Update(show);
-        _context.SaveChanges();
+        return Update(show);
     }
 
     public void DeleteShow(int id)
     {
-        var show = _context.Shows.Find(id);
+        var show = Get().FirstOrDefault(s => s.Id == id);
         if (show != null)
         {
-            _context.Shows.Remove(show);
-            _context.SaveChanges();
+            Delete(show);
         }
     }
 }

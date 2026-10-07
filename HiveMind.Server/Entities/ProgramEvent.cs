@@ -5,7 +5,7 @@ namespace HiveMind.Server.Entities;
 public class ProgramEvent
 {
     [Key]
-    public int EventId { get; set; }
+    public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public int? ProgramStrategyId { get; set; }
     public ProgramStrategy? ProgramStrategy { get; set; }

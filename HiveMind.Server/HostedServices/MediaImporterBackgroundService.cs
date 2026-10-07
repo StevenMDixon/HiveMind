@@ -6,9 +6,9 @@ using System.Text.RegularExpressions;
 
 namespace HiveMind.Server.HostedServices;
 
-public partial class MediaImporterBackgroundService(IServiceProvider serviceProvider, ILogger<MediaImporterBackgroundService> logger) : BackgroundService
+public partial class MediaImporterBackgroundService(IServiceScopeFactory scopeFactory, ILogger<MediaImporterBackgroundService> logger) : BackgroundService
 {
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
     private readonly ILogger<MediaImporterBackgroundService> _logger = logger;
     private readonly string fileFormats = "mp4|avi|mkv|mov|wmv|flv|webm|m4v";
 
@@ -17,7 +17,7 @@ public partial class MediaImporterBackgroundService(IServiceProvider serviceProv
         while (!stoppingToken.IsCancellationRequested)
         {
             // Create a new scope for database operations
-            using (var scope = _serviceProvider.CreateScope())
+            using (var scope = _scopeFactory.CreateScope())
             {
                 var libraryService = scope.ServiceProvider.GetRequiredService<LibraryService>();
                 var mediaItemService = scope.ServiceProvider.GetRequiredService<Services.MediaItemService>();
@@ -39,14 +39,14 @@ public partial class MediaImporterBackgroundService(IServiceProvider serviceProv
 
                 if (targetLibary != null && !targetLibary.IsProcessed)
                 {
-                    var currentMediaItems = mediaItemService.GetMediaItemLibraryID(targetLibary.LibraryId);
+                    var currentMediaItems = mediaItemService.GetMediaItemLibraryID(targetLibary.Id);
 
-                    if (targetLibary.LibraryPath != null && targetLibary.LibraryPath != string.Empty)
+                    if (targetLibary.Path != null && targetLibary.Path != string.Empty)
                     {
 
-                        //targetLibary.LibraryPath = mountedPath + targetLibary.LibraryPath;
+                        //targetLibary.Path = mountedPath + targetLibary.Path;
 
-                        _logger.LogInformation("Processing Library: {LibraryName}", targetLibary.LibraryName);
+                        _logger.LogInformation("Processing Library: {LibraryName}", targetLibary.Name);
 
                         var files = new List<string>();
 
@@ -55,27 +55,27 @@ public partial class MediaImporterBackgroundService(IServiceProvider serviceProv
                             var pathsToIgnore = targetLibary.PathsToIgnore == string.Empty ? [] : targetLibary.PathsToIgnore.Split(';');
 
                             files.AddRange(
-                                Directory.GetFiles(mountedPath + targetLibary.LibraryPath, "*.*", SearchOption.AllDirectories)
+                                Directory.GetFiles(mountedPath + targetLibary.Path, "*.*", SearchOption.AllDirectories)
                                 .Where(x => Regex.IsMatch(x, $".*[.]({fileFormats})$"))
                                 .Where(x => pathsToIgnore.Length == 0 || !pathsToIgnore.Any(path => x.Contains(path)))
                                 );
                         }
                         catch (Exception e)
                         {
-                            _logger.LogError(e, "Error while getting files from library path: {LibraryPath}", targetLibary.LibraryPath);
+                            _logger.LogError(e, "Error while getting files from library path: {LibraryPath}", targetLibary.Path);
                         }
 
                         //_logger.LogInformation("Found files: {Count}", files.Count);
 
                         mediaItemsToDelete = [.. currentMediaItems.ExceptBy(files, x => mountedPath + x.FilePath)];
 
-                        var importer = ImporterFactory.Resolve(targetLibary.LibraryType);
+                        var importer = ImporterFactory.Resolve(targetLibary.Type);
 
                         var tagService = scope.ServiceProvider.GetRequiredService<TagsService>();
                         var showService = scope.ServiceProvider.GetRequiredService<ShowService>();
                         var queryService = scope.ServiceProvider.GetRequiredService<QueryService>();
 
-                        var importerResults = importer.Generate([.. files.Where(x => !currentMediaItems.Any(y => y.FilePath == x))], mountedPath, targetLibary.LibraryPath, showService, tagService, queryService);
+                        var importerResults = importer.Generate([.. files.Where(x => !currentMediaItems.Any(y => y.FilePath == x))], mountedPath, targetLibary.Path, showService, tagService, queryService);
 
                         foreach (var importerResult in importerResults)
                         {
@@ -103,7 +103,7 @@ public partial class MediaImporterBackgroundService(IServiceProvider serviceProv
                         //if (mountedPath != String.Empty) targetLibary.LibraryPath = targetLibary.LibraryPath.Replace(mountedPath, "");
                     }
 
-                    mediaItemService.AddMediaItems(mediaItems.Select(x => ConvertMetaToMediaItem(x, targetLibary.LibraryId)));    
+                    mediaItemService.AddMediaItems(mediaItems.Select(x => ConvertMetaToMediaItem(x, targetLibary.Id)));    
 
                     if(mediaItemsToDelete.Count != 0)
                     {
@@ -111,7 +111,7 @@ public partial class MediaImporterBackgroundService(IServiceProvider serviceProv
                     }
 
                     libraryService.MarkLibraryAsProcessed(targetLibary);
-                    _logger.LogInformation("Finished processing Library: {LibraryName}", targetLibary.LibraryName);
+                    _logger.LogInformation("Finished processing Library: {LibraryName}", targetLibary.Name);
                 }
             }
 

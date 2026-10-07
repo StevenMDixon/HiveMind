@@ -3,19 +3,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HiveMind.Server.Services;
 
-public class ProgramEventService(SqliteDBContext context) : BaseService(context)
+public class ProgramEventService(SqliteDBContext context) : BaseService<ProgramEvent>(context)
 {
 
     public IEnumerable<ProgramEvent> GetAllProgramEvents()
     {
-        return _context.ProgramEvents.Include(pe => pe.ProgramStrategy).Include(pe => pe.Query);
+        return Get().Include(pe => pe.ProgramStrategy).Include(pe => pe.Query);
     }
 
 
     public IEnumerable<ProgramEvent> GetUpComingEvents(int programStrategyID, DateTime currentDate)
     {
         var results = new List<ProgramEvent>();
-        var upcoming = _context.ProgramEvents.Where(pe => pe.ProgramStrategyId == programStrategyID && pe.EventDate >= currentDate);
+        var upcoming = Get().Where(pe => pe.ProgramStrategyId == programStrategyID && pe.EventDate >= currentDate);
 
         foreach(var programEvent in upcoming)
         {
@@ -30,45 +30,38 @@ public class ProgramEventService(SqliteDBContext context) : BaseService(context)
 
     public void AddProgramEvent(ProgramEvent programEvent)
     {
-        _context.ProgramEvents.Add(programEvent);
-        _context.SaveChanges();
+        Create(programEvent);
     }
 
     public void AddProgramEvent(IEnumerable<ProgramEvent> programEvents)
     {
-        _context.ProgramEvents.AddRange(programEvents);
-        _context.SaveChanges();
-    }
-
-    public ProgramEvent? GetProgramEventByID(int id)
-    {
-        return _context.ProgramEvents.Find(id);
-    }
-
-    public IEnumerable<ProgramEvent> GetProgramEventByProgramId(int id)
-    {
-        return _context.ProgramEvents.Where(x => x.ProgramStrategyId == id);
-    }
-
-    public void Update(ProgramEvent programEvent)
-    {
-        _context.ProgramEvents.Update(programEvent);
-        _context.SaveChanges();
-    }
-
-    public void Delete(int id)
-    {
-        var programEvent = _context.ProgramEvents.Find(id);
-        if (programEvent != null)
+        foreach (var programEvent in programEvents)
         {
-            _context.ProgramEvents.Remove(programEvent);
-            _context.SaveChanges();
+            Create(programEvent);
         }
     }
 
-    public void DeleteMany(IEnumerable<ProgramEvent> programEvent)
+    public ProgramEvent? GetProgramEventByID(int Id)
     {
-        _context.ProgramEvents.RemoveRange(programEvent);
-        _context.SaveChanges();
+        return Get().FirstOrDefault(x => x.Id == Id);
+    }
+
+    public IEnumerable<ProgramEvent> GetProgramEventByProgramId(int Id)
+    {
+        return Get().Where(x => x.ProgramStrategyId == Id);
+    }
+
+    public void Delete(int Id)
+    {
+        var programEvent = Get().FirstOrDefault(x => x.Id == Id);
+        if (programEvent != null)
+        {
+            Delete(programEvent);
+        }
+    }
+
+    public void DeleteMany(IEnumerable<ProgramEvent> programEvents)
+    {
+        Delete(programEvents.ToList());
     }
 }

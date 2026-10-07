@@ -17,7 +17,7 @@ public class OutBumpStrategy: ISlotStrategy
             ("Tag", "Equals", context.Settings["Bump Out Tag"] ?? "Out"),
         };
 
-        if(tags.Count > 0) bumpOutFilter.AddRange(tags.Select(x => ("Tag", "Equals", x)));
+        if(tags.Count > 0) bumpOutFilter.AddRange(tags.Select(x => ("Tag", "Contains", x)));
 
         var bumpOut = retriever.GetMedia(source, retreiverType, 1, bumpOutFilter).FirstOrDefault();
 
@@ -39,7 +39,9 @@ public class OutBumpStrategy: ISlotStrategy
             ("Tag", "Equals", context.Settings["Bump In Tag"] ?? "In")
         };
 
-        if(tags.Count > 0) bumpInFilter.AddRange(tags.Select(x => ("Tag", "Equals", x)));
+        // What are we using to determin a bump matches?
+
+        if(tags.Count > 0) bumpInFilter.AddRange(tags.Select(x => ("Tag", "Contains", x)));
 
         var bumpIn = retriever.GetMedia(source, retreiverType, 1, bumpInFilter).FirstOrDefault();
 

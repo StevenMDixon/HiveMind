@@ -3,54 +3,50 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HiveMind.Server.Services;
 
-public class MediaItemService(SqliteDBContext context) : BaseService(context)
+public class MediaItemService(SqliteDBContext context) : BaseService<MediaItem>(context)
 {
     public IEnumerable<MediaItem> GetAllMediaItems()
     {
-        return _context.MediaItems.Include(media => media.Library).Include(media => media.Show).Include(media => media.Tags);
+        return Get().Include(media => media.Library).Include(media => media.Show).Include(media => media.Tags);
     }
 
     public void AddMediaItem(MediaItem mediaItem)
     {
-        _context.MediaItems.Add(mediaItem);
-        _context.SaveChanges();
+        Create(mediaItem);
     }
 
     public void AddMediaItems(IEnumerable<MediaItem> mediaItems)
     {
-        _context.MediaItems.AddRange(mediaItems);
-        _context.SaveChanges();
+        foreach (var mediaItem in mediaItems)
+        {
+            Create(mediaItem);
+        }
     }
 
-    public MediaItem? GetMediaItemByID(int id)
+    public MediaItem? GetMediaItemByID(int Id)
     {
-        return _context.MediaItems.Find(id);
+        return Get().Include(x => x.Tags).Include(x => x.Library).Include(x => x.Show).FirstOrDefault(x => x.Id == Id);
     }
 
-    public IEnumerable<MediaItem> GetMediaItemLibraryID(int id)
+    public IEnumerable<MediaItem> GetMediaItemLibraryID(int Id)
     {
-        return _context.MediaItems.Where(x => x.LibraryId == id);
+        return Get().Where(x => x.LibraryId == Id);
     }
 
-    public void Update(MediaItem mediaItem)
+    public void Delete(int Id)
     {
-        _context.MediaItems.Update(mediaItem);
-        _context.SaveChanges();
-    }
-
-    public void Delete(int id)
-    {
-        var mediaItem = _context.MediaItems.Find(id);
+        var mediaItem = Get().FirstOrDefault(x => x.Id == Id);
         if (mediaItem != null)
         {
-            _context.MediaItems.Remove(mediaItem);
-            _context.SaveChanges();
+            Delete(mediaItem);
         }
     }
 
     public void DeleteMany(IEnumerable<MediaItem> mediaItems)
     {
-        _context.MediaItems.RemoveRange(mediaItems);
-        _context.SaveChanges();
+        foreach (var mediaItem in mediaItems)
+        {
+            Delete(mediaItem);
+        }
     }
 }

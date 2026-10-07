@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HiveMind.Server.Entities;
 
-[Index(nameof(TagName), IsUnique = true)]
+[Index(nameof(Name), IsUnique = true)]
 public class Tags
 {
     [Key]
-    public int TagId { get; set; }
-    public string TagName { get; set; } = string.Empty;
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
     public ICollection<MediaItem> MediaItem { get; set; } = null!;
 }

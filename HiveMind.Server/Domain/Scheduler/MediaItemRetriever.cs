@@ -26,7 +26,7 @@ public class MediaItemRetriever(QueryService queryService)
 
     public List<MediaItem> GetMedia(string queryName, RetreiverType retrieverType, int count = 1, List<(string, string, string)>? customFilters = null)
     {
-        var queryId = _QueryService.GetQueryByName(queryName)?.QueryId;
+        var queryId = _QueryService.GetQueryByName(queryName)?.Id;
 
         if (queryId == null)
         {

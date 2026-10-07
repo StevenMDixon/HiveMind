@@ -11,7 +11,7 @@ public class DefaultImporter : IImporter
     {
         var results = new List<VideoMeta>();
 
-        var tagDict = tagService.GetAllTags().ToDictionary(t => t.TagName, t => t);
+        var tagDict = tagService.GetAllTags().ToDictionary(t => t.Name, t => t);
 
         foreach (var file in files)
         {
@@ -32,7 +32,7 @@ public class DefaultImporter : IImporter
                 }
                 else
                 {
-                    var newTag = new Tags { TagName = tag };
+                    var newTag = new Tags { Name = tag };
                     tagDict.Add(tag, newTag);
                     mappedTags.Add(newTag);
                 }

@@ -23,14 +23,14 @@ const StationPage = () => {
     const navigate = useNavigate();
 
     const columns = [
-        { key: 'stationId', name: 'ID', align: 'left' },
-        { key: 'stationName', name: 'Station Name', align: 'left' },
-        { key: 'stationNumber', name: 'Station Number', align: 'left' }
+        { key: 'id', name: 'ID', align: 'left' },
+        { key: 'name', name: 'Station Name', align: 'left' },
+        { key: 'number', name: 'Station Number', align: 'left' }
     ] as CellData<Station>[];
 
     const actionColumns = [
-        { key: 'a1', name: "Edit", action: (e: Station) => navigate("/stations/" + e.stationId), icon: "Edit" },
-        { key: 'a2', name: "Delete", action: (e: Station) => deleteStation(e.stationId), icon: "Delete" }
+        { key: 'a1', name: "Edit", action: (e: Station) => navigate("/stations/" + e.id), icon: "Edit" },
+        { key: 'a2', name: "Delete", action: (e: Station) => deleteStation(e.id), icon: "Delete" }
     ] as CellData<Station>[];
 
     const handleRetry = () => {

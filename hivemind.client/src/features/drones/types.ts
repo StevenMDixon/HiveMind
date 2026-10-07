@@ -1,13 +1,13 @@
 export interface Drone {
-    droneId: number;
+    id: number;
     name: string;
     hostName: string;
     stations: Station[];
 }
 
 export interface Station {
-    stationId: number;
-    stationNumber: string;
-    stationName: string;
-    stationLogo: string;
+    id: number;
+    number: string;
+    name: string;
+    logo: string;
 }

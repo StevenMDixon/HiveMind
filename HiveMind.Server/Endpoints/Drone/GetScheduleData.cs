@@ -18,8 +18,6 @@ public class GetScheduleData
 
     public static Results<Ok<List<DroneScheduleResults>>, NoContent, ValidationProblem> Handle(DroneService droneService, [FromRoute] int id, [FromQuery] DateTime? date)
     {
-        Console.WriteLine(date);
-        
         var requestedDate = date ?? DateTime.Today;
 
         var currentDateOnly = DateOnly.FromDateTime(requestedDate);

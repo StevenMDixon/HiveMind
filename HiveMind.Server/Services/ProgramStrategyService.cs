@@ -3,46 +3,37 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HiveMind.Server.Services
 {
-    public class ProgramStrategyService(SqliteDBContext context) : BaseService(context)
+    public class ProgramStrategyService(SqliteDBContext context) : BaseService<ProgramStrategy>(context)
     {
 
         public IEnumerable<ProgramStrategy> GetAllProgramStrategies()
         {
-            return _context.ProgramStrategies.Include(c => c.Lineups);
+            return Get(b => b.Lineups);
         }
 
         public IEnumerable<ProgramStrategy> GetAvailableStrategiesToProcess()
         {
             var currentDate = DateOnly.FromDateTime(DateTime.Now);
 
-            return [.. _context.ProgramStrategies.Include(x => x.Lineups).Where(ps => ps.Active == true && (ps.LastScheduleDate <= currentDate || ps.LastScheduleDate == null))];
+            return Get(b => b.Lineups).Where(ps => ps.Active == true && (ps.LastScheduleDate <= currentDate || ps.LastScheduleDate == null));
         }
 
         public ProgramStrategy AddProgramStrategy(ProgramStrategy programStrategy)
         {
-            _context.ProgramStrategies.Add(programStrategy);
-            _context.SaveChanges();
-            return programStrategy;
+            return Create(programStrategy);
         }
 
-        public ProgramStrategy? GetProgramStrategyById(int id)
+        public ProgramStrategy? GetProgramStrategyById(int Id)
         {
-            return _context.ProgramStrategies.Include(x => x.Lineups).FirstOrDefault(x => x.ProgramStrategyId == id);
+            return Get(b => b.Lineups).FirstOrDefault(x => x.Id == Id);
         }
 
-        public void Update(ProgramStrategy programStrategy)
+        public void Delete(int Id)
         {
-            _context.ProgramStrategies.Update(programStrategy);
-            _context.SaveChanges();
-        }
-
-        public void Delete(int id)
-        {
-            var programStrategy = _context.ProgramStrategies.Find(id);
+            var programStrategy = Get().FirstOrDefault(x => x.Id == Id);
             if (programStrategy != null)
             {
-                _context.ProgramStrategies.Remove(programStrategy);
-                _context.SaveChanges();
+                Delete(programStrategy);
             }
         }
     }

@@ -29,9 +29,9 @@ public class MediaQueryBuilderTests : IDisposable
     private void SeedTestData()
     {
         // Create tags
-        var actionTag = new Tags { TagId = 1, TagName = "Action" };
-        var comedyTag = new Tags { TagId = 2, TagName = "Comedy" };
-        var dramaTag = new Tags { TagId = 3, TagName = "Drama" };
+        var actionTag = new Tags { Id = 1, Name = "Action" };
+        var comedyTag = new Tags { Id = 2, Name = "Comedy" };
+        var dramaTag = new Tags { Id = 3, Name = "Drama" };
 
         _context.Tags.AddRange(actionTag, comedyTag, dramaTag);
 
@@ -39,7 +39,7 @@ public class MediaQueryBuilderTests : IDisposable
         {
             new()
             {
-                MediaItemId = 1,
+                Id = 1,
                 Title = "Movie A",
                 FilePath = "/path/movie-a.mp4",
                 Duration = 5400000,
@@ -50,7 +50,7 @@ public class MediaQueryBuilderTests : IDisposable
             },
             new()
             {
-                MediaItemId = 2,
+                Id = 2,
                 Title = "Movie B",
                 FilePath = "/path/movie-b.mp4",
                 Duration = 7200000,
@@ -61,7 +61,7 @@ public class MediaQueryBuilderTests : IDisposable
             },
             new()
             {
-                MediaItemId = 3,
+                Id = 3,
                 Title = "Show Episode 1",
                 FilePath = "/path/show-ep1.mp4",
                 Duration = 2700000,
@@ -72,7 +72,7 @@ public class MediaQueryBuilderTests : IDisposable
             },
             new()
             {
-                MediaItemId = 4,
+                Id = 4,
                 Title = "Show Episode 2",
                 FilePath = "/path/show-ep2.mp4",
                 Duration = 2700000,
@@ -83,7 +83,7 @@ public class MediaQueryBuilderTests : IDisposable
             },
             new()
             {
-                MediaItemId = 5,
+                Id = 5,
                 Title = "Documentary",
                 FilePath = "/path/documentary.mp4",
                 Duration = 10800000,
@@ -506,7 +506,7 @@ public class MediaQueryBuilderTests : IDisposable
         // Assert
         Assert.Equal(3, result.Count); // Movie A, Show Episode 1, Show Episode 2
         Assert.All(result, item =>
-            Assert.Contains(item.Tags ?? [], tag => tag.TagName == "Action"));
+            Assert.Contains(item.Tags ?? [], tag => tag.Name == "Action"));
     }
 
     [Fact]

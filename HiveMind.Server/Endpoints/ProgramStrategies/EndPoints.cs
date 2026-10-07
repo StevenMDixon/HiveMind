@@ -7,7 +7,7 @@ public class EndPoints
     {
         var endpoints = app.MapGroup("strategies");
         GetAll.Map(endpoints);
-        GetById.Map(endpoints);
+        Get.Map(endpoints);
         Update.Map(endpoints);
         Delete.Map(endpoints);
         Create.Map(endpoints);

@@ -15,7 +15,7 @@ export const getStations = async (): Promise<Station[]> => {
 };
 
 export const updateStation = async(station: Station) => {
-    return await fetch('/api/stations/' + station.stationId, {
+    return await fetch('/api/stations/' + station.id, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...station }),

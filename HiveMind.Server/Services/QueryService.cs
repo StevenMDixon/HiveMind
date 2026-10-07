@@ -5,51 +5,47 @@ namespace HiveMind.Server.Services;
 using HiveMind.Server.Domain.Enums;
 using HiveMind.Server.QueryEngine;
 
-public class QueryService(SqliteDBContext context) : BaseService(context)
+public class QueryService(SqliteDBContext context) : BaseService<Query>(context)
 {
     public IEnumerable<Query> GetAllQueries()
     {
-        return _context.Queries.Include(c => c.Filters);
+        return Get();
     }
 
     public Query AddQuery(Query query)
     {
-        _context.Queries.Add(query);
-        _context.SaveChanges();
-        return query;
+        return Create(query);
     }
 
     public Query? GetQueryByID(int id)
     {
-        return _context.Queries.Include(x => x.Filters).FirstOrDefault(x => x.QueryId == id);
+        return Get().FirstOrDefault(x => x.Id == id);
     }
 
     public Query? GetQueryByName(string name)
     {
-        return _context.Queries.Include(x => x.Filters).FirstOrDefault(x => x.Name == name);
+        return Get().FirstOrDefault(x => x.Name == name);
     }
 
     public void Update(Query query)
     {
         Console.WriteLine(_context.Entry(query).State);
 
-        _context.Queries.Update(query);
-        _context.SaveChanges();
+        Update(query);
     }
 
     public void Delete(int id)
     {
-        var query = _context.Queries.Find(id);
+        var query = Get().FirstOrDefault(x => x.Id == id);
         if (query != null)
         {
-            _context.Queries.Remove(query);
-            _context.SaveChanges();
+            Delete(query);
         }
     }
 
     public ICollection<MediaItem> GetMediaItemsByQueryId(int queryId, List<(string, string, string)>? customFilters = null)
     {
-        var query = _context.Queries.Include(q => q.Filters).FirstOrDefault(q => q.QueryId == queryId);
+        var query = Get().Include(x => x.Filters).FirstOrDefault(q => q.Id == queryId);
         
         if (query == null || query.Filters == null)
         {
@@ -74,7 +70,7 @@ public class QueryService(SqliteDBContext context) : BaseService(context)
 
     public ICollection<MediaItem> GetMediaItemsByQueryGroup(ICollection<int> queryIds, List<(string, string, string)>? customFilters = null)
     {
-        var queries = _context.Queries.Include(q => q.Filters).Where(q => queryIds.Contains(q.QueryId)).ToList();
+        var queries = _context.Queries.Include(q => q.Filters).Where(q => queryIds.Contains(q.Id)).ToList();
 
         if (queries == null || !(queries.Count > 0))
         {

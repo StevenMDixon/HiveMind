@@ -172,9 +172,9 @@ public static class MediaQueryBuilder
         // Get the Tags collection property
         var tagsProperty = Expression.Property(parameter, "Tags");
 
-        // Create lambda for tag filtering: tag => tag.TagName.Contains(value)
+        // Create lambda for tag filtering: tag => tag.Name.Contains(value)
         var tagParam = Expression.Parameter(typeof(Tags), "tag");
-        var tagNameProperty = Expression.Property(tagParam, "TagName");
+        var tagNameProperty = Expression.Property(tagParam, "Name");
         var constant = Expression.Constant(filter.Value);
 
         Expression tagComparison = filter.Operator switch
@@ -206,7 +206,7 @@ public static class MediaQueryBuilder
         var showProperty = Expression.Property(parameter, "Show");
 
         // Get the MediaItemShowTitle property from Show
-        var showNameProperty = Expression.Property(showProperty, "ShowTitle");
+        var showNameProperty = Expression.Property(showProperty, "Name");
         var constant = Expression.Constant(filter.Value);
 
         Expression showComparison = filter.Operator switch

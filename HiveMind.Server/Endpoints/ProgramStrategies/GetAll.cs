@@ -16,6 +16,6 @@ public class GetAll
     {
         var strategies = programStrategy.GetAllProgramStrategies();
 
-        return TypedResults.Ok(new GetAllProgramStrategiesResponse(strategies.Select(x => new ProgramStrategy(x.ProgramStrategyId, x.Name, x.AdvancedDays, x.Active, x.LastScheduleDate)).ToList()));
+        return TypedResults.Ok(new GetAllProgramStrategiesResponse(strategies.Select(x => new ProgramStrategy(x.Id, x.Name, x.AdvancedDays, x.Active, x.LastScheduleDate)).ToList()));
     }
 }

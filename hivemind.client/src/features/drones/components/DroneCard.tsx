@@ -34,10 +34,10 @@ const DroneCard = ({ drone, remove, edit }: DroneCardProps) => {
                 <Typography sx={{ margin: "1em" }}><EmojiNatureIcon sx={{ verticalAlign: "bottom"}} fontSize="large" color="secondary" /> {drone.name}</Typography>
                 <Stack direction="row">
                     <IconButton>
-                        <EditIcon onClick={() => edit(drone.droneId) } />
+                        <EditIcon onClick={() => edit(drone.id) } />
                     </IconButton>
                     <IconButton>
-                        <DeleteIcon onClick={() => remove(drone.droneId)} />
+                        <DeleteIcon onClick={() => remove(drone.id)} />
                     </IconButton>
                 </Stack>
             </Stack>
@@ -49,10 +49,10 @@ const DroneCard = ({ drone, remove, edit }: DroneCardProps) => {
                     {drone.stations && drone.stations.map(station =>
                         <ListItem>
                             <ListItemAvatar>
-                                <Avatar alt="Remy Sharp" src={station.stationLogo} />
+                                <Avatar alt="Remy Sharp" src={station.logo} />
                             </ListItemAvatar>
                             <ListItemText>
-                                {station.stationName}
+                                {station.name}
                             </ListItemText>
                         </ListItem>
                     )

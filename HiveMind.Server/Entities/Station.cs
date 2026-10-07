@@ -2,9 +2,11 @@
 
 public class Station
 {
-    public int StationId { get; set; }
-    public int StationNumber { get; set; }
-    public string StationName { get; set; } = string.Empty;
-    public string StationLogo { get; set; } = string.Empty;
+    public int Id { get; set; }
+    public int Number { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Logo { get; set; } = string.Empty;
+    public int? StrategyId { get; set; }
     public ProgramStrategy? Strategy { get; set; }
+    public int? DroneId { get; set; }
 }

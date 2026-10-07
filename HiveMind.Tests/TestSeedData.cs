@@ -21,26 +21,26 @@ public static class TestSeedData
 
     public static List<Tags> Tags = new List<Tags>
     {
-        new() { TagId = 1, TagName = "In" },
-        new() { TagId = 2, TagName = "Out" }
+        new() { Id = 1, Name = "In" },
+        new() { Id = 2, Name = "Out" }
     };
 
     public static List<Show> Shows = new List<Show>
     {
         new()
         {
-            ShowId = 1,
-            ShowTitle = "Show 1"
+            Id = 1,
+            Name = "Show 1"
         },
         new()
         {
-            ShowId = 2,
-            ShowTitle = "Show 2"
+            Id = 2,
+            Name = "Show 2"
         },
         new()
         {
-            ShowId = 3,
-            ShowTitle = "Show 3"
+            Id = 3,
+            Name = "Show 3"
         },
     };
 
@@ -48,7 +48,7 @@ public static class TestSeedData
         {
             new ()
             {
-                MediaItemId = 1,
+                Id = 1,
                 Title = "Show 1 Episode 1",
                 FilePath = "/path/show-1-ep1.mp4",
                 Duration = 1321000,
@@ -60,7 +60,7 @@ public static class TestSeedData
             },
             new ()
             {
-                MediaItemId = 2,
+                Id = 2,
                 Title = "Show 1 Episode 2",
                 FilePath = "/path/show-1-ep2.mp4",
                 Duration = 1321000,
@@ -71,7 +71,7 @@ public static class TestSeedData
             },
             new()
             {
-                MediaItemId = 3,
+                Id = 3,
                 Title = "Show 1 Episode 3",
                 FilePath = "/path/show-1-ep3.mp4",
                 Duration = 1321000,
@@ -82,7 +82,7 @@ public static class TestSeedData
             },
             new()
             {
-                MediaItemId = 4,
+                Id = 4,
                 Title = "Show 2 Episode 2",
                 FilePath = "/path/show-2-ep2.mp4",
                 Duration = 1321000,
@@ -93,7 +93,7 @@ public static class TestSeedData
             },
             new()
             {
-                MediaItemId = 5,
+                Id = 5,
                 Title = "Show 2 Episode 3",
                 FilePath = "/path/show-2-ep3.mp4",
                 Duration = 1321000,
@@ -109,7 +109,7 @@ public static class TestSeedData
     {
         new()
             {
-                MediaItemId = 6,
+                Id = 6,
                 Title = "Commercial 1",
                 FilePath = "/path/Commercial1.mp4",
                 Duration = 1321000,

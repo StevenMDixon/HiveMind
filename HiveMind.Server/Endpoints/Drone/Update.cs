@@ -1,34 +1,64 @@
-﻿using HiveMind.Server.Services;
+﻿using HiveMind.Server.Entities;
+using HiveMind.Server.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HiveMind.Server.Endpoints.Drone
+namespace HiveMind.Server.Endpoints.Drone;
+
+public class Update
 {
-    public class Update
+    public static void Map(IEndpointRouteBuilder app)
     {
-        public static void Map(IEndpointRouteBuilder app)
+        app.MapPut("/", Handle)
+            .WithName("Update");
+    }
+
+    public record UpdateRequest(int Id, string HostName, string Name, int Slots, List<UpdatedStation> Stations);
+
+    public record UpdatedStation(int Id);
+
+    public static Results<Ok, NoContent, ValidationProblem> Handle(DroneService droneService, [FromBody] UpdateRequest updateRequest)
+    {
+        var drone = droneService.GetById(updateRequest.Id);
+
+        if (drone == null)
         {
-            app.MapPut("/", Handle)
-                .WithName("Update");
+            return TypedResults.NoContent();
         }
 
-        public record UpdateRequest(int id, string hostName, string name, int slots);
+        drone.HostName = updateRequest.HostName;
+        drone.Name = updateRequest.Name;
+        drone.StationSlots = updateRequest.Slots;
 
-        public static Results<Ok, NoContent, ValidationProblem> Handle(DroneService droneService, [FromBody] UpdateRequest updateRequest)
-        {
-            var drone = droneService.GetById(updateRequest.id);
-            if (drone == null)
-            {
-                return TypedResults.NoContent();
-            }
+        //var itemsToUpdate = new List<(Station, UpdatedStation)>();
 
-            drone.HostName = updateRequest.hostName;
-            drone.Name = updateRequest.name;
-            drone.StationSlots = updateRequest.slots;
+        //foreach (var station in updateRequest.Stations ?? [])
+        //{
+        //    var matchedItem = drone?.Stations?.Where(x => x.Id == station.Id).FirstOrDefault();
 
-            droneService.Update(drone);
+        //    if (matchedItem != null)
+        //    {
+        //        itemsToUpdate.Add((matchedItem, station));
+        //    }
 
-            return TypedResults.Ok();
-        }
+        //    itemsToUpdate.Add((new Station()
+        //    {
+
+        //    }, station));
+        //}
+
+        //drone!.Stations = Helper.Resolve(itemsToUpdate, UpdateItem);
+
+        droneService.Update(drone);
+
+        return TypedResults.Ok();
+    }
+
+    private static Station UpdateItem(Station station, UpdatedStation updatedStation)
+    {
+        
+
+        return station;
     }
 }
+

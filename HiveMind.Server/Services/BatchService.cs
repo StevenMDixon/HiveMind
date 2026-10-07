@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HiveMind.Server.Services;
 
-public class BatchService(SqliteDBContext context) : BaseService(context)
+public class BatchService(SqliteDBContext context) : BaseService<ScheduleBatch>(context)
 {
     public IEnumerable<ScheduleBatch> GetAllBatches()
     {
@@ -13,43 +13,39 @@ public class BatchService(SqliteDBContext context) : BaseService(context)
 
     public IEnumerable<ScheduleBatch> GetUnprocessedBatches()
     {
-        return _context.ScheduleBatches.Where(b => b.Status == BatchStatus.New).Include(x => x.ScheduleBatchItems).Include(y => y.ProgramStrategy);
+        return Get().Where(b => b.Status == BatchStatus.New).Include(x => x.ScheduleBatchItems).Include(y => y.ProgramStrategy);
     }
 
     public IEnumerable<ScheduleBatch> GetBatchesBeforeDate(DateOnly date)
     {
-        return _context.ScheduleBatches.Where(b => b.StartDate <= date).Include(x => x.ScheduleBatchItems).Include(y => y.ScheduleBatchItems);
+        return Get().Where(b => b.StartDate <= date).Include(x => x.ScheduleBatchItems).Include(y => y.ScheduleBatchItems);
     }
 
     public void AddBatch(ScheduleBatch batch)
     {
-        _context.ScheduleBatches.Add(batch);
-        _context.SaveChanges();
+        Create(batch);
     }
 
     public void CompleteBatch(ScheduleBatch batch)
     {
         batch.Status = BatchStatus.Completed;
-        _context.ScheduleBatches.Update(batch);
-        _context.SaveChanges();
+        Update(batch);
     }
 
     public void CancelBatch(ScheduleBatch batch)
     {
         batch.Status = BatchStatus.Canceled;
-        _context.ScheduleBatches.Update(batch);
-        _context.SaveChanges();
+        Update(batch);
     }
 
     public void UpdateBatch(ScheduleBatch batch)
     {
-        _context.ScheduleBatches.Update(batch);
-        _context.SaveChanges();
+        Update(batch);
     }
 
     public void CreateBatchItem(ScheduleBatch batch, ScheduleBatchItem item)
     {
-        item.ScheduleBatchId = batch.ScheduleBatchId;
+        item.ScheduleBatchId = batch.Id;
         _context.ScheduleBatchItems.Add(item);
         _context.SaveChanges();
     }

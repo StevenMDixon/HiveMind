@@ -2,22 +2,21 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HiveMind.Server.Endpoints.Drone
+namespace HiveMind.Server.Endpoints.Drone;
+
+public class Create
 {
-    public class Create
+    public static void Map(IEndpointRouteBuilder app)
     {
-        public static void Map(IEndpointRouteBuilder app)
-        {
-            app.MapPost("/", Handle)
-                .WithName("Create");
-        }
+        app.MapPost("/", Handle)
+            .WithName("Create");
+    }
 
-        public record CreateRequest(string hostName, string name, int slots);
+    public record CreateRequest(string hostName, string Name, int Slots);
 
-        public static Results<Ok, NoContent, ValidationProblem> Handle(DroneService droneService, [FromBody] CreateRequest createRequest)
-        {
-            droneService.Create(createRequest.name, createRequest.hostName, createRequest.slots);
-            return TypedResults.Ok();
-        }
+    public static Results<Ok, NoContent, ValidationProblem> Handle(DroneService droneService, [FromBody] CreateRequest createRequest)
+    {
+        droneService.Create(createRequest.Name, createRequest.hostName, createRequest.Slots);
+        return TypedResults.Ok();
     }
 }

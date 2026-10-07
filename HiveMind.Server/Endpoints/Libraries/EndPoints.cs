@@ -6,12 +6,12 @@ public class EndPoints
     public static void Map(IEndpointRouteBuilder app)
     {
         var endpoints = app.MapGroup("Libraries");
-        GetAllLibraries.Map(endpoints);
-        CreateLibrary.Map(endpoints);
-        DeleteLibrary.Map(endpoints);
-        GetLibraryById.Map(endpoints);
+        GetAll.Map(endpoints);
+        Create.Map(endpoints);
+        Delete.Map(endpoints);
+        Get.Map(endpoints);
+        Update.Map(endpoints);
         GetLibraryTypes.Map(endpoints);
-        UpdateLibrary.Map(endpoints);
         ReprocessLibrary.Map(endpoints);
     }
 }

@@ -5,104 +5,147 @@ using HiveMind.Server.Services;
 
 namespace HiveMind.Server.HostedServices;
 
-public class SchedulingBackgroundService(IServiceProvider serviceProvider, ILogger<SchedulingBackgroundService> logger) : BackgroundService
+public class SchedulingBackgroundService(IServiceScopeFactory scopeFactory, ILogger<SchedulingBackgroundService> logger) : BackgroundService
 {
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
     private readonly ILogger<SchedulingBackgroundService> _logger = logger;
-
-    public record ScheduleContext(DateOnly Date, ProgramStrategyLineup? ProgramStrategyLineup = null);
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
             // Create a new scope for database operations
-            using (var scope = _serviceProvider.CreateScope())
+            using (var scope = _scopeFactory.CreateScope())
             {
-                var batchService = scope.ServiceProvider.GetRequiredService<BatchService>();
                 var libraryService = scope.ServiceProvider.GetRequiredService<LibraryService>();
-
                 var unprocessedLibraries = libraryService.GetUnprocessedLibraries();
 
                 if (unprocessedLibraries != null && unprocessedLibraries.Any())
                 {
-                    await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken); // Example delay
-                    continue; // Skip processing if there are unprocessed libraries
+                    return; // Skip processing if there are unprocessed libraries
                 }
 
-                var openBatches = batchService.GetUnprocessedBatches();
+                await CleanupSchedules(scope, stoppingToken);
 
-                if (openBatches.Any())
-                {
-                    // Process first open batch
-                    await ProcessBatch(openBatches.First(), scope);
-                }
-                else
-                {
-                    // we should not have any open batches at this point, so we can create new batches for any program strategies that need to be processed
-                    var programStrategyService = scope.ServiceProvider.GetRequiredService<ProgramStrategyService>();
-                    var programToProcess = programStrategyService.GetAvailableStrategiesToProcess();
-
-                    if(programToProcess.Any())
-                    {
-                        // create batches for each program strategy that needs to be processed
-                        foreach (var program in programToProcess)
-                        {
-                            await CreateBatch(program, batchService, programStrategyService);
-                        }
-                    }
-                }
+                await ProcessBatch(scope, stoppingToken);
+                await CreateBatches(scope, stoppingToken);
             }
+
             await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken); // Example delay
         }
     }
 
-    private static async Task CreateBatch(ProgramStrategy programStrategy, BatchService batchService, ProgramStrategyService programStrategyService)
+    private static async Task CleanupSchedules(IServiceScope scope, CancellationToken stoppingToken)
     {
-        var batchItems = new List<ScheduleBatchItem>();
+        var settingsService = scope.ServiceProvider.GetRequiredService<SettingsService>();
+        var batchService = scope.ServiceProvider.GetRequiredService<BatchService>();
+        var scheduleService = scope.ServiceProvider.GetRequiredService<ScheduleService>();
 
-        var startDate = DateOnly.FromDateTime(DateTime.Now);
-        var endDate = DateOnly.FromDateTime(DateTime.Now.AddDays(programStrategy.AdvancedDays));
-
-        if (programStrategy.LastScheduleDate != null)
+        var retentionDaysSetting = settingsService.GetByName("Schedule Retention Days");
+        if (retentionDaysSetting != null && int.TryParse(retentionDaysSetting.Value, out int retentionDays))
         {
-            startDate = programStrategy.LastScheduleDate.Value.AddDays(1);
-            // Probably want to do this so that if a schedule gets out of sync we still schedule those days
-            // For Sequential items...?
-        }
+            var cutoffDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-retentionDays));
 
-        for (var date = startDate; date <= endDate; date = date.AddDays(1))
-        {
-            batchItems.Add(new ScheduleBatchItem
+            var oldSchedulingResults = scheduleService.GetSchedulingResults(cutoffDate);
+
+            foreach (var result in oldSchedulingResults)
             {
-                ScheduleDate = date,
-                IsCompleted = false,
-                OutputFilePath = programStrategy.ProgramStrategyId.ToString(),
-                ProgramStrategyLineUpId = LineUpSelectionMapper.GetMatchingProgramStrategyLineup(programStrategy, date)
-            });
+                if (File.Exists(result.Path))
+                {
+                    File.Delete(result.Path);
+                }
+
+                scheduleService.Delete(result);
+            }
+
+            var oldBatchResults = batchService.GetBatchesBeforeDate(cutoffDate);
+
+            var batchesToDelete = new List<ScheduleBatch>();
+
+            foreach (var batch in oldBatchResults)
+            {
+                var batchChildren = batch?.ScheduleBatchItems?.All(item => item.ScheduleDate <= cutoffDate) ?? true;
+
+                if (batch != null && batchChildren)
+                {
+                    batchesToDelete.Add(batch);
+                }
+            }
+
+            batchService.DeleteBatchItems(batchesToDelete);
         }
-
-        var batch = new ScheduleBatch
-        {
-            ProgramStrategyId = programStrategy.ProgramStrategyId,
-            ScheduleBatchItems = batchItems,
-            StartDate = startDate,
-            EndDate = endDate
-        };
-
-        batchService.AddBatch(batch);
-
-        programStrategy.LastScheduleDate = endDate;
-
-        programStrategyService.Update(programStrategy);
     }
 
-    private async Task ProcessBatch(ScheduleBatch batch, IServiceScope scope)
+    private static async Task CreateBatches(IServiceScope scope, CancellationToken stoppingToken)
     {
+        var programStrategyService = scope.ServiceProvider.GetRequiredService<ProgramStrategyService>();
+        var batchService = scope.ServiceProvider.GetRequiredService<BatchService>();
+
+        var programToProcess = programStrategyService.GetAvailableStrategiesToProcess();
+
+        if (!programToProcess.Any())
+        {
+            //_logger.LogInformation("No Programs to Process");
+            return;
+        }
+        // create batches for each program strategy that needs to be processed
+        foreach (var program in programToProcess)
+        {
+            var batchItems = new List<ScheduleBatchItem>();
+
+            var startDate = DateOnly.FromDateTime(DateTime.Now);
+            var endDate = DateOnly.FromDateTime(DateTime.Now.AddDays(program.AdvancedDays));
+
+            if (program.LastScheduleDate != null)
+            {
+                startDate = program.LastScheduleDate.Value.AddDays(1);
+                // Probably want to do this so that if a schedule gets out of sync we still schedule those days
+                // For Sequential items...?
+            }
+
+            for (var date = startDate; date <= endDate; date = date.AddDays(1))
+            {
+                batchItems.Add(new ScheduleBatchItem
+                {
+                    ScheduleDate = date,
+                    IsCompleted = false,
+                    OutputFilePath = program.Id.ToString(),
+                    ProgramStrategyLineupId = LineUpSelectionMapper.GetMatchingProgramStrategyLineup(program, date)
+                });
+            }
+
+            var batch = new ScheduleBatch
+            {
+                ProgramStrategyId = program.Id,
+                ScheduleBatchItems = batchItems,
+                StartDate = startDate,
+                EndDate = endDate
+            };
+
+            batchService.AddBatch(batch);
+
+            program.LastScheduleDate = endDate;
+
+            programStrategyService.Update(program);
+        }
+    }
+
+    private async Task ProcessBatch(IServiceScope scope, CancellationToken stoppingToken)
+    {
+        
+        var batchService = scope.ServiceProvider.GetRequiredService<BatchService>();
+
+        var openBatches = batchService.GetUnprocessedBatches();
+
+        var batch = openBatches.FirstOrDefault();
+
+        if (batch == null)
+        {
+            _logger.LogInformation("No open batches found.");
+            return;
+        }
         // each batch item represents a day in the overall schedule.
         var batchItemsToProcess = batch.ScheduleBatchItems?.Where(x => x.IsCompleted == false);
-
-        var batchService = scope.ServiceProvider.GetRequiredService<BatchService>();
 
         var lineupService = scope.ServiceProvider.GetRequiredService<LineupService>();
 
@@ -111,7 +154,7 @@ public class SchedulingBackgroundService(IServiceProvider serviceProvider, ILogg
         {
             batch.Status = BatchStatus.Completed;
             batchService.UpdateBatch(batch);
-            _logger.LogWarning("Batch {BatchId} has no items to process.", batch.ScheduleBatchId);
+            _logger.LogWarning("Batch {BatchId} has no items to process.", batch.Id);
             return;
         }
 
@@ -122,13 +165,19 @@ public class SchedulingBackgroundService(IServiceProvider serviceProvider, ILogg
         {
             if (batchItem == null)
             {
-                _logger.LogWarning("Batch item is null for batch {BatchId}.", batch.ScheduleBatchId);
+                _logger.LogWarning("Batch item is null for batch {BatchId}.", batch.Id);
                 continue;
             }
-         
-            var lineup = programScheduleLineupService.GetProgramStrategyLineupById(batchItem.ProgramStrategyLineUpId ?? 0);
 
-            var scheduler = new Scheduler(scope);
+            if(stoppingToken.IsCancellationRequested)
+            {
+                _logger.LogInformation("Cancellation requested. Stopping batch processing for batch {BatchId}.", batch.Id);
+                return;
+            }
+
+            var lineup = programScheduleLineupService.GetProgramStrategyLineupById(batchItem.ProgramStrategyLineupId ?? 0);
+
+            var scheduler = new Scheduler(scope.ServiceProvider);
 
             await scheduler.GenerateSchedule(lineup?.LineupId ?? 0, batch.ProgramStrategyId ?? 0, batchItem.ScheduleDate);
 
@@ -139,5 +188,7 @@ public class SchedulingBackgroundService(IServiceProvider serviceProvider, ILogg
                 batchService.UpdateBatchItem(batchItem);
             }
         }
+
+        return;
     }
 }

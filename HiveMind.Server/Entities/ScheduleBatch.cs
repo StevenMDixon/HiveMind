@@ -4,7 +4,7 @@ namespace HiveMind.Server.Entities;
 
 public class ScheduleBatch
 {
-    public int ScheduleBatchId { get; set; }
+    public int Id { get; set; }
 
     public DateOnly StartDate { get; set; }
 

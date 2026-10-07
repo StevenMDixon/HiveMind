@@ -28,35 +28,35 @@ public class SqliteDBContext(DbContextOptions<SqliteDBContext> options) : DbCont
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Station>().HasData(
-            new Station { StationId = 1, StationName = "Test1", StationNumber = 1 },
-            new Station { StationId = 2, StationName = "Test2", StationNumber = 2 },
-            new Station { StationId = 3, StationName = "Test3", StationNumber = 3 }
+            new Station { Id = 1, Name = "Test1", Number = 1 },
+            new Station { Id = 2, Name = "Test2", Number = 2 },
+            new Station { Id = 3, Name = "Test3", Number = 3 }
         );
 
         modelBuilder.Entity<Settings>().HasData(
-            new Settings { SettingsId = 1, Name = "Import_Location", Value = "/" },
-            new Settings { SettingsId = 2, Name = "Export_Location", Value = "/" },
-            new Settings { SettingsId = 3, Name = "Bump In Tag", Value = "In" },
-            new Settings { SettingsId = 4, Name = "Bump Out Tag", Value = "Out" },
-            new Settings { SettingsId = 5, Name = "Bump Generic Tag", Value = "Generic" },
-            new Settings { SettingsId = 6, Name = "Schedule Retention Days", Value = "7" }
+            new Settings { Id = 1, Name = "Import_Location", Value = "/" },
+            new Settings { Id = 2, Name = "Export_Location", Value = "/" },
+            new Settings { Id = 3, Name = "Bump In Tag", Value = "In" },
+            new Settings { Id = 4, Name = "Bump Out Tag", Value = "Out" },
+            new Settings { Id = 5, Name = "Bump Generic Tag", Value = "Generic" },
+            new Settings { Id = 6, Name = "Schedule Retention Days", Value = "7" }
         );
 
         modelBuilder.Entity<TransitionTemplate>().HasData(
-            new TransitionTemplate { TransitionTemplateId = 1, Name = "Default MidRoll"},
-            new TransitionTemplate { TransitionTemplateId = 2, Name = "Default PostRoll" }
+            new TransitionTemplate { Id = 1, Name = "Default MidRoll"},
+            new TransitionTemplate { Id = 2, Name = "Default PostRoll" }
         );
 
         modelBuilder.Entity<TransitionTemplateSlot>().HasData(
-            new TransitionTemplateSlot { TransitionTemplateSlotId = 1, TransitionTemplateId = 1, Slot = TransitionSlot.OutBump, Index = 0},
-            new TransitionTemplateSlot { TransitionTemplateSlotId = 2, TransitionTemplateId = 1, Slot = TransitionSlot.Ident, Index = 1},
-            new TransitionTemplateSlot { TransitionTemplateSlotId = 3, TransitionTemplateId = 1, Slot = TransitionSlot.Filler, Index = 2},
-            new TransitionTemplateSlot { TransitionTemplateSlotId = 4, TransitionTemplateId = 1, Slot = TransitionSlot.Ident, Index = 3},
-            new TransitionTemplateSlot { TransitionTemplateSlotId = 5, TransitionTemplateId = 1, Slot = TransitionSlot.InBump, Index = 4},
-            new TransitionTemplateSlot { TransitionTemplateSlotId = 6, TransitionTemplateId = 2, Slot = TransitionSlot.Ident, Index = 0},
-            new TransitionTemplateSlot { TransitionTemplateSlotId = 7, TransitionTemplateId = 2, Slot = TransitionSlot.Promo, Index = 1},
-            new TransitionTemplateSlot { TransitionTemplateSlotId = 8, TransitionTemplateId = 2, Slot = TransitionSlot.Filler, Index = 2},
-            new TransitionTemplateSlot { TransitionTemplateSlotId = 9, TransitionTemplateId = 2, Slot = TransitionSlot.Ident, Index = 3}
+            new TransitionTemplateSlot { Id = 1, TransitionTemplateId = 1, Slot = TransitionSlot.OutBump, Index = 0},
+            new TransitionTemplateSlot { Id = 2, TransitionTemplateId = 1, Slot = TransitionSlot.Ident, Index = 1},
+            new TransitionTemplateSlot { Id = 3, TransitionTemplateId = 1, Slot = TransitionSlot.Filler, Index = 2},
+            new TransitionTemplateSlot { Id = 4, TransitionTemplateId = 1, Slot = TransitionSlot.Ident, Index = 3},
+            new TransitionTemplateSlot { Id = 5, TransitionTemplateId = 1, Slot = TransitionSlot.InBump, Index = 4},
+            new TransitionTemplateSlot { Id = 6, TransitionTemplateId = 2, Slot = TransitionSlot.Ident, Index = 0},
+            new TransitionTemplateSlot { Id = 7, TransitionTemplateId = 2, Slot = TransitionSlot.Promo, Index = 1},
+            new TransitionTemplateSlot { Id = 8, TransitionTemplateId = 2, Slot = TransitionSlot.Filler, Index = 2},
+            new TransitionTemplateSlot { Id = 9, TransitionTemplateId = 2, Slot = TransitionSlot.Ident, Index = 3}
         );
     }
 

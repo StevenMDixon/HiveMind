@@ -5,7 +5,9 @@ public class EndPoints
     public static void Map(IEndpointRouteBuilder app)
     {
         var endpoints = app.MapGroup("MediaItems");
-        GetAllMediaItems.Map(endpoints);
+        Get.Map(endpoints);
+        GetAll.Map(endpoints);
+        Update.Map(endpoints);
     }
 }
 

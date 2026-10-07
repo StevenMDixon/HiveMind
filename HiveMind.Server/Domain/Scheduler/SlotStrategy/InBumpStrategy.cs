@@ -14,7 +14,7 @@ public class InBumpStrategy: ISlotStrategy
             ("Duration", "LessThan", duration.ToString())
         };
 
-        if(tags.Count > 0) customFilter.AddRange(tags.Select(x => ("Tag", "Equals", x)));
+        if(tags.Count > 0) customFilter.AddRange(tags.Select(x => ("Tag", "Contains", x)));
 
         var mediaItems = retriever.GetMedia(source, retreiverType, 1, customFilter);
 

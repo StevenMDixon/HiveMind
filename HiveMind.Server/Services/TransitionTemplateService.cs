@@ -3,40 +3,33 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HiveMind.Server.Services;
 
-public class TransitionTemplateService: BaseService
+public class TransitionTemplateService(SqliteDBContext context) : BaseService<TransitionTemplate>(context)
 {
-    public TransitionTemplateService(SqliteDBContext context) : base(context)
-    {
-    }
-
     public IEnumerable<TransitionTemplate> GetAllTransitionTemplates()
     {
-        return _context.TransitionTemplates;
+        return Get().ToList();
     }   
 
     public TransitionTemplate? GetTransitionTemplateByID(int id)
     {
-        return _context.TransitionTemplates.Where(tt => tt.TransitionTemplateId == id).Include(tt => tt.Slots).FirstOrDefault();
+        return Get().Where(tt => tt.Id == id).Include(tt => tt.Slots).FirstOrDefault();
     }
 
-    public void CreateTransitionTemplate(TransitionTemplate template)
+    public TransitionTemplate CreateTransitionTemplate(TransitionTemplate template)
     {
-        _context.TransitionTemplates.Add(template);
-        _context.SaveChanges();
+        return Create(template);
     }
 
-    public void UpdateTransitionTemplate(TransitionTemplate template)
+    public TransitionTemplate UpdateTransitionTemplate(TransitionTemplate template)
     {
-        _context.Update(template);
-        _context.SaveChanges();
+        return Update(template);
     }
 
     public void Delete(int id)
     {
-        var template = _context.TransitionTemplates.Find(id);
+        var template = Get().FirstOrDefault(tt => tt.Id == id);
         if (template != null) {
-            _context.TransitionTemplates.Remove(template);
-            _context.SaveChanges();
+            Delete(template );
         }
     }
 }

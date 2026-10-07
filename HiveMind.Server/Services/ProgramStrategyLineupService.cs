@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HiveMind.Server.Services;
 
-public class ProgramStrategyLineupService(SqliteDBContext context) : BaseService(context)
+public class ProgramStrategyLineupService(SqliteDBContext context) : BaseService<ProgramStrategyLineup>(context)
 {
-    public ProgramStrategyLineup? GetProgramStrategyLineupById(int id)
+    public ProgramStrategyLineup? GetProgramStrategyLineupById(int Id)
     {
-        return _context.ProgramStrategyLineups.Where(x => x.ProgramStrategyLineupId == id).Include(x => x.Lineup).FirstOrDefault();
+        return Get().Where(x => x.Id == Id).Include(x => x.Lineup).FirstOrDefault();
     }
 }

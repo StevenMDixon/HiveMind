@@ -6,7 +6,7 @@ namespace HiveMind.Server.Entities;
 public class MediaItem
 {
     [Key]
-    public int MediaItemId { get; set; }
+    public int Id { get; set; }
     public string Title { get; set; } = "";
     public int Duration { get; set; } // Duration in milliseconds
     public int LibraryId { get; set; }

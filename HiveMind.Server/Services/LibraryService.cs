@@ -2,34 +2,29 @@
 
 namespace HiveMind.Server.Services;
 
-public class LibraryService(SqliteDBContext context) : BaseService(context)
+public class LibraryService(SqliteDBContext context) : BaseService<Library>(context)
 {
     public IEnumerable<Library> GetAllLibraries()
     {
-        return _context.Libraries;
+        return Get();
     }
 
     public IEnumerable<Library> GetUnprocessedLibraries()
     {
-        return _context.Libraries.Where(l => l.IsProcessed == false);
+        return Get().Where(l => l.IsProcessed == false);
     }
 
     public void AddLibrary(Library library)
     {
-        _context.Libraries.Add(library);
+        Create(library);
         _context.SaveChanges();
     }
 
-    public Library? GetLibraryByID(int id)
+    public Library? GetLibraryByID(int Id)
     {
-        return _context.Libraries.Find(id);
+        return Get().FirstOrDefault(x => x.Id == Id);
     }
 
-    public void Update(Library library)
-    {
-        _context.Libraries.Update(library);
-        _context.SaveChanges();
-    }
 
     public void MarkLibraryAsProcessed(Library library)
     {
@@ -38,12 +33,12 @@ public class LibraryService(SqliteDBContext context) : BaseService(context)
         _context.SaveChanges();
     }
 
-    public void Delete(int id)
+    public void Delete(int Id)
     {
-        var library = _context.Libraries.Find(id);
+        var library = Get().FirstOrDefault(x => x.Id == Id);
         if (library != null)
         {
-            _context.Libraries.Remove(library);
+            Delete(library);
             _context.SaveChanges();
         }
     }

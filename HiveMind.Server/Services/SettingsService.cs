@@ -2,27 +2,26 @@
 
 namespace HiveMind.Server.Services;
 
-public class SettingsService(SqliteDBContext context) : BaseService(context)
+public class SettingsService(SqliteDBContext context) : BaseService<Settings>(context)
 {
     public IEnumerable<Settings> GetAllSettings()
     {
-        return _context.Settings;
+        return Get();
     }
 
-    public void UpdateSetting(Settings setting)
+    public Settings UpdateSetting(Settings setting)
     {
-        _context.Settings.Update(setting);
-        _context.SaveChanges();
+        return Update(setting);
     }
 
     public Settings? GetByName(string Name)
     {
-        return _context.Settings.FirstOrDefault(s => s.Name == Name);
+        return Get().FirstOrDefault(s => s.Name == Name);
     }
 
     public Settings? GetById(int Id)
     {
-        return _context.Settings.Find(Id);
+        return Get().FirstOrDefault(s => s.Id == Id);
     }
 
     public void UpdateSettings(Settings[] settings)

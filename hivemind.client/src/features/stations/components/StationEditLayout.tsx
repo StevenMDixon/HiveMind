@@ -22,7 +22,7 @@ const StationEditLayout = ({ stationData }: StationEditLayoutProps) => {
         <Container sx={{ mt: 5 }}>
             {
                 stationData &&
-                <CustomForm title={stationData.stationName} save={handleSaveStation} initialValue={stationData} fields={fields} />
+                <CustomForm title={stationData.name} save={handleSaveStation} initialValue={stationData} fields={fields} />
             }
         </Container>
     )

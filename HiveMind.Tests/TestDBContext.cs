@@ -16,15 +16,15 @@ public class TestDbContext : DbContext
     {
         modelBuilder.Entity<MediaItem>(entity =>
         {
-            entity.HasKey(e => e.MediaItemId);
+            entity.HasKey(e => e.Id);
             entity.Property(e => e.Title).IsRequired();
             entity.Property(e => e.FilePath).IsRequired();
         });
 
         modelBuilder.Entity<Tags>(entity =>
         {
-            entity.HasKey(e => e.TagId);
-            entity.Property(e => e.TagName).IsRequired();
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired();
         });
 
         // Many-to-many relationship

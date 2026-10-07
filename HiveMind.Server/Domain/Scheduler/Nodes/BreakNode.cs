@@ -41,9 +41,11 @@ public class BreakNode: INode
         var results = new List<GenerationResultItem>();
 
         // Set Promos from context
-        var random = Random.Shared.Next(context.PromoQueries.Count);
-
-        sources[TransitionSlot.Promo] = context.PromoQueries[random];
+        if(context.PromoQueries.Count > 0)
+        {
+            var random = Random.Shared.Next(context.PromoQueries.Count);
+            sources[TransitionSlot.Promo] = context.PromoQueries[random];
+        }
 
         var breakSlots = slots.ContainsKey(type) ? slots[type] : [];
 

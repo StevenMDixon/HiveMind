@@ -28,7 +28,7 @@ public class Update
 
     public record ProgramStrategyRequest(string? Name, int? AdvancedDays, bool? Active, DateOnly? StartDate, DateOnly? EndDate, ICollection<ProgramStrategyItem> ProgramStrategyItems);
 
-    public record ProgramStrategyItem(int ProgramStrategyLineupId, int? ProgramStrategyId, int? LineUpId, LineupSelectionType SelectionType, String SelectionOption);
+    public record ProgramStrategyItem(int Id, int? ProgramStrategyId, int? LineUpId, LineupSelectionType SelectionType, String SelectionOption);
 
     public static Results<Ok, NotFound<string>, ValidationProblem> Handle(ProgramStrategyService programStrategyService, [FromRoute] int id, [FromBody] ProgramStrategyRequest request)
     {
@@ -40,37 +40,40 @@ public class Update
             strategy.AdvancedDays = request.AdvancedDays ?? strategy.AdvancedDays;
             strategy.Active = request.Active ?? strategy.Active;
 
+            var itemsToUpdate = new List<(ProgramStrategyLineup, ProgramStrategyItem)>();
 
-            var strategyLineupToRemove = strategy.Lineups?.Where(c => !request.ProgramStrategyItems.Any(x => x.ProgramStrategyLineupId == c.ProgramStrategyLineupId)).ToList();
-
-            foreach (var stratToRem in strategyLineupToRemove ?? [])
+            foreach(var updatedLineup in request.ProgramStrategyItems)
             {
-                strategy.Lineups.Remove(stratToRem);
-            }
+                var matchedItem = strategy?.Lineups?.Where(x => x.Id == updatedLineup.Id).FirstOrDefault();
 
-            foreach(var stratToUpd in strategy.Lineups ?? [])
-            {
-                var reqData = request.ProgramStrategyItems.Where(x => x.ProgramStrategyLineupId == stratToUpd.ProgramStrategyLineupId).FirstOrDefault();
-
-                if(reqData != null)
+                if(matchedItem != null)
                 {
-                    stratToUpd.SelectionOption = reqData.SelectionOption;
-                    stratToUpd.SelectionType = reqData.SelectionType;
-                    stratToUpd.LineupId = reqData.LineUpId;
+                    itemsToUpdate.Add((matchedItem, updatedLineup));
                 }
+
+                itemsToUpdate.Add((new ProgramStrategyLineup() { 
+                    ProgramStrategyId = strategy!.Id, SelectionOption = updatedLineup.SelectionOption, SelectionType = updatedLineup.SelectionType}, updatedLineup));
             }
 
-            var strategyLineupsToAdd = request.ProgramStrategyItems.Where(x => x.ProgramStrategyLineupId <= 0).ToList();
-
-            foreach(var stratToAdd in strategyLineupsToAdd)
-            {
-                strategy.Lineups?.Add(new ProgramStrategyLineup() { LineupId = stratToAdd.LineUpId == 0 ? null : stratToAdd.LineUpId, ProgramStrategyId = strategy.ProgramStrategyId, SelectionOption = stratToAdd.SelectionOption, SelectionType = stratToAdd.SelectionType });
-            }
+            strategy.Lineups = Helper.Resolve(itemsToUpdate, UpdateItem);
 
             programStrategyService.Update(strategy);
             return TypedResults.Ok();
         }
 
         return TypedResults.NotFound($"A strategy with the ID: {id} was not found.");
+    }
+
+    private static ProgramStrategyLineup UpdateItem(ProgramStrategyLineup lineup, ProgramStrategyItem updatedLineup)
+    {
+        if(updatedLineup != null)
+        {
+            lineup.Id = updatedLineup.Id;
+            lineup.SelectionOption = updatedLineup.SelectionOption;
+            lineup.SelectionType = updatedLineup.SelectionType;
+            lineup.LineupId = updatedLineup.LineUpId;
+        }
+
+        return lineup;
     }
 }

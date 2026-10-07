@@ -14,27 +14,26 @@ builder.Services.AddDbContext<SqliteDBContext>(options => options.UseSqlite(Sqli
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.AddTransient<StationService>();
-builder.Services.AddTransient<LibraryService>();
-builder.Services.AddTransient<MediaItemService>();
-builder.Services.AddTransient<ShowService>();
-builder.Services.AddTransient<TagsService>();
-builder.Services.AddTransient<QueryService>();
-builder.Services.AddTransient<LineupService>();
-builder.Services.AddTransient<SettingsService>();
-builder.Services.AddTransient<ProgramStrategyService>();
-builder.Services.AddTransient<BatchService>();
-builder.Services.AddTransient<ProgramStrategyLineupService>();
-builder.Services.AddTransient<TransitionTemplateService>();
-builder.Services.AddTransient<ScheduleService>();
-builder.Services.AddTransient<DroneService>();
-builder.Services.AddTransient<ProgramEventService>();
+builder.Services.AddScoped<StationService>();
+builder.Services.AddScoped<LibraryService>();
+builder.Services.AddScoped<MediaItemService>();
+builder.Services.AddScoped<ShowService>();
+builder.Services.AddScoped<TagsService>();
+builder.Services.AddScoped<QueryService>();
+builder.Services.AddScoped<LineupService>();
+builder.Services.AddScoped<SettingsService>();
+builder.Services.AddScoped<ProgramStrategyService>();
+builder.Services.AddScoped<BatchService>();
+builder.Services.AddScoped<ProgramStrategyLineupService>();
+builder.Services.AddScoped<TransitionTemplateService>();
+builder.Services.AddScoped<ScheduleService>();
+builder.Services.AddScoped<DroneService>();
+builder.Services.AddScoped<ProgramEventService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 builder.Services.AddHostedService<SchedulingBackgroundService>();
 builder.Services.AddHostedService<MediaImporterBackgroundService>();
-builder.Services.AddHostedService<CleanupService>();
 
 var app = builder.Build();
 

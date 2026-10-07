@@ -3,23 +3,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HiveMind.Server.Services;
 
-public class DroneService(SqliteDBContext context) : BaseService(context)
+public class DroneService(SqliteDBContext context) : BaseService<Drone>(context)
 {
     public List<Drone> GetAll()
     {
-        return [.. _context.Drones.Include(x => x.Stations)];
+        return Get().Include(x => x.Stations).IgnoreAutoIncludes().ToList();
     }
 
     public Drone? GetByHostName(string hostName)
     {
-        var drone = _context.Drones.Where(x => x.HostName == hostName).Include(x => x.Stations).FirstOrDefault();
+        var drone = Get(x => x.Stations).FirstOrDefault(x => x.HostName == hostName);
 
         return drone;
     }
 
-    public Drone? GetById(int id)
+    public Drone? GetById(int Id)
     {
-        var drone = _context.Drones.Where(x => x.DroneId == id).Include(x => x.Stations).FirstOrDefault();
+        var drone = Get(x => x.Stations).FirstOrDefault(x => x.Id == Id);
         return drone;
     }
 
@@ -29,25 +29,18 @@ public class DroneService(SqliteDBContext context) : BaseService(context)
         _context.SaveChanges();
     }
 
-    public void Update(Drone drone)
+    public void Delete(int Id)
     {
-        _context.Drones.Update(drone);
-        _context.SaveChanges();
-    }
-
-    public void Delete(int id)
-    {
-        var drone = _context.Drones.Find(id);
+        var drone = Get().FirstOrDefault(x => x.Id == Id);
         if (drone != null)
         {
-            _context.Drones.Remove(drone);
-            _context.SaveChanges();
+            Delete(drone);
         }
     }
 
     public List<(string, string)> GetDroneSchedule(int droneId, DateOnly date)
     {
-        var drone = _context.Drones.Where(x => x.DroneId == droneId).Include(x => x.Stations).ThenInclude(x => x.Strategy).FirstOrDefault();
+        var drone = _context.Drones.Where(x => x.Id == droneId).Include(x => x.Stations).ThenInclude(x => x.Strategy).FirstOrDefault();
 
         if (drone != null)
         {
@@ -59,14 +52,14 @@ public class DroneService(SqliteDBContext context) : BaseService(context)
 
                 if(currentStrategy != null)
                 {
-                    var schedulingResult = _context.SchedulingResults.Where(x => x.ProgramStrategyId == currentStrategy.ProgramStrategyId && x.Date == date).FirstOrDefault();
+                    var schedulingResult = _context.SchedulingResults.Where(x => x.ProgramStrategyId == currentStrategy.Id && x.Date == date).FirstOrDefault();
 
                     if(schedulingResult != null)
                     {
                         string filePath = schedulingResult.Path;
                         string fileContents = System.IO.File.ReadAllText(filePath);
 
-                        schedules.Add((station.StationNumber.ToString(), fileContents));
+                        schedules.Add((station.Number.ToString(), fileContents));
                     }
                 }
             }

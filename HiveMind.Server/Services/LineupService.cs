@@ -1,25 +1,22 @@
 ﻿using HiveMind.Server.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace HiveMind.Server.Services;
 
-public class LineupService(SqliteDBContext context) : BaseService(context)
+public class LineupService(SqliteDBContext context) : BaseService<Lineup>(context)
 {
     public IEnumerable<Lineup> GetAllLineups()
     {
-        return _context.Lineups;
+        return Get();
     }
 
     public void AddLineup(Lineup lineup)
     {
-        _context.Lineups.Add(lineup);
-        _context.SaveChanges();
+        Create(lineup);
     }
 
-    public Lineup? GetLineupByID(int id)
+    public Lineup? GetLineupByID(int Id)
     {
-        return _context.Lineups
-            .FirstOrDefault(x => x.LineupId == id);
+        return Get().FirstOrDefault(x => x.Id == Id);
     }
 
     public void Update(Lineup lineup)
@@ -28,13 +25,12 @@ public class LineupService(SqliteDBContext context) : BaseService(context)
         _context.SaveChanges();
     }
 
-    public void DeleteLineup(int id)
+    public void DeleteLineup(int Id)
     {
-        var lineup = _context.Lineups.Find(id);
+        var lineup = Get().FirstOrDefault(x => x.Id == Id);
         if (lineup != null)
         {
-            _context.Lineups.Remove(lineup);
-            _context.SaveChanges();
+            Delete(lineup);
         }
     }
 }

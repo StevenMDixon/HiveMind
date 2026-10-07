@@ -80,7 +80,7 @@ public class BlockNode: INode
 
     public Dictionary<TransitionType, List<TransitionTemplateSlot>> RetrieveTransitionSlots(GenerationContext context, Dictionary<TransitionType, int> transitions)
     {
-        var transitionTemplateService = context.Scope.ServiceProvider.GetRequiredService<TransitionTemplateService>();
+        var transitionTemplateService = context.ServiceProvider.GetRequiredService<TransitionTemplateService>();
 
         var slots = new Dictionary<TransitionType, List<TransitionTemplateSlot>>();
 

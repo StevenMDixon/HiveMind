@@ -6,7 +6,7 @@ namespace HiveMind.Server.Domain.Scheduler;
 public class GenerationContext()
 {
     public MediaItemRetriever Retriever { get; set; } = null!;
-    public IServiceScope Scope { get; set; } = null!;
+    public IServiceProvider ServiceProvider { get; set; } = null!;
     public List<BlockContext> BlockContext { get; set; } = [];
     public List<SourceItem> PromoQueries { get; set; } = [];
     public Dictionary<string, string> Settings { get; set; } = [];
