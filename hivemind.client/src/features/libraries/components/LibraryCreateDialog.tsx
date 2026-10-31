@@ -9,13 +9,13 @@ interface NewLibraryFormProps {
 }
 
 const LibraryCreateDialog = ({ createLibrary, libraryTypes }: NewLibraryFormProps) => {
-    const libraryDefault = { libraryId: 0, libraryName: '', libraryPath: '', pathsToIgnore: '', libraryType: 0, isProcessed: false };
+    const libraryDefault = { id: 0, name: '', path: '', pathsToIgnore: '', type: 0, isProcessed: false };
 
     const fields = [
-        { name: 'libraryName', display: "Name", type: "Text", initialValue: libraryDefault.libraryName, validator: (libraryName: string) => libraryName != '', required: true },
-        { name: 'libraryPath', display: "Path", type: "Text", initialValue: libraryDefault.libraryPath, validator: (libraryPath: string) => libraryPath != '', required: true },
+        { name: 'name', display: "Name", type: "Text", initialValue: libraryDefault.name, validator: (libraryName: string) => libraryName != '', required: true },
+        { name: 'path', display: "Path", type: "Text", initialValue: libraryDefault.path, validator: (libraryPath: string) => libraryPath != '', required: true },
         { name: 'pathsToIgnore', display: "Paths to Ignore", type: "Text", initialValue: libraryDefault.pathsToIgnore },
-        { name: 'libraryType', display: "Type", type: "Select", initialValue: libraryDefault.libraryType, required: true, options: libraryTypes }
+        { name: 'type', display: "Type", type: "Select", initialValue: libraryDefault.type, required: true, options: libraryTypes }
     ] as CustomFormField[];
 
     return (

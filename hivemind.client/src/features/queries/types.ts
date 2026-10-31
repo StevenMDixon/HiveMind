@@ -5,15 +5,16 @@ export interface Option {
 }
 
 export interface Filter {
-    queryFilterId: number;
+    id: number;
     field: number;
     operator: number;
     value: string;
 }
 
 export interface Query {
-    queryId: number;
-    queryName: string;
+    id: number;
+    name: string;
+    type: string;
     filters: Filter[];
 }
 

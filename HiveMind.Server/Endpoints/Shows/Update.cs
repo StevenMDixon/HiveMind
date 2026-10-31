@@ -9,7 +9,7 @@ public class Update
 {
     public static void Map(IEndpointRouteBuilder app)
     {
-        app.MapPost("/{id:int}", Handle)
+        app.MapPut("/{id:int}", Handle)
             .WithName("UpdateShow");
     }
 

@@ -128,6 +128,10 @@ namespace HiveMind.Server.Migrations
                     b.Property<int?>("ShowId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("ThumbnailPath")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("TEXT");

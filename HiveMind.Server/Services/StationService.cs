@@ -9,6 +9,11 @@ public class StationService(SqliteDBContext context) : BaseService<Station>(cont
         return _context.Stations;
     }
 
+    public IEnumerable<Station> GetStationsByIds(ICollection<int> ids)
+    {
+        return _context.Stations.Where(x => ids.Contains(x.Id));
+    }
+
     public Station AddStation(Station station)
     {
         return Create(station);

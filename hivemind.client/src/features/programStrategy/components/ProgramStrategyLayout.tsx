@@ -30,7 +30,7 @@ const ProgramStrategyLayout = ({ strategy }: ProgramStrategyLayoutProps) => {
 
     const [lineups, setLineupsData] = useState<ProgramStrategyLineup[]>(strategy.programStrategyItems ?? []);
     
-    const mappedLineups = availableLineups?.reduce((acc: EnumOptionsObj, cur) => { acc[cur.lineupId] = cur.lineupName; return acc; }, {});
+    const mappedLineups = availableLineups?.reduce((acc: EnumOptionsObj, cur) => { acc[cur.id] = cur.name; return acc; }, {});
 
     const formatLineup = (item: number) => {
         return mappedLineups ? mappedLineups[item] : item;
@@ -51,7 +51,7 @@ const ProgramStrategyLayout = ({ strategy }: ProgramStrategyLayoutProps) => {
 
     const saveProgramStrategy = (e: ProgramStrategy) => {
         const newData = {
-            programStrategyId: e.programStrategyId,
+            id: e.id,
             name: e.name,
             startDate: e.startDate,
             endDate: e.endDate,
@@ -60,23 +60,22 @@ const ProgramStrategyLayout = ({ strategy }: ProgramStrategyLayoutProps) => {
             programStrategyItems: lineups
         } as ProgramStrategy
 
-        console.log(newData);
 
         saveStrategy(newData);
     }
 
     const removeLineup = (item: ProgramStrategyLineup) => {
-        const newFilterData = lineups.filter(x => x.programStrategyLineupId != item.programStrategyLineupId)
+        const newFilterData = lineups.filter(x => x.id != item.id)
         setLineupsData(newFilterData)
     }
 
     const addLineup = () => {
-        const newFilterData = [...lineups, { programStrategyLineupId: (lineups.length + 1) * -1, lineUpId: 0, selectionType: 0, selectionOption: "" } as ProgramStrategyLineup];
+        const newFilterData = [...lineups, { id: (lineups.length + 1) * -1, lineUpId: 0, selectionType: 0, selectionOption: "" } as ProgramStrategyLineup];
         setLineupsData(newFilterData);
     }
 
     const saveLineup = (item: ProgramStrategyLineup) => {
-        setLineupsData(lineups.map(lineup => lineup.programStrategyLineupId == item.programStrategyLineupId ? item : lineup));
+        setLineupsData(lineups.map(lineup => lineup.id == item.id ? item : lineup));
     }
 
     const gridColumns = [

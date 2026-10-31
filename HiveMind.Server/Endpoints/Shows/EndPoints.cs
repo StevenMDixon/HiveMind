@@ -6,6 +6,7 @@ public class EndPoints
     {
         var endpoints = app.MapGroup("Shows");
         Get.Map(endpoints);
+        GetAll.Map(endpoints);
         Update.Map(endpoints);
     }
 }

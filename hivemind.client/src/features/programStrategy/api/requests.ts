@@ -1,3 +1,4 @@
+import type PaginatedDataResponse from "../../../utilities/PaginatedData";
 import type { ProgramStrategy, Lineup } from "../types";
 
 
@@ -41,7 +42,7 @@ export const deleteProgramStrategy = async (strategyId: number) => {
 
 export const updateProgramStrategy = async (strategy: ProgramStrategy) => {
     console.log(strategy)
-    const result = await fetch('/api/strategies/' + strategy.programStrategyId, {
+    const result = await fetch('/api/strategies/' + strategy.id, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(strategy),
@@ -69,4 +70,21 @@ export const getLineups = async (): Promise<Lineup[]> => {
 
     const data = await response.json();
     return data.lineups;
+};
+
+
+
+export const search = async (searchTerm: string, page: number, count: number): Promise<PaginatedDataResponse<ProgramStrategy>> => {
+    let url = "/api/strategies";
+
+    url += `?search=${searchTerm}&count=${count}&page=${page}`;
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch media: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return {data: data.strategies, dataCount: data.dataCount} as PaginatedDataResponse<ProgramStrategy>;
 };

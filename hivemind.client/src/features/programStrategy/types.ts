@@ -1,5 +1,5 @@
 export interface ProgramStrategy {
-    programStrategyId: number;
+    id: number;
     name: string;
     advancedDays: number;
     active: boolean;
@@ -9,7 +9,7 @@ export interface ProgramStrategy {
 }
 
 export interface ProgramStrategyLineup {
-    programStrategyLineupId: number,
+    id: number,
     programStrategyId: number,
     lineUpId: number,
     selectionOption: string,
@@ -17,6 +17,6 @@ export interface ProgramStrategyLineup {
 }
 
 export interface Lineup {
-    lineupId: number;
-    lineupName: string;
+    id: number;
+    name: string;
 }

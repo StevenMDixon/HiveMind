@@ -4,6 +4,7 @@ using HiveMind.Server.Endpoints;
 using HiveMind.Server.HostedServices;
 using HiveMind.Server.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,8 +33,9 @@ builder.Services.AddScoped<ProgramEventService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
-builder.Services.AddHostedService<SchedulingBackgroundService>();
-builder.Services.AddHostedService<MediaImporterBackgroundService>();
+//builder.Services.AddHostedService<SchedulingBackgroundService>();
+//builder.Services.AddHostedService<MediaImporterBackgroundService>();
+builder.Services.AddHostedService<ThumbnailGenerationService>();
 
 var app = builder.Build();
 
@@ -50,6 +52,13 @@ using (var scope = app.Services.CreateScope())
 
 app.UseDefaultFiles();
 app.MapStaticAssets();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "thumbs")),
+    RequestPath = "/thumbs"
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

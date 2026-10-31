@@ -1,5 +1,5 @@
 import Header from '@/components/Header';
-import CustomTable, { type CellData } from '@/components/CustomTable';
+import CustomTable, { type CellData, type PagingData } from '@/components/CustomTable';
 import CustomDialog from '@/components/Dialog';
 
 import Container from '@mui/material/Container';
@@ -8,8 +8,8 @@ import { useNavigate } from "react-router-dom";
 import type { Station } from '../types';
 
 import {stationDefault, fields } from '../fields'
-
-import { stationsQueryOptions } from '../api/queryOptions';
+import { useState } from 'react';
+import { stationsQuerySearchOptions } from '../api/queryOptions';
 import { useQuery } from '@tanstack/react-query';
 
 import { useStationCreateHook, useStationDeleteHook } from '../hooks/stationHooks';
@@ -18,7 +18,11 @@ const StationPage = () => {
     const { mutate: createStation } = useStationCreateHook();
     const { mutate: deleteStation } = useStationDeleteHook();
 
-    const { data, refetch, isLoading } = useQuery(stationsQueryOptions());
+    const [search, setSearch] = useState('');
+    const [pageIndex, setPageIndex] = useState(1);
+    const [pageSize] = useState(18);
+
+    const { data: stations, refetch, isLoading } = useQuery(stationsQuerySearchOptions(search, pageIndex, pageSize));
 
     const navigate = useNavigate();
 
@@ -37,12 +41,28 @@ const StationPage = () => {
         refetch();
     };
 
+    const Search = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setSearch(e.target.value);
+    }
+    
+    const HandlePageIndexChange = (_: React.ChangeEvent<unknown>, value: number) => {
+        setPageIndex(value);
+    }
+
+    const paging = {
+        currentPage: pageIndex,
+        dataTotal: stations?.dataCount,
+        pageSize: pageSize,
+        changePage: HandlePageIndexChange
+    } as PagingData;
+
+
     return (
         <Container disableGutters maxWidth={false}>
             <Header Title="Stations">
                 <CustomDialog buttonText="Add Station" title="Create Station" save={createStation} initialValue={stationDefault } fields={fields} />
             </Header>
-            {data && <CustomTable data={data} handleRetry={handleRetry} columns={columns} actionColumns={actionColumns} isLoading={isLoading} />}
+            <CustomTable data={stations?.data} handleRetry={handleRetry} columns={columns} actionColumns={actionColumns} isLoading={isLoading} searchFN={Search} paging={paging}/>
         </Container>
     )
 }

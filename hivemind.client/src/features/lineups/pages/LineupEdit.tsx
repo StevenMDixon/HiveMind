@@ -26,8 +26,8 @@ const LineupDataWrapper = ({ lineup }: LineupDataWrapperProps) => {
 
     const saveLineup = async (data: string) => {
         const newlineup = {
-            lineupName: lineup.lineupName,
-            lineupId: lineup.lineupId,
+            name: lineup.name,
+            id: lineup.id,
             channelId: lineup.channelId,
             startTime: lineup.startTime,
             jsonData: data

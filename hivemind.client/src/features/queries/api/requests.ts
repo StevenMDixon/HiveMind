@@ -1,6 +1,7 @@
 import type { Query } from '../types';
 import type { Media } from '../../media/types';
 import type { QuerySetting, QuerySettingItem } from "../types";
+import type PaginatedDataResponse from '../../../utilities/PaginatedData';
 
 
 export const getQuery = async (queryId: number): Promise<Query> => {
@@ -37,7 +38,7 @@ export const createQuery = async (query: Query) => {
     const response = await fetch('/api/queries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ QueryName: query.queryName }),
+        body: JSON.stringify({ QueryName: query.name }),
     });
 
     return response;
@@ -53,7 +54,7 @@ export const deleteQuery = async (queryId: number) => {
 };
 
 export const updateQuery = async(query: Query) => {
-    const result = await fetch('/api/queries/' + query.queryId, {
+    const result = await fetch('/api/queries/' + query.id, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(query),
@@ -84,4 +85,20 @@ export const getOptions = async (): Promise<QuerySettingItem[]> => {
     const data = await response.json();
     console.log(data)
     return data.options;
+};
+
+
+export const search = async (searchTerm: string, page: number, count: number): Promise<PaginatedDataResponse<Query>> => {
+    let url = "/api/queries";
+
+    url += `?search=${searchTerm}&count=${count}&page=${page}`;
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch media: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return {data: data.queries, dataCount: data.dataCount} as PaginatedDataResponse<Query>;
 };

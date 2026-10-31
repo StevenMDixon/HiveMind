@@ -11,7 +11,7 @@ export interface EnumOptionsObj {
     [key: number]: string | number | boolean; // Keys are numbers, values are strings
 }
 
-export type CustomFormFieldTypes = 'Text' | 'Number' | 'Date' | 'Select' | 'Time' | 'Radio' | 'Switch' | 'Checkbox';
+export type CustomFormFieldTypes = 'Text' | 'Number' | 'Date' | 'Select' | 'Time' | 'Radio' | 'Switch' | 'Checkbox' | 'MultiSelect';
 
 export interface Option  {
     id: number,
@@ -88,6 +88,22 @@ const CreateFields = ({ field, index, disableLabels, variant, fullWidth, handle 
                 <Checkbox onChange={handle} checked={field.initialValue as boolean} name={field.name} />
             }
             label={field.display ? field.display : field.name} />
+        )
+        case 'MultiSelect': return (
+            <FormControl sx={{ mr: 1, p: 0, minWidth: 100 }} key={index} fullWidth={fullWidth}>
+                {!disableLabels && <FormLabel>{field.display ? field.display : field.name}</FormLabel>}
+                <Select
+                    required={field.required}
+                    variant={variant as TextFieldVariants}
+                    name={field.name}
+                    value={field.initialValue}
+                    onChange={handle}
+                    disabled={field.disabled}
+                    multiple
+                >
+                    {field.options && createSelectOptions(field.options)}
+                </Select>
+            </FormControl>
         )
         case 'Select': return (
             <FormControl sx={{ mr: 1, p: 0, minWidth: 100 }} key={index} fullWidth={fullWidth}>

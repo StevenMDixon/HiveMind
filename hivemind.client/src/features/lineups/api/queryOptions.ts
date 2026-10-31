@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import { getLineups, getLineup, getLineupItem, getQueryTypes, getPadToOptions, getPlayoutTypes } from './requests';
+import { getLineups, getLineup, getLineupItem, getQueryTypes, getPadToOptions, getPlayoutTypes, search } from './requests';
 import { queryKeys } from './queryKeys';
 
 export const lineupsQueryOptions = () => {
@@ -44,3 +44,9 @@ export const playoutTypesQueryOptions = () => {
     });
 }
 
+export const lineupQuerySearchOptions = (searchTerm: string, page: number, count: number) => {
+    return queryOptions({
+        queryKey: [...queryKeys.all, searchTerm, page, count],
+        queryFn: () => search(searchTerm, page, count)
+    });
+}

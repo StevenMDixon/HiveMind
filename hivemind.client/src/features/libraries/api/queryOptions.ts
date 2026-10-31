@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import { getLibraries, getLibrary, getLibraryTypes } from '../api/requests';
+import { getLibraries, getLibrary, getLibraryTypes, search } from '../api/requests';
 import { libraryKeys } from './queryKeys';
 
 export const libraryQueryOptions = (id: string) => {
@@ -20,5 +20,12 @@ export const libraryTypesQueryOptions = () => {
     return queryOptions({
         queryKey: ['libraryTypes'],
         queryFn: getLibraryTypes
+    });
+}
+
+export const libraryQuerySearchOptions = (searchTerm: string, page: number, count: number) => {
+    return queryOptions({
+        queryKey: ['libraryTypes', searchTerm, page, count],
+        queryFn: () => search(searchTerm, page, count)
     });
 }

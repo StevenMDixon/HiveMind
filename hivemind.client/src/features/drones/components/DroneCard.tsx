@@ -16,8 +16,6 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItem from '@mui/material/ListItem';
 
 import type { Drone } from '../types';
-// import { Box } from '@mui/material';
-// import ListItemText from '@mui/material/ListItemText';
 
 interface DroneCardProps {
     drone: Drone,

@@ -30,7 +30,7 @@ const LineupItemContainer = ({ lineupItem, index, selectItem, deleteItem, moveIt
     const queriesCount = lineupItem.queries.filter(x => x.queryType == 4).length; 
 
     return (
-        <TimelineItem key={lineupItem.lineupItemId}>
+        <TimelineItem key={lineupItem.id}>
             <TimelineOppositeContent color="text.secondary" >
                 {currenTime.toLocaleTimeString()}
             </TimelineOppositeContent>
@@ -102,7 +102,7 @@ const LineupTimeline = ({ selector, add, lineupItems, remove, move, startTime }:
     return (
         <Timeline>
             {lineupItems && lineupItems.map((lineupItem: LineupItem, index: number) =>
-                <LineupItemContainer key={lineupItem.lineupItemId} lineupItem={lineupItem} index={index} selectItem={selector} deleteItem={remove} moveItem={move} currenTime={getTimeAtIndex(startTime, index, lineupItems)} />)}
+                <LineupItemContainer key={lineupItem.id} lineupItem={lineupItem} index={index} selectItem={selector} deleteItem={remove} moveItem={move} currenTime={getTimeAtIndex(startTime, index, lineupItems)} />)}
             {
                 lineupItems.length > 0 &&
                 <TimelineItem>

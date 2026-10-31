@@ -12,14 +12,14 @@ public class DroneService(SqliteDBContext context) : BaseService<Drone>(context)
 
     public Drone? GetByHostName(string hostName)
     {
-        var drone = Get(x => x.Stations).FirstOrDefault(x => x.HostName == hostName);
+        var drone = Get().Include(x => x.Stations).FirstOrDefault(x => x.HostName == hostName);
 
         return drone;
     }
 
     public Drone? GetById(int Id)
     {
-        var drone = Get(x => x.Stations).FirstOrDefault(x => x.Id == Id);
+        var drone = Get().Include(x => x.Stations).FirstOrDefault(x => x.Id == Id);
         return drone;
     }
 
@@ -40,13 +40,13 @@ public class DroneService(SqliteDBContext context) : BaseService<Drone>(context)
 
     public List<(string, string)> GetDroneSchedule(int droneId, DateOnly date)
     {
-        var drone = _context.Drones.Where(x => x.Id == droneId).Include(x => x.Stations).ThenInclude(x => x.Strategy).FirstOrDefault();
+        var drone = Get().Include(x => x.Stations!).ThenInclude(x => x.Strategy).Where(x => x.Id == droneId).FirstOrDefault();
 
         if (drone != null)
         {
             var schedules = new List<(string, string)>();
 
-            foreach(var station in drone.Stations)
+            foreach(var station in drone.Stations ?? [])
             {
                 var currentStrategy = station.Strategy;
 

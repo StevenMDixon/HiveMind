@@ -28,6 +28,7 @@ import DevicesIcon from '@mui/icons-material/Devices';
 import ViewTimelineIcon from '@mui/icons-material/ViewTimeline';
 import SlideshowIcon from '@mui/icons-material/Slideshow';
 import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
+import ArticleIcon from '@mui/icons-material/Article';
 import { useState } from 'react';
 
 interface RouteItemProps {
@@ -121,7 +122,10 @@ const Sidebar: React.FC = () => {
         { key: "Progam Strategy", route: "/programstrategy", icon: AutoAwesomeMosaicIcon, folder: 'Schedule' },
         { key: "Drones", route: "/drones", icon: DevicesIcon, folder: 'Orchestrate' },
         { key: "System Setting", route: "/system-settings", icon: SettingsSuggestIcon, folder: 'Settings' },
+        { key: "Transitions", route: "/transitions", icon: ArticleIcon, folder: 'Schedule' },
     //    { key: "Events", route: "/", icon: MicrowaveIcon, folder: 'Schedule' },
+
+
     ];
 
     const hasCurrentRoute = (elements : NavItems[]) : boolean => {

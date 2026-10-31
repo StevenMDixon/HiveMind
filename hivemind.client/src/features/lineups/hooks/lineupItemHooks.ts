@@ -27,7 +27,7 @@ export const useLineupItemUpdateHook = () => {
         mutationFn: updateLineupItem,
         onSuccess: (_, lineupItem) => {
             showNotification("Lineup Item updated", "success");
-            queryClient.invalidateQueries({ queryKey: queryKeys.lineItem(lineupItem.lineupItemId) });
+            queryClient.invalidateQueries({ queryKey: queryKeys.lineItem(lineupItem.id) });
 
         },
         onError: () => {

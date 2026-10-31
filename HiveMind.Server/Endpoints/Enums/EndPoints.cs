@@ -9,5 +9,6 @@ public class EndPoints
         QuerySettings.Map(endpoints);
         QueryOptions.Map(endpoints);
         GetLineupSelectionTypes.Map(endpoints);
+        Ratings.Map(endpoints);
     }
 }

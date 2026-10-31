@@ -22,4 +22,5 @@ public class MediaItem
     public int? ShowId { get; set; }
     public Show? Show { get; set; }
     public ICollection<Tags>? Tags { get; set; }
+    public string ThumbnailPath { get; set; } = string.Empty;
 }

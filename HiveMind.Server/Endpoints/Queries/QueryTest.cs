@@ -17,11 +17,11 @@ public class QueryTest
 
     public static Results<Ok<QueryResult>, NotFound<string>> Handle(QueryService queryService, [FromRoute] int id)
     {
-        var queryResults = queryService.GetMediaItemsByQueryId(id);
+        var queryResults = queryService.GetMediaItemsByQueryId(id).Take(20);
 
         if (queryResults is not null)
         {
-            return TypedResults.Ok(new QueryResult(queryResults));
+            return TypedResults.Ok(new QueryResult(queryResults.ToList()));
         }
 
         return TypedResults.NotFound($"A query with the ID: {id} was not found.");

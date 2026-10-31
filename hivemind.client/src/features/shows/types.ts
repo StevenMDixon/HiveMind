@@ -1,4 +1,5 @@
 export interface Show {
-    showId: number;
-    showName: string;
+    id: number;
+    name: string;
+    rating: string;
 }

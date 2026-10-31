@@ -17,13 +17,15 @@ import QueryPage from './features/queries/pages/Queries'
 import QueryDetail from './features/queries/pages/QueryDetail'
 import LineupView from './features/lineups/pages/Lineup'
 import LineupEdit from './features/lineups/pages/LineupEdit'
-import LineupItemEdit from './features/lineups/pages/LineupItemEdit'; 
 import ShowsPage from './features/shows/pages/Shows';
+import ShowsEdit from './features/shows/pages/ShowEdit';
 import SettingsPage from './features/settings/pages/Settings';
 import ProgramStrategyPage from './features/programStrategy/pages/ProgramStrategy';
 import ProgramStrategyDetail from './features/programStrategy/pages/ProgramStrategyDetail';
-import DronePage from './features/drones/pages/drones';
-
+import DronePage from './features/drones/pages/Drones';
+import DroneEdit from './features/drones/pages/DroneEdit';
+import TransitionPage from './features/transitions/pages/Transitions';
+import TransitionEdit from './features/transitions/pages/TransitionEdit';
 
 const darkTheme = createTheme({
     palette: {
@@ -51,7 +53,7 @@ const App = () => {
                             <Route path="stations/:id/" element={<StationEdit />} />
                             <Route path="lineups" element={<LineupView />} />
                             <Route path="lineups/:id" element={<LineupEdit />} />
-                            <Route path="lineups/:id/items/:itemId" element={<LineupItemEdit />} />
+                            {/* <Route path="lineups/:id/items/:itemId" element={<LineupItemEdit />} /> */}
                             <Route path="queries" element={<QueryPage />} />
                             <Route path="queries/:id" element={<QueryDetail />} />
                             <Route path="libraries" element={<LibaryPage />} />
@@ -59,10 +61,14 @@ const App = () => {
                             <Route path="media" element={<MediaPage />} />
                             {/*<Route path="media/manage/:id" element={<p>Hello!</p>} />*/}
                             <Route path="shows" element={<ShowsPage />} />
+                            <Route path="shows/:id" element={<ShowsEdit />} />
                             <Route path="system-settings" element={<SettingsPage />} />
                             <Route path="programstrategy/" element={<ProgramStrategyPage />} />
                             <Route path="programstrategy/:id" element={<ProgramStrategyDetail />} />
                             <Route path="drones" element={<DronePage />} />
+                            <Route path="drones/:id" element={<DroneEdit />} />
+                            <Route path="transitions" element={<TransitionPage />} />
+                            <Route path="transitions/:id" element={<TransitionEdit />} />
                         </Route>
                 </Routes>
                 </HashRouter>

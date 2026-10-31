@@ -1,6 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
 import { getQueries, getTestQueryResults, getQuery, getOptions, getSettings } from './requests';
 import { queryKeys } from './queryKeys';
+import { search } from './requests';
 
 export const queriesQueryOptions = () => {
     return queryOptions({
@@ -37,3 +38,9 @@ export const optionsQueryOptions = () => {
     });
 }
 
+export const queryQuerySearchOptions = (searchTerm: string, page: number, count: number) => {
+    return queryOptions({
+        queryKey: ['queries', searchTerm, page, count],
+        queryFn: () => search(searchTerm, page, count)
+    });
+}

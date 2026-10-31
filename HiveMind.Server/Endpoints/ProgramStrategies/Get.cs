@@ -12,7 +12,7 @@ public class Get
         app.MapGet("/{id:int}", Handle).WithName("GetProgramStrategyById");
     }
 
-    public record ProgramStrategy(int ProgramStrategyId, string Name, int AdvancedDays, bool Active, DateOnly? LastScheduleDate, List<StrategyLineup> ProgramStrategyItems);
+    public record ProgramStrategy(int Id, string Name, int AdvancedDays, bool Active, DateOnly? LastScheduleDate, List<StrategyLineup> ProgramStrategyItems);
 
     public record StrategyLineup(int ProgramStrategyLineupId, int? ProgramStrategyId, int? LineUpId, LineupSelectionType SelectionType, String SelectionOption);
 

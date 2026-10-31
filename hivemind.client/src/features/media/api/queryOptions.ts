@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import { getMedia } from './requests';
+import { getMedia, search } from './requests';
 
 export const mediaQueryOptions = () => {
     return queryOptions({
@@ -7,3 +7,14 @@ export const mediaQueryOptions = () => {
         queryFn: getMedia
     });
 }
+
+
+export const mediaQuerySearchOptions = (searchTerm: string, page: number, count: number) => {
+    return queryOptions({
+        queryKey: ['media', searchTerm, page, count],
+        queryFn: () => search(searchTerm, page, count)
+    });
+}
+
+
+

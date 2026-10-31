@@ -47,29 +47,29 @@ export const QueryLayout = ({ query, save }: QueryLayoutProps) => {
 
     const handleSave = (e: Query) => {
         const newData = {
-            queryId: e.queryId,
-            queryName: e.queryName,
+            id: e.id,
+            name: e.name,
             filters: filterData
-        }
+        } as Query
         save(newData);
     }
 
     const removeFilter = (item: Filter) => {
-        const newFilterData = filterData.filter(x => x.queryFilterId != item.queryFilterId)
+        const newFilterData = filterData.filter(x => x.id != item.id)
         setFilterData(newFilterData)
     }
 
     const addFilter = () => {
-        const newFilterData = [...filterData, { queryFilterId: (filterData.length + 1) * -1, field: 0, operator: 0, value: "" } as Filter];
+        const newFilterData = [...filterData, { id: (filterData.length + 1) * -1, field: 0, operator: 0, value: "" } as Filter];
         setFilterData(newFilterData);
     }
 
     const saveFilter = (item: Filter) => {
-        setFilterData(filterData.map(filter => filter.queryFilterId == item.queryFilterId ? item : filter));
+        setFilterData(filterData.map(filter => filter.id == item.id ? item : filter));
     }
 
     const fields = [
-        { name: 'queryName', display: "Name", type: "Text", initialValue: query.queryName },
+        { name: 'name', display: "Name", type: "Text", initialValue: query.name },
     ] as CustomFormField[];
 
     const gridColumns = [

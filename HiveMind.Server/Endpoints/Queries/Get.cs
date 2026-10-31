@@ -13,14 +13,14 @@ public static class Get
 
     public record Filter(int Id, int Field, int Operator, string Value);
 
-    public record Query(int Id, string Name, ICollection<Filter>? Filters);
+    public record Query(int Id, string Name, string Type, ICollection<Filter>? Filters);
 
     public static Results<Ok<Query>, NotFound<string>> Handle(QueryService queryService, [FromRoute] int id)
     {
         var query = queryService.GetQueryByID(id);
         if (query is not null)
         {
-            return TypedResults.Ok(new Query(query.Id, query.Name, query.Filters?.Select(x => new Filter(x.Id, (int)x.Field, (int)x.Operator, x.Value)).ToList()));
+            return TypedResults.Ok(new Query(query.Id, query.Name, query.Type.ToString(), query.Filters?.Select(x => new Filter(x.Id, (int)x.Field, (int)x.Operator, x.Value)).ToList()));
         }
 
         return TypedResults.NotFound($"A query with the ID: {id} was not found.");

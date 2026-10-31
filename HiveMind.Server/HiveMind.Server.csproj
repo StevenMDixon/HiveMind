@@ -7,7 +7,7 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <SpaRoot>..\hivemind.client</SpaRoot>
     <SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
-    <SpaProxyServerUrl>https://localhost:51463</SpaProxyServerUrl>
+    <SpaProxyServerUrl>https://localhost:41463</SpaProxyServerUrl>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,5 +1,5 @@
 export interface LineupItem {
-    lineupItemId: number;
+    id: number;
     name: string;
     index: number;
     type: string;
@@ -7,7 +7,7 @@ export interface LineupItem {
 }
 
 export interface QueryLineupItem {
-    queryLineupItemId: number;
+    id: number;
     queryId: number;
     lineupItemId: number;
     queryType: number;
@@ -20,8 +20,8 @@ export interface QueryLineupItem {
 }
 
 export interface Lineup {
-    lineupId: number;
-    lineupName: string;
+    id: number;
+    name: string;
     channelId: number | null;
     startTime: string;
     jsonData: string;

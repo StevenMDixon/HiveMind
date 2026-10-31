@@ -1,18 +1,41 @@
 import Container from '@mui/material/Container';
+import { useState } from 'react';
 import Header from '@/components/Header';
-import CustomTable, { type CellData } from "@/components/CustomTable";
+import CustomTable, { type CellData, type PagingData } from "@/components/CustomTable";
 
 import type { Media, Show } from '../types';
 
 import { useQuery } from '@tanstack/react-query';
-import { mediaQueryOptions } from '../api/queryOptions';
+import { mediaQuerySearchOptions } from '../api/queryOptions';
 
 const MediaPage = () => {
-    const { data: media, refetch: refectchMedia, isLoading } = useQuery(mediaQueryOptions());
+
+    const [search, setSearch] = useState('');
+    const [pageIndex, setPageIndex] = useState(1);
+    const [pageSize] = useState(18);
+        
+
+    const { data: media, refetch: refetchMedia, isLoading } = useQuery(mediaQuerySearchOptions(search, pageIndex, pageSize));
 
     const handleRetry = () => {
-        refectchMedia();
+        refetchMedia();
     };
+
+    const Search = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setSearch(e.target.value);
+    }
+    
+    const HandlePageIndexChange = (_: React.ChangeEvent<unknown>, value: number) => {
+        console.log(value);
+        setPageIndex(value);
+    }
+
+    const paging = {
+        currentPage: pageIndex,
+        dataTotal: media?.dataCount,
+        pageSize: pageSize,
+        changePage: HandlePageIndexChange
+     } as PagingData;   
 
     const columns = [
         { key: 'title', name: 'ID', align: 'left' },
@@ -29,7 +52,7 @@ const MediaPage = () => {
         <Container disableGutters maxWidth={false}>
             <Header Title="Media">
             </Header>
-            <CustomTable data={media} columns={columns} handleRetry={handleRetry} isLoading={isLoading} />
+            <CustomTable data={media?.data} columns={columns} handleRetry={handleRetry} isLoading={isLoading} searchFN={Search} paging={paging}/>
          </Container>
     )
 }

@@ -1,3 +1,4 @@
+import type PaginatedDataResponse from '../../../utilities/PaginatedData';
 import type { Library, EnumOptionsObj } from '../types';
 
 export const getLibraries = async () => {
@@ -23,7 +24,7 @@ export const createLibrary = async (libraryInputs: Library) => {
     const response = await fetch('/api/libraries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ LibraryName: libraryInputs.libraryName, LibraryPath: libraryInputs.libraryPath, PathsToIgnore: libraryInputs.pathsToIgnore, LibraryType: libraryInputs.libraryType }),
+        body: JSON.stringify(libraryInputs),
     });
 
     return response;
@@ -50,10 +51,10 @@ export const getLibrary = async (id: string | undefined): Promise<Library> => {
 };
 
 export const updateLibrary = async (item: Library) => {
-    const result = await fetch('/api/libraries/' + item.libraryId, {
+    const result = await fetch('/api/libraries/' + item.id, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ LibraryName: item.libraryName, LibraryPath: item.libraryPath, PathsToIgnore: item.pathsToIgnore, LibraryType: item.libraryType }),
+        body: JSON.stringify({ LibraryName: item.name, LibraryPath: item.path, PathsToIgnore: item.pathsToIgnore, LibraryType: item.type }),
     });
 
     return result;
@@ -67,3 +68,18 @@ export const reprocessLibrary = async (libraryId: number) => {
 
     return result;
 }
+
+export const search = async (searchTerm: string, page: number, count: number): Promise<PaginatedDataResponse<Library>> => {
+    let url = "/api/libraries";
+
+    url += `?search=${searchTerm}&count=${count}&page=${page}`;
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch media: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return {data: data.libraries, dataCount: data.dataCount} as PaginatedDataResponse<Library>;
+};

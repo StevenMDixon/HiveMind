@@ -1,26 +1,16 @@
 import Container from '@mui/material/Container';
 import Header from '@/components/Header';
-// import CustomTable, { type CellData } from '@/components/CustomTable';
 
 import type { Drone } from '../types';
-
 import { useQuery } from '@tanstack/react-query';
 import { dronesQueryOptions } from '../api/queryOptions';
-
-// import Card from '@mui/material/Card';
-// import CardHeader from '@mui/material/CardHeader';
-// import CardMedia from '@mui/material/CardMedia';
-// import CardContent from '@mui/material/CardContent';
-// import Typography from '@mui/material/Typography';
-// import CardActions from '@mui/material/CardActions';
-
 
 import CustomDialog from '@/components/Dialog';
 import { droneDefault, fields } from '../fields';
 import { useDroneCreateHook, useDroneDeleteHook } from '../hooks/droneHooks';
 
-
 import DroneCard from '../components/DroneCard';
+import { useNavigate } from "react-router-dom";
 
 
 interface DroneCardsProps {
@@ -29,6 +19,9 @@ interface DroneCardsProps {
 
 const DroneCardWrapper = ({ drones }: DroneCardsProps) => {
     const { mutate: deleteDrone } = useDroneDeleteHook();
+
+
+    const navigate = useNavigate();
 
     return (
         <Container sx={{
@@ -39,7 +32,7 @@ const DroneCardWrapper = ({ drones }: DroneCardsProps) => {
             marginTop: "1em"
         }} >
             {
-                drones && drones.map(x => <DroneCard drone={x} remove={deleteDrone} />)
+                drones && drones.map(x => <DroneCard drone={x} remove={deleteDrone} edit={() => navigate("/drones/"+ x.id)} />)
             }
         
        
@@ -51,20 +44,9 @@ const DroneCardWrapper = ({ drones }: DroneCardsProps) => {
 const DronesPage = () => {
     const { data: drones, isLoading } = useQuery(dronesQueryOptions());
 
-
     const { mutate: createDrone } = useDroneCreateHook();
     
-
-    // const columns = [
-    //     { key: 'droneId', name: 'ID', align: 'left' },
-    //     { key: 'name', name: 'Name', align: 'left' },
-    //     { key: 'hostName', name: 'HostName', align: 'left' },
-    // ] as CellData<Drone>[];
-
-
-    // const handleRetry = () => {
-    //     refetch();
-    // };
+    console.log(drones)
 
     return (
         <Container disableGutters maxWidth={false}>

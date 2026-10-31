@@ -1,8 +1,15 @@
+export interface EditDrone {
+    id: number;
+    name: string;
+    hostName: string;
+    stations: number[];
+}
+
 export interface Drone {
     id: number;
     name: string;
     hostName: string;
-    stations: Station[];
+    stations:  Station[];
 }
 
 export interface Station {

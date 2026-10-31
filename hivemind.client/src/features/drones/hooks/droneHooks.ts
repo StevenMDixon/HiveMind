@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createDrone, deleteDrone } from '../api/requests';
+import { createDrone, deleteDrone, updateDrone } from '../api/requests';
 import { useGlobalNotification } from '@/dashboard/useGlobalNotification';
 import { droneKeys } from '../api/queryKeys';
 
@@ -18,6 +18,23 @@ export const useDroneCreateHook = () => {
         },
     });
 };
+
+export const useDroneUpdateHook = () => {
+    const queryClient = useQueryClient();
+    const { showNotification } = useGlobalNotification();
+
+    return useMutation({
+        mutationFn: updateDrone,
+        onSuccess: () => {
+            showNotification("Drone updated", "success");
+            queryClient.invalidateQueries({ queryKey: droneKeys.all });
+        },
+        onError: () => {
+            showNotification("Failed to update drone", "error");
+        },
+    });
+};
+
 
 export const useDroneDeleteHook = () => {
     const queryClient = useQueryClient();

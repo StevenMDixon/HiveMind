@@ -1,9 +1,9 @@
 export interface Library {
-    libraryId: number;
-    libraryName: string;
-    libraryPath: string;
+    id: number;
+    name: string;
+    path: string;
     pathsToIgnore: string;
-    libraryType: number;
+    type: number;
     isProcessed: boolean;
 }
 

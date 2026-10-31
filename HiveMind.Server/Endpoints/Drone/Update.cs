@@ -1,5 +1,4 @@
-﻿using HiveMind.Server.Entities;
-using HiveMind.Server.Services;
+﻿using HiveMind.Server.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,52 +12,31 @@ public class Update
             .WithName("Update");
     }
 
-    public record UpdateRequest(int Id, string HostName, string Name, int Slots, List<UpdatedStation> Stations);
+    public record UpdateRequest(int Id, string? HostName, string? Name, int? Slots, List<int>? Stations);
 
-    public record UpdatedStation(int Id);
-
-    public static Results<Ok, NoContent, ValidationProblem> Handle(DroneService droneService, [FromBody] UpdateRequest updateRequest)
+    public static Results<Ok, NoContent, ValidationProblem, NotFound> Handle(DroneService droneService, StationService stationService, [FromBody] UpdateRequest updateRequest)
     {
         var drone = droneService.GetById(updateRequest.Id);
 
         if (drone == null)
         {
-            return TypedResults.NoContent();
+            return TypedResults.NotFound();
         }
 
-        drone.HostName = updateRequest.HostName;
-        drone.Name = updateRequest.Name;
-        drone.StationSlots = updateRequest.Slots;
+        drone.HostName = updateRequest.HostName ?? drone.HostName;
+        drone.Name = updateRequest.Name ?? drone.Name ;
+        drone.StationSlots = updateRequest.Slots ?? drone.StationSlots;
 
-        //var itemsToUpdate = new List<(Station, UpdatedStation)>();
+        if(updateRequest.Stations != null)
+        {
+            var stations = stationService.GetStationsByIds(updateRequest.Stations);
 
-        //foreach (var station in updateRequest.Stations ?? [])
-        //{
-        //    var matchedItem = drone?.Stations?.Where(x => x.Id == station.Id).FirstOrDefault();
-
-        //    if (matchedItem != null)
-        //    {
-        //        itemsToUpdate.Add((matchedItem, station));
-        //    }
-
-        //    itemsToUpdate.Add((new Station()
-        //    {
-
-        //    }, station));
-        //}
-
-        //drone!.Stations = Helper.Resolve(itemsToUpdate, UpdateItem);
+            drone.Stations = stations.ToList();
+        }
 
         droneService.Update(drone);
 
         return TypedResults.Ok();
-    }
-
-    private static Station UpdateItem(Station station, UpdatedStation updatedStation)
-    {
-        
-
-        return station;
     }
 }
 

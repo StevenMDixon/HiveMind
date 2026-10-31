@@ -5,6 +5,8 @@ public class EndPoints
     public static void Map(IEndpointRouteBuilder app)
     {
         var endpoints = app.MapGroup("Transitions");
-        GetTransitionTemplates.Map(endpoints);
+        Get.Map(endpoints);
+        GetAll.Map(endpoints);
+        Update.Map(endpoints);
     }
 }

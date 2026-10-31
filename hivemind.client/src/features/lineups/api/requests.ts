@@ -1,3 +1,4 @@
+import type PaginatedDataResponse from '../../../utilities/PaginatedData';
 import type { Lineup, LineupItem } from '../types';
 import type { EnumOptionsObj } from '@/utilities/types';
 
@@ -13,7 +14,7 @@ export const getLineup = async (id: number) => {
 }
 
 export const updateLineup = async (lineup: Lineup) => {
-    const result = await fetch('/api/lineups/' + lineup.lineupId, {
+    const result = await fetch('/api/lineups/' + lineup.id, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...lineup }),
@@ -58,7 +59,7 @@ export const createLineupItem = async(lineupItem: LineupItem) => {
 }
 
 export const updateLineupItem = async (lineupItem: LineupItem) => {
-    return await fetch('/api/lineupitems/' + lineupItem.lineupItemId, {
+    return await fetch('/api/lineupitems/' + lineupItem.id, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...lineupItem }),
@@ -107,4 +108,21 @@ export const getPadToOptions = async (): Promise<EnumOptionsObj> => {
 
     const data = await response.json();
     return data.options
+};
+
+
+
+export const search = async (searchTerm: string, page: number, count: number): Promise<PaginatedDataResponse<Lineup>> => {
+    let url = "/api/lineups";
+
+    url += `?search=${searchTerm}&count=${count}&page=${page}`;
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch media: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return {data: data.lineups, dataCount: data.dataCount} as PaginatedDataResponse<Lineup>;
 };

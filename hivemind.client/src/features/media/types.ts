@@ -1,15 +1,15 @@
 export interface Show {
-    showId: number;
+    id: number;
     name: string;
 }
 
 export interface Tag {
-    tagId: number;
-    tagName: string;
+    id: number;
+    name: string;
 }
 
 export interface Media {
-    mediaItemId: number;
+    id: number;
     title: string;
     duration: number;
     libraryId: number;

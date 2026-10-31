@@ -19,19 +19,12 @@ public class QueryService(SqliteDBContext context) : BaseService<Query>(context)
 
     public Query? GetQueryByID(int id)
     {
-        return Get().FirstOrDefault(x => x.Id == id);
+        return Get().Include(x => x.Filters).FirstOrDefault(x => x.Id == id);
     }
 
     public Query? GetQueryByName(string name)
     {
         return Get().FirstOrDefault(x => x.Name == name);
-    }
-
-    public void Update(Query query)
-    {
-        Console.WriteLine(_context.Entry(query).State);
-
-        Update(query);
     }
 
     public void Delete(int id)

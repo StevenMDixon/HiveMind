@@ -10,6 +10,11 @@ public class MediaItemService(SqliteDBContext context) : BaseService<MediaItem>(
         return Get().Include(media => media.Library).Include(media => media.Show).Include(media => media.Tags);
     }
 
+    public IEnumerable<MediaItem> GetMediaItemsWithoutThumbs()
+    {
+        return Get().Where(x => x.ThumbnailPath == string.Empty);
+    }
+
     public void AddMediaItem(MediaItem mediaItem)
     {
         Create(mediaItem);
@@ -21,6 +26,12 @@ public class MediaItemService(SqliteDBContext context) : BaseService<MediaItem>(
         {
             Create(mediaItem);
         }
+    }
+
+    public void Update(IEnumerable<MediaItem> mediaItems)
+    {
+        _context.UpdateRange(mediaItems);
+        _context.SaveChanges();
     }
 
     public MediaItem? GetMediaItemByID(int Id)

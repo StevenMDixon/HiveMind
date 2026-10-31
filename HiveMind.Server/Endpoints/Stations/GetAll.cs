@@ -13,9 +13,21 @@ public static class GetAll
     public record Station(int Id, string Name, int Number, string Logo, int? StrategyId, int? DroneId);
     public record GetAllStationsResponse(List<Station> Stations);
 
-    public static Results<Ok<GetAllStationsResponse>, NotFound> Handle(StationService stationService)
+    public record Parameters(
+       string? Search,
+       int? Page,
+       int? Count
+    );
+
+    public static Results<Ok<GetAllStationsResponse>, NotFound> Handle(StationService stationService, [AsParameters] Parameters filters)
     {
         var stations = stationService.GetAllStations();
+
+        var pageSize = filters.Count ?? 100;
+        var currentPage = filters.Page ?? 1;
+        var dataCount = stations.Count();
+
+        if (filters.Search != null && filters.Search != string.Empty) stations = stations.Where(x => x.Name.ToLower().Contains(filters.Search.ToLower()));
 
         return TypedResults.Ok(new GetAllStationsResponse(stations.Select(x => new Station(x.Id, x.Name, x.Number, x.Logo, x.StrategyId, x.DroneId)).ToList()));
     }

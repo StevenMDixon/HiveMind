@@ -1,3 +1,4 @@
+import type PaginatedDataResponse from '../../../utilities/PaginatedData';
 import type { Station } from '../types'; 
 
 export const getStation = async (id: string): Promise<Station> => {
@@ -36,3 +37,19 @@ export const deleteStation = async (stationId: number) => {
         headers: { 'Content-Type': 'application/json' }
     });
 }
+
+
+export const search = async (searchTerm: string, page: number, count: number): Promise<PaginatedDataResponse<Station>> => {
+    let url = "/api/stations";
+
+    url += `?search=${searchTerm}&count=${count}&page=${page}`;
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch stations: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return {data: data.stations, dataCount: data.dataCount} as PaginatedDataResponse<Station>;
+};

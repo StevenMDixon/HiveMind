@@ -27,7 +27,7 @@ export const useQueryDeleteHook = () => {
         mutationFn: (id: number) => deleteQuery(id),
         onSuccess: () => {
             showNotification("Query deleted", "success");
-            queryClient.invalidateQueries({ queryKey: queryKeys.details() });
+            queryClient.invalidateQueries({ queryKey: queryKeys.all });
         },
         onError: () => {
             showNotification("Failed to delete query", "error");
