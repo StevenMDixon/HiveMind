@@ -5,7 +5,6 @@ namespace HiveMind.Server.Domain.Enums;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum TransitionSlot
 {
-
     InBump,
     OutBump,
     Ident,

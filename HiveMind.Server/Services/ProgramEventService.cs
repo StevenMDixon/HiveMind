@@ -14,15 +14,16 @@ public class ProgramEventService(SqliteDBContext context) : BaseService<ProgramE
 
     public IEnumerable<ProgramEvent> GetUpComingEvents(int programStrategyID, DateTime currentDate)
     {
+        var today = DateOnly.FromDateTime(currentDate);
         var results = new List<ProgramEvent>();
-        var upcoming = Get().Where(pe => pe.ProgramStrategyId == programStrategyID && pe.EventDate >= currentDate);
+        var upcoming = Get().Where(pe => pe.ProgramStrategyId == programStrategyID && pe.EventDate >= today);
 
         foreach(var programEvent in upcoming)
         {
             var startDate = programEvent.EventDate.AddDays(-programEvent.PromoDays);
             var endDate = programEvent.EventDate.AddDays(-1);
 
-            if(currentDate >= startDate && currentDate <= endDate) results.Add(programEvent);
+            if(today >= startDate && today <= endDate) results.Add(programEvent);
         }
 
         return results;

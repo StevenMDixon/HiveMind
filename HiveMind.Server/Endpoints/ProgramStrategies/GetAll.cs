@@ -12,7 +12,7 @@ public class GetAll
     }
 
     public record ProgramStrategy(int Id, string Name, int AdvancedDays, bool Active, DateOnly? LastScheduledDate);
-    public record GetAllProgramStrategiesResponse(List<ProgramStrategy> Strategies);
+    public record GetAllProgramStrategiesResponse(List<ProgramStrategy> Strategies, int CurrentPage, int PageSize, int DataCount);
 
     public record Parameters(
        string? Search,
@@ -33,6 +33,6 @@ public class GetAll
         var m = (pageSize * currentPage);
         strategies = strategies.Skip((pageSize * (currentPage - 1))).Take(pageSize);
 
-        return TypedResults.Ok(new GetAllProgramStrategiesResponse(strategies.Select(x => new ProgramStrategy(x.Id, x.Name, x.AdvancedDays, x.Active, x.LastScheduleDate)).ToList()));
+        return TypedResults.Ok(new GetAllProgramStrategiesResponse(strategies.Select(x => new ProgramStrategy(x.Id, x.Name, x.AdvancedDays, x.Active, x.LastScheduleDate)).ToList(), currentPage, pageSize, dataCount));
     }
 }

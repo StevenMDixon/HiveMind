@@ -6,14 +6,9 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
-//import EventNoteIcon from '@mui/icons-material/EventNote';
-import LiveTvIcon from '@mui/icons-material/LiveTv';
 import HiveIcon from '@mui/icons-material/Hive';
 import { Link, useLocation } from 'react-router-dom';
-import MovieIcon from '@mui/icons-material/Movie';
 import Typography from '@mui/material/Typography'
-import SavedSearchIcon from '@mui/icons-material/SavedSearch';
 import DisplaySettingsIcon from '@mui/icons-material/DisplaySettings';
 import { type SvgIconComponent } from '@mui/icons-material';
 import ExpandLess from '@mui/icons-material/ExpandLess';
@@ -22,19 +17,11 @@ import Collapse from '@mui/material/Collapse';
 import SettingsIcon from '@mui/icons-material/Settings';
 import PrecisionManufacturingIcon from '@mui/icons-material/PrecisionManufacturing';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
-import DevicesIcon from '@mui/icons-material/Devices';
-// import ViewModuleIcon from '@mui/icons-material/ViewModule';
-import ViewTimelineIcon from '@mui/icons-material/ViewTimeline';
-import SlideshowIcon from '@mui/icons-material/Slideshow';
-import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
-import ArticleIcon from '@mui/icons-material/Article';
 import { useState } from 'react';
 
 interface RouteItemProps {
     name: string,
     route: string,
-    icon: SvgIconComponent,
     current: boolean,
     folder: string
 }
@@ -51,17 +38,16 @@ interface FolderItemProps {
 interface NavItems {
     key: string,
     route: string,
-    icon: SvgIconComponent,
     folder: string
 }
 
-const RouteItem = ({name, route, current, icon: Icon }: RouteItemProps) => {
+const RouteItem = ({name, route, current}: RouteItemProps) => {
     return (
         <ListItem disablePadding>
             <ListItemButton component={Link} to={route} key={route} selected={current}>
-                <ListItemIcon sx={{ minWidth: 0, mr: 2 }} >
+                {/* <ListItemIcon sx={{ minWidth: 0, mr: 2 }} >
                     {<Icon sx={{ m: 0, p: 0 }} color={current ? 'secondary' : 'inherit'} />}
-                </ListItemIcon>
+                </ListItemIcon> */}
                 <ListItemText primary={name} />
             </ListItemButton>
         </ListItem>
@@ -84,7 +70,7 @@ const FolderItem = ({ name, icon: Icon, open, handleOpen, items, route}: FolderI
             </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding sx={{ pl: 2 }}>
-                    {items && items.map(element => <RouteItem key={element.key} name={element.key} route={element.route} icon={element.icon} current={isCurrent(element.route,route)} folder={element.folder} />)}
+                    {items && items.map(element => <RouteItem key={element.key} name={element.key} route={element.route} current={isCurrent(element.route,route)} folder={element.folder} />)}
                 </List>
             </Collapse>
         </>
@@ -112,20 +98,18 @@ const Sidebar: React.FC = () => {
     }
 
     const navElements = [
-        { key: "Stations", route: "/stations", icon: LiveTvIcon, folder: 'Orchestrate'},
-        { key: "Libraries", route: "/libraries", icon: VideoLibraryIcon, folder: 'Manage' },
-        { key: "Media", route: "/media", icon: MovieIcon, folder: 'Manage' },
-        { key: "Queries", route: "/queries", icon: SavedSearchIcon, folder: 'Manage' },
-        { key: "Shows", route: "/shows", icon: SlideshowIcon, folder: 'Manage' },
-        // { key: "Blocks", route: "/", icon: ViewModuleIcon, folder: 'Manage' },
-        { key: "Lineups", route: "/lineups", icon: ViewTimelineIcon, folder: 'Schedule' },
-        { key: "Progam Strategy", route: "/programstrategy", icon: AutoAwesomeMosaicIcon, folder: 'Schedule' },
-        { key: "Drones", route: "/drones", icon: DevicesIcon, folder: 'Orchestrate' },
-        { key: "System Setting", route: "/system-settings", icon: SettingsSuggestIcon, folder: 'Settings' },
-        { key: "Transitions", route: "/transitions", icon: ArticleIcon, folder: 'Schedule' },
-    //    { key: "Events", route: "/", icon: MicrowaveIcon, folder: 'Schedule' },
-
-
+        { key: "Stations", route: "/stations", folder: 'Orchestrate'},
+        { key: "Libraries", route: "/libraries",  folder: 'Manage' },
+        { key: "Media", route: "/media", folder: 'Manage' },
+        { key: "Queries", route: "/queries", folder: 'Manage' },
+        { key: "Shows", route: "/shows",  folder: 'Manage' },
+        { key: "Tags", route: "/tags",  folder: 'Manage' },
+        { key: "Media Queue", route: "/queue",  folder: 'Manage' },
+        { key: "Lineups", route: "/lineups", folder: 'Schedule' },
+        { key: "Progam Strategy", route: "/programstrategy",  folder: 'Schedule' },
+        { key: "Drones", route: "/drones", folder: 'Orchestrate' },
+        { key: "System Setting", route: "/system-settings", folder: 'Settings' },
+        { key: "Transitions", route: "/transitions", folder: 'Schedule' },
     ];
 
     const hasCurrentRoute = (elements : NavItems[]) : boolean => {
@@ -153,7 +137,7 @@ const Sidebar: React.FC = () => {
             <Divider />
                 <List>
                     {navElements.map(element => (
-                        element.folder == '' && <RouteItem key={element.key} name={element.key} route={element.route} icon={element.icon} current={element.route === location.pathname} folder={element.folder} />
+                        element.folder == '' && <RouteItem key={element.key} name={element.key} route={element.route} current={element.route === location.pathname} folder={element.folder} />
                     ))}
                     {folderState.map((folder, index) => {
                          const elements = navElements.filter(x => x.folder == folder.name)

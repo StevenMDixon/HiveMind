@@ -1,4 +1,6 @@
-﻿using HiveMind.Server.Services;
+﻿using HiveMind.Server.Domain.Enums;
+using HiveMind.Server.Migrations;
+using HiveMind.Server.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using static HiveMind.Server.Endpoints.Scheduler.GetLineupResults;
@@ -11,7 +13,7 @@ public class GetAll
         app.MapGet("/", Handle).WithName("GetAllMediaItems");
     }
 
-    public record Tag(int Id, string Name);
+    public record Tag(int Id, string Name, TagCategory Category);
     public record Show(int Id, string Name, string Rating);
 
     public record Library();
@@ -53,7 +55,7 @@ public class GetAll
             x.EpisodeNumber,
             x.SeasonNumber,
             x.Show is not null ? new Show(x.Show.Id, x.Show.Name, x.Show.Rating.ToString()) : null,
-            x.Tags is not null ? x.Tags.Select(y => new Tag(y.Id, y.Name)) : []
+            x.Tags is not null ? x.Tags.Select(y => new Tag(y.Id, y.Name, y.Category)) : []
             )
         );
 

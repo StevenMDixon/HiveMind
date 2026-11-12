@@ -1,4 +1,5 @@
-﻿using HiveMind.Server.Services;
+﻿using HiveMind.Server.Domain.Enums;
+using HiveMind.Server.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace HiveMind.Server.Endpoints.Tags;
@@ -11,9 +12,9 @@ public class GetAll
             .WithName("GetAllTags");
     }
 
-    public record Tag(int Id, string Name);
+    public record Tag(int Id, string Name, TagCategory Category);
 
-    public record Response(List<Tag> Tags);
+    public record Response(List<Tag> Tags, int CurrentPage, int PageSize, int DataCount);
 
     public record Parameters(
        string? Search,
@@ -31,6 +32,9 @@ public class GetAll
 
         if (filters.Search != null && filters.Search != string.Empty) tags = tags.Where(x => x.Name.ToLower().Contains(filters.Search.ToLower()));
 
-        return TypedResults.Ok(new Response(tags.Select(x => new Tag(x.Id, x.Name)).ToList()));
+        var m = (pageSize * currentPage);
+        tags = tags.Skip((pageSize * (currentPage - 1))).Take(pageSize);
+
+        return TypedResults.Ok(new Response(tags.Select(x => new Tag(x.Id, x.Name, x.Category)).ToList(), currentPage, pageSize, dataCount));
     }
 }

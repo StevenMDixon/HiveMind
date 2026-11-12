@@ -18,7 +18,8 @@ public static class EndPointMapper
         ProgramStrategies.EndPoints.Map(api);
         Drone.EndPoints.Map(api);
         TransitionTemplates.EndPoints.Map(api);
-
+        Tags.EndPoints.Map(api);
         Scheduler.EndPoints.Map(api);
+        TaggingQueue.EndPoints.Map(api);
     }
 }

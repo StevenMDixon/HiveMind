@@ -35,8 +35,6 @@ export const createShow = async(showInputs: Show) => {
 }
 
 export const updateShow = async (item: Show) => {
-
-    console.log(JSON.stringify({name: item.name, rating: item.rating}))
     const result = await fetch('/api/shows/' + item.id, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -45,8 +43,6 @@ export const updateShow = async (item: Show) => {
 
     return result;
 }
-
-
 
 export const getRatingOptions = async (): Promise<EnumOptionsObj> => {
     const response = await fetch('/api/enums/ratings');

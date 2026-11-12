@@ -1,4 +1,6 @@
-﻿namespace HiveMind.Server.Entities;
+﻿using HiveMind.Server.Migrations;
+
+namespace HiveMind.Server.Entities;
 
 public class Station
 {
@@ -8,5 +10,5 @@ public class Station
     public string Logo { get; set; } = string.Empty;
     public int? StrategyId { get; set; }
     public ProgramStrategy? Strategy { get; set; }
-    public int? DroneId { get; set; }
+    public List<Drone>? Drones { get; set; }
 }

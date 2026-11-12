@@ -8,5 +8,6 @@ public class EndPoints
         Get.Map(endpoints);
         GetAll.Map(endpoints);
         Update.Map(endpoints);
+        GetSlotTypes.Map(endpoints);
     }
 }

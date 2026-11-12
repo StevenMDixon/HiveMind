@@ -12,6 +12,8 @@ import Delete from '@mui/icons-material/DeleteOutline';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import RoundedLoadingFiller from '@/components/RoundedLoadingFiller'
 
@@ -44,9 +46,10 @@ interface EditingGridProps<T> {
     deleteItem?: (i: T) => void;
     saveItem: (i: T) => void;
     isLoading: boolean;
+    handleMove?: (i: T, id: number) => void;
 }
 
-const EditingGrid = <T,>({ gridItems, gridFieldColumns, deleteItem, saveItem, isLoading} : EditingGridProps<T>)  => {
+const EditingGrid = <T,>({ gridItems, gridFieldColumns, deleteItem, saveItem, isLoading, handleMove} : EditingGridProps<T>)  => {
 
     const [selectedEditItem, setSelectedEditItem] = useState<T | null>(null);
 
@@ -71,7 +74,7 @@ const EditingGrid = <T,>({ gridItems, gridFieldColumns, deleteItem, saveItem, is
 
   return (
       <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <Table aria-label="simple table">
               <TableHead>
                   <TableRow>
                       {gridFieldColumns.map((column, index) => <TableCell align="right" key={index}>{column.display}</TableCell>)}
@@ -85,7 +88,7 @@ const EditingGrid = <T,>({ gridItems, gridFieldColumns, deleteItem, saveItem, is
                       gridItems && gridItems.map((item, index) =>
                           selectedEditItem && selectedEditItem == item ?
                               <EditTableRow key={index} item={selectedEditItem} columns={gridFieldColumns} stopEdit={handleStopEditing} saveEdit={handleSaveEdit} /> :
-                              <ViewTableRow key={index} item={item} columns={gridFieldColumns} setEdit={handleSetEdit} remove={deleteItem ? handleRemoval : undefined} />)
+                              <ViewTableRow key={index} item={item} columns={gridFieldColumns} setEdit={handleSetEdit} remove={deleteItem ? handleRemoval : undefined} handleMove={handleMove} />)
                   }
               </TableBody>
           </Table>
@@ -96,11 +99,13 @@ const EditingGrid = <T,>({ gridItems, gridFieldColumns, deleteItem, saveItem, is
 interface RowProps<T>{
     item: T;
     columns: EditingGridColumns<T>[];
+    
 }
 
 interface ViewActionProps<T> {
     setEdit: (i: T) => void;
     remove?: (i: T) => void;
+    handleMove?: (i: T, id: number) => void;
 }
 
 interface EditActionProps<T> {
@@ -112,7 +117,7 @@ function getProperty<Type, Key extends keyof Type>(obj: Type, key: Key | string)
     return obj[key as Key];
 }
 
-const ViewTableRow = <T,>({ item, columns, setEdit, remove} : RowProps<T> & ViewActionProps<T>) => {
+const ViewTableRow = <T,>({ item, columns, setEdit, remove, handleMove} : RowProps<T> & ViewActionProps<T>) => {
     return (
         <TableRow
             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -130,6 +135,14 @@ const ViewTableRow = <T,>({ item, columns, setEdit, remove} : RowProps<T> & View
                     {remove && <IconButton onClick={() => remove(item)}>
                         <Delete />
                     </IconButton>}
+                    {
+                        handleMove && <IconButton onClick={() => handleMove(item, -1) } ><ArrowUpwardIcon />
+                    </IconButton>
+                    }
+                    {
+                        handleMove && <IconButton onClick={() => handleMove(item, 1) }><ArrowDownwardIcon />
+                    </IconButton>
+                    }
                 </Stack>
             </TableCell>
         </TableRow>

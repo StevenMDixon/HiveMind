@@ -26,36 +26,24 @@ public class Update
         }
     }
 
-    public record ProgramStrategyRequest(string? Name, int? AdvancedDays, bool? Active, DateOnly? StartDate, DateOnly? EndDate, ICollection<ProgramStrategyItem> ProgramStrategyItems);
+    public record ProgramStrategyRequest(string? Name, int? AdvancedDays, bool? Active, DateOnly? StartDate, DateOnly? EndDate, ICollection<ProgramStrategyItem> ProgramStrategyItems, ICollection<ProgramStrategyEvent> ProgramStrategyEvents);
 
     public record ProgramStrategyItem(int Id, int? ProgramStrategyId, int? LineUpId, LineupSelectionType SelectionType, String SelectionOption);
+
+    public record ProgramStrategyEvent(int Id, int? ProgramStrategyId, string Name, int PromoDays, int QueryId, DateOnly EventDate);
 
     public static Results<Ok, NotFound<string>, ValidationProblem> Handle(ProgramStrategyService programStrategyService, [FromRoute] int id, [FromBody] ProgramStrategyRequest request)
     {
         var strategy = programStrategyService.GetProgramStrategyById(id);
 
-        if (strategy is not null)
+        if (strategy != null)
         {
             strategy.Name = request.Name ?? strategy.Name;
             strategy.AdvancedDays = request.AdvancedDays ?? strategy.AdvancedDays;
             strategy.Active = request.Active ?? strategy.Active;
 
-            var itemsToUpdate = new List<(ProgramStrategyLineup, ProgramStrategyItem)>();
-
-            foreach(var updatedLineup in request.ProgramStrategyItems)
-            {
-                var matchedItem = strategy?.Lineups?.Where(x => x.Id == updatedLineup.Id).FirstOrDefault();
-
-                if(matchedItem != null)
-                {
-                    itemsToUpdate.Add((matchedItem, updatedLineup));
-                }
-
-                itemsToUpdate.Add((new ProgramStrategyLineup() { 
-                    ProgramStrategyId = strategy!.Id, SelectionOption = updatedLineup.SelectionOption, SelectionType = updatedLineup.SelectionType}, updatedLineup));
-            }
-
-            strategy.Lineups = Helper.Resolve(itemsToUpdate, UpdateItem);
+            strategy.Lineups = request.ProgramStrategyItems.Select(x => ConvertAndUpdateLineup(strategy.Id, x, strategy.Lineups)).ToList();
+            strategy.Events = request.ProgramStrategyEvents.Select(x => ConvertAndUpdateEvent(strategy.Id, x, strategy.Events)).ToList();
 
             programStrategyService.Update(strategy);
             return TypedResults.Ok();
@@ -64,16 +52,36 @@ public class Update
         return TypedResults.NotFound($"A strategy with the ID: {id} was not found.");
     }
 
-    private static ProgramStrategyLineup UpdateItem(ProgramStrategyLineup lineup, ProgramStrategyItem updatedLineup)
+   private static ProgramStrategyLineup ConvertAndUpdateLineup(int parentID, ProgramStrategyItem updatedItem, ICollection<ProgramStrategyLineup>? currentItems)
     {
-        if(updatedLineup != null)
+        var matched = currentItems?.Where(x => x.Id == updatedItem.Id).FirstOrDefault() ?? null;
+
+        if (matched != null)
         {
-            lineup.Id = updatedLineup.Id;
-            lineup.SelectionOption = updatedLineup.SelectionOption;
-            lineup.SelectionType = updatedLineup.SelectionType;
-            lineup.LineupId = updatedLineup.LineUpId;
+            matched.SelectionOption = updatedItem.SelectionOption;
+            matched.SelectionType = updatedItem.SelectionType;
+            matched.LineupId = updatedItem.LineUpId;
+
+            return matched;
         }
 
-        return lineup;
+        return new ProgramStrategyLineup() { LineupId = updatedItem.LineUpId, SelectionOption = updatedItem.SelectionOption, ProgramStrategyId = parentID, SelectionType = updatedItem.SelectionType };
+    }
+
+    private static ProgramEvent ConvertAndUpdateEvent(int parentID, ProgramStrategyEvent updatedItem, ICollection<ProgramEvent>? currentItems)
+    {
+        var matched = currentItems?.Where(x => x.Id == updatedItem.Id).FirstOrDefault() ?? null;
+
+        if (matched != null)
+        {
+            matched.QueryId = updatedItem.QueryId;
+            matched.Name = updatedItem.Name;
+            matched.EventDate = updatedItem.EventDate;
+            matched.PromoDays = updatedItem.PromoDays;
+
+            return matched;
+        }
+
+        return new ProgramEvent() { ProgramStrategyId = parentID, QueryId = updatedItem.QueryId, Name = updatedItem.Name, EventDate = updatedItem.EventDate, PromoDays = updatedItem.PromoDays };
     }
 }

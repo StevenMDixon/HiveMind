@@ -12,7 +12,7 @@ public class GetAll
     }
 
     public record Library(int Id, string Name, string Path, string PathsToIgnore, string Type, bool IsProcessed);
-    public record GetAllLibrariesResponse(List<Library> Libraries);
+    public record GetAllLibrariesResponse(List<Library> Libraries, int CurrentPage, int PageSize, int DataCount);
 
     public record Parameters(
        string? Search,
@@ -33,6 +33,6 @@ public class GetAll
         var m = (pageSize * currentPage);
         libraries = libraries.Skip((pageSize * (currentPage - 1))).Take(pageSize);
 
-        return TypedResults.Ok(new GetAllLibrariesResponse(libraries.Select(x => new Library(x.Id, x.Name, x.Path, x.PathsToIgnore, x.Type.ToString(), x.IsProcessed)).ToList()));
+        return TypedResults.Ok(new GetAllLibrariesResponse(libraries.Select(x => new Library(x.Id, x.Name, x.Path, x.PathsToIgnore, x.Type.ToString(), x.IsProcessed)).ToList(), currentPage, pageSize, dataCount));
     }
 }

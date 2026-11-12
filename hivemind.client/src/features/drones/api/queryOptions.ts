@@ -18,7 +18,7 @@ export const droneQueryOptions = (id: string) => {
 
 export const stationsQueryOptions = () => {
     return queryOptions({
-        queryKey: [...droneKeys.all],
+        queryKey: [...droneKeys.all, 'stations'],
         queryFn: getStations
     });
 }

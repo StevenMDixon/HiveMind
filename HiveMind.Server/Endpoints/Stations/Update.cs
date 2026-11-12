@@ -23,7 +23,7 @@ public class Update
         }
     }
 
-    public record StationRequest(string? Name, int? Number, string? Logo, int? StrategyId, int? DroneId);
+    public record StationRequest(string? Name, int? Number, string? Logo, int? StrategyId);
     public static Results<Ok, NotFound<string>, ValidationProblem> Handle(StationService stationService, [FromRoute] int id, [FromBody] StationRequest request)
     {
         var station = stationService.GetStationByID(id);
@@ -34,7 +34,6 @@ public class Update
             station.Number = request.Number ?? station.Number;
             station.Logo = request.Logo ?? station.Logo;
             station.StrategyId = request.StrategyId ?? station.StrategyId;
-            station.DroneId = request.DroneId ?? station.DroneId;
             stationService.Update(station);
             return TypedResults.Ok();
         }

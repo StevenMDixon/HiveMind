@@ -3,7 +3,6 @@ using HiveMind.Server.Entities;
 using HiveMind.Server.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using static HiveMind.Server.Endpoints.ProgramStrategies.Update;
 
 namespace HiveMind.Server.Endpoints.TransitionTemplates;
 
@@ -12,10 +11,10 @@ public class Update
     public static void Map(IEndpointRouteBuilder app)
     {
         app.MapPut("/", Handle)
-            .WithName("Update");
+            .WithName("UpdateTransitionTemplate");
     }
 
-    public record UpdateRequest(int id, string? Name, List<Slot>? Slots);
+    public record UpdateRequest(int id, string? Name, bool? MatchShowBumps, List<Slot>? Slots);
 
     public record Slot(int Id, TransitionSlot SlotType, int TransitionTemplateId, int Index);
 
@@ -29,7 +28,9 @@ public class Update
         }
 
         template.Name = updateRequest.Name ?? template.Name;
-        
+        template.MatchShowBumps = updateRequest.MatchShowBumps ?? template.MatchShowBumps;
+
+
         var itemsToUpdate = new List<(TransitionTemplateSlot, Slot)>();
 
         foreach (var slot in updateRequest.Slots ?? [])
@@ -39,6 +40,7 @@ public class Update
             if (matchedItem != null)
             {
                 itemsToUpdate.Add((matchedItem, slot));
+                continue;
             }
 
             itemsToUpdate.Add((new TransitionTemplateSlot()
@@ -49,7 +51,7 @@ public class Update
             }, slot));
         }
 
-        template.Slots = Helper.Resolve(itemsToUpdate, UpdateItem);
+        template!.Slots = Helper.Resolve(itemsToUpdate, UpdateItem);
 
         transitionTemplateService.UpdateTransitionTemplate(template);
 

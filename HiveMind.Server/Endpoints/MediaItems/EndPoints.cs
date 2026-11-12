@@ -8,6 +8,8 @@ public class EndPoints
         Get.Map(endpoints);
         GetAll.Map(endpoints);
         Update.Map(endpoints);
+        Stream.Map(endpoints);
+        GetUntaggedByType.Map(endpoints);
     }
 }
 

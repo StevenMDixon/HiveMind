@@ -14,7 +14,7 @@ public class Get
 
     public record TransitionTemplate(int Id, string Name, bool MatchShowBumps, List<TransitionTemplateSlot> Slots);
 
-    public record TransitionTemplateSlot(int Id, TransitionSlot SlotType, int TransitionTemplateId, int Index);
+    public record TransitionTemplateSlot(int Id, int SlotType, int TransitionTemplateId, int Index);
 
 
     public static Results<Ok<TransitionTemplate>, NotFound> Handle(TransitionTemplateService transitionTemplateService, [FromRoute] int Id)
@@ -26,6 +26,6 @@ public class Get
             return TypedResults.NotFound();
         }
 
-        return TypedResults.Ok(new TransitionTemplate(transitionTemplate.Id, transitionTemplate.Name, transitionTemplate.MatchShowBumps, transitionTemplate.Slots.Select(x => new TransitionTemplateSlot(x.Id, x.Slot, x.TransitionTemplateId, x.Index)).ToList()));
+        return TypedResults.Ok(new TransitionTemplate(transitionTemplate.Id, transitionTemplate.Name, transitionTemplate.MatchShowBumps, transitionTemplate.Slots.Select(x => new TransitionTemplateSlot(x.Id, (int)x.Slot, x.TransitionTemplateId, x.Index)).ToList()));
     }
 }

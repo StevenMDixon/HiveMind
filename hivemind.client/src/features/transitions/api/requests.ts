@@ -7,18 +7,18 @@ export const getTransition = async (id: string): Promise<Transition> => {
     const response = await fetch(Route + id);
     const data = await response.json();
 
-    return data.transitionTemplates;
+    return data;
 };
 
 export const getTransitions = async (): Promise<Transition[]> => {
     const response = await fetch(Route);
     const data = await response.json();
 
-    return data.transitionTemplates;
+    return data.transitions;
 };
 
 export const updateTransitions = async(transition: Transition) => {
-    return await fetch(Route + transition.id, {
+    return await fetch(Route, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...transition }),
@@ -50,5 +50,20 @@ export const search = async (searchTerm: string, page: number, count: number): P
     }
 
     const data = await response.json();
-    return {data: data.transitionTemplates, dataCount: data.dataCount} as PaginatedDataResponse<Transition>;
+
+    return { data: data.transitions, dataCount: data.dataCount } as PaginatedDataResponse<Transition>;
 };
+
+export const getSlotTypes = async () => {
+    const response = await fetch(Route + 'slot-types', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to query slot types: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.slots;
+}

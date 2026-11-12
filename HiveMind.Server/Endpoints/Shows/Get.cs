@@ -10,7 +10,8 @@ public class Get
 {
     public static void Map(IEndpointRouteBuilder app)
     {
-        app.MapGet("/{id:int}", Handle).WithName("Get a Show by Id");
+        app.MapGet("/{id:int}", Handle)
+            .WithName("Get a Show by Id");
     }
 
     public record Show(int Id, string Name, Ratings Rating);

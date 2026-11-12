@@ -8,14 +8,14 @@ namespace HiveMind.Server.Services
 
         public IEnumerable<ProgramStrategy> GetAllProgramStrategies()
         {
-            return Get(b => b.Lineups);
+            return Get().Include(x => x.Lineups);
         }
 
         public IEnumerable<ProgramStrategy> GetAvailableStrategiesToProcess()
         {
             var currentDate = DateOnly.FromDateTime(DateTime.Now);
 
-            return Get(b => b.Lineups).Where(ps => ps.Active == true && (ps.LastScheduleDate <= currentDate || ps.LastScheduleDate == null));
+            return Get().Include(x => x.Lineups).Where(ps => ps.Active == true && (ps.LastScheduleDate <= currentDate || ps.LastScheduleDate == null));
         }
 
         public ProgramStrategy AddProgramStrategy(ProgramStrategy programStrategy)
@@ -25,7 +25,7 @@ namespace HiveMind.Server.Services
 
         public ProgramStrategy? GetProgramStrategyById(int Id)
         {
-            return Get(b => b.Lineups).FirstOrDefault(x => x.Id == Id);
+            return Get().Include(x => x.Lineups).Include(x => x.Events).FirstOrDefault(x => x.Id == Id);
         }
 
         public void Delete(int Id)

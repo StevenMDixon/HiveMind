@@ -7,11 +7,12 @@ public static class GetAll
 {
     public static void Map(IEndpointRouteBuilder app)
     {
-        app.MapGet("/", Handle);
+        app.MapGet("/", Handle)
+            .WithName("GetAllStations");
     }
     
-    public record Station(int Id, string Name, int Number, string Logo, int? StrategyId, int? DroneId);
-    public record GetAllStationsResponse(List<Station> Stations);
+    public record Station(int Id, string Name, int Number, string Logo, int? StrategyId);
+    public record GetAllStationsResponse(List<Station> Stations, int CurrentPage, int PageSize, int DataCount);
 
     public record Parameters(
        string? Search,
@@ -29,6 +30,9 @@ public static class GetAll
 
         if (filters.Search != null && filters.Search != string.Empty) stations = stations.Where(x => x.Name.ToLower().Contains(filters.Search.ToLower()));
 
-        return TypedResults.Ok(new GetAllStationsResponse(stations.Select(x => new Station(x.Id, x.Name, x.Number, x.Logo, x.StrategyId, x.DroneId)).ToList()));
+        var m = (pageSize * currentPage);
+        stations = stations.Skip((pageSize * (currentPage - 1))).Take(pageSize);
+
+        return TypedResults.Ok(new GetAllStationsResponse(stations.Select(x => new Station(x.Id, x.Name, x.Number, x.Logo, x.StrategyId)).ToList(), currentPage, pageSize, dataCount));
     }
 }

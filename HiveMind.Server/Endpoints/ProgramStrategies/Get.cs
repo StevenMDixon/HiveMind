@@ -12,9 +12,11 @@ public class Get
         app.MapGet("/{id:int}", Handle).WithName("GetProgramStrategyById");
     }
 
-    public record ProgramStrategy(int Id, string Name, int AdvancedDays, bool Active, DateOnly? LastScheduleDate, List<StrategyLineup> ProgramStrategyItems);
+    public record ProgramStrategy(int Id, string Name, int AdvancedDays, bool Active, DateOnly? LastScheduleDate, List<StrategyLineup> ProgramStrategyItems, List<StrategyEvent> ProgramStrategyEvents);
 
-    public record StrategyLineup(int ProgramStrategyLineupId, int? ProgramStrategyId, int? LineUpId, LineupSelectionType SelectionType, String SelectionOption);
+    public record StrategyLineup(int Id, int ProgramStrategyId, int? LineUpId, LineupSelectionType SelectionType, String SelectionOption);
+
+    public record StrategyEvent(int Id, string Name, int ProgramStrategyId, int PromoDays, int QueryId, DateOnly EventDate);
 
     public static Results<Ok<ProgramStrategy>, NotFound<string>> Handle(ProgramStrategyService programStrategyService, [FromRoute] int id)
     {
@@ -28,7 +30,8 @@ public class Get
                 strategy.AdvancedDays,
                 strategy.Active,
                 strategy.LastScheduleDate,
-                strategy.Lineups?.Select(x => new StrategyLineup(x.Id, x.ProgramStrategyId, x.LineupId, x.SelectionType, x.SelectionOption)).ToList() ?? []
+                strategy.Lineups?.Select(x => new StrategyLineup(x.Id, x.ProgramStrategyId!.Value, x.LineupId, x.SelectionType, x.SelectionOption)).ToList() ?? [],
+                strategy.Events?.Select(x => new StrategyEvent(x.Id, x.Name, x.ProgramStrategyId!.Value, x.PromoDays, x.QueryId, x.EventDate)).ToList() ?? []
                 ));
         }
 

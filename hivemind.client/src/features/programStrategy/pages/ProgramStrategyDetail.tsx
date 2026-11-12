@@ -3,7 +3,6 @@ import { programStrategyDetailQueryOptions } from "../api/queryOptions";
 import { useQuery } from '@tanstack/react-query';
 
 import Container from '@mui/material/Container';
-import Stack from '@mui/material/Stack';
 // import { useNavigate } from "react-router-dom";
 
 import Header from '@/components/Header';
@@ -21,11 +20,9 @@ const ProgramStrategyDetail = () => {
         <Container disableGutters maxWidth={false}>
             <Header Title={`Program Strategy: ${id}`}>
             </Header>
-            <Stack>
-                <Container sx={{ mt: 5 }}>
-                    {programStrategy && <ProgramStrategyLayout strategy={programStrategy} />}
-                </Container>
-            </Stack>
+            <Container sx={{ mt: 5, width: '100%' }} disableGutters>
+                {programStrategy && <ProgramStrategyLayout strategy={programStrategy} />}
+            </Container>
         </Container>
     )
 }

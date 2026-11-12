@@ -83,7 +83,6 @@ export const getOptions = async (): Promise<QuerySettingItem[]> => {
     }
 
     const data = await response.json();
-    console.log(data)
     return data.options;
 };
 

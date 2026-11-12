@@ -35,7 +35,7 @@ public class Get
                 mediaItem.EpisodeNumber,
                 mediaItem.SeasonNumber,
                 mediaItem.Show is not null ? new Show(mediaItem.Show.Id, mediaItem.Show.Name, mediaItem.Show.Rating.ToString()) : null,
-                mediaItem.Tags is not null ? mediaItem.Tags.Select(y => new Tag(y.Id, y.Name)) : [],
+                mediaItem.Tags is not null ? mediaItem.Tags.Select(y => new Tag(y.Id, y.Name, y.Category)) : [],
                 mediaItem.ThumbnailPath
                 ));
         }

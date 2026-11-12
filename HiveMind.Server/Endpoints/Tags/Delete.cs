@@ -9,7 +9,7 @@ public class Delete
     public static void Map(IEndpointRouteBuilder app)
     {
         app.MapDelete("/{id:int}", Handle)
-            .WithName("Delete");
+            .WithName("DeleteTags");
     }
 
     public static Results<Ok, NoContent, ValidationProblem, NotFound<string>> Handle(TagsService service, [FromRoute] int id)

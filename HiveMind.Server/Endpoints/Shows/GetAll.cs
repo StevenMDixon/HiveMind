@@ -13,7 +13,7 @@ public class GetAll
 
     public record Show(int Id, string Name, string Rating);
 
-    public record ShowsResponse(ICollection<Show> Shows);
+    public record ShowsResponse(ICollection<Show> Shows, int CurrentPage, int PageSize, int DataCount);
 
     public record Parameters(
        string? Search,
@@ -31,6 +31,9 @@ public class GetAll
 
         if (filters.Search != null && filters.Search != string.Empty) shows = shows.Where(x => x.Name.ToLower().Contains(filters.Search.ToLower()));
 
-        return TypedResults.Ok(new ShowsResponse(shows.Select(show => new Show(show.Id, show.Name, show.Rating.ToString())).ToList()));
+        var m = (pageSize * currentPage);
+        shows = shows.Skip((pageSize * (currentPage - 1))).Take(pageSize);
+
+        return TypedResults.Ok(new ShowsResponse(shows.Select(show => new Show(show.Id, show.Name, show.Rating.ToString())).ToList(), currentPage, pageSize, dataCount));
     }
 }

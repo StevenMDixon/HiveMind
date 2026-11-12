@@ -11,5 +11,6 @@ public class EndPoints
         Create.Map(endpoints);
         Update.Map(endpoints);
         Delete.Map(endpoints);
+        GetTagCategories.Map(endpoints);
     }
 }

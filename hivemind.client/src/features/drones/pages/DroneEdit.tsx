@@ -7,7 +7,7 @@ import DroneEditLayout from '../components/DroneEditLayout';
 import { droneQueryOptions, stationsQueryOptions } from '../api/queryOptions';
 import { useQuery } from '@tanstack/react-query';
 
-const LibraryEdit = () => {
+const DroneEdit = () => {
     const { id } = useParams();
 
     const { data: drone } = useQuery(droneQueryOptions(id ?? '0'));
@@ -30,4 +30,4 @@ const LibraryEdit = () => {
     )
 }
 
-export default LibraryEdit;
+export default DroneEdit;

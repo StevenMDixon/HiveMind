@@ -12,7 +12,6 @@ public enum LineupSelectionType
     MonthAndDay,
     [Priority(0)]
     Date,
-
     NthWeekday,
     DateRange, 
     MonthDayRange,

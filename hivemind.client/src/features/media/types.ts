@@ -6,6 +6,7 @@ export interface Show {
 export interface Tag {
     id: number;
     name: string;
+    category: number;
 }
 
 export interface Media {
@@ -22,4 +23,5 @@ export interface Media {
     seasonNumber: number;
     show: Show;
     tags: Tag[];
+    thumbnailPath: string;
 }

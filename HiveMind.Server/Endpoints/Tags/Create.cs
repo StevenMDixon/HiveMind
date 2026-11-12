@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using HiveMind.Server.Domain.Enums;
 using HiveMind.Server.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,7 @@ public class Create
     {
         app.MapPost("/", Handle)
             .WithRequestValidation<CreateRequest>()
-            .WithName("Create");
+            .WithName("CreateTags");
     }
 
     public class Validator : AbstractValidator<CreateRequest>
@@ -19,10 +20,11 @@ public class Create
         public Validator()
         {
             RuleFor(x => x.Name).NotEmpty();
+            RuleFor(x => x.Category).IsInEnum();
         }
     }
 
-    public record CreateRequest(string Name);
+    public record CreateRequest(string Name, TagCategory Category);
 
     public static Results<Ok<int>, NoContent, ValidationProblem> Handle(TagsService service, [FromBody] CreateRequest createRequest)
     {
@@ -30,7 +32,7 @@ public class Create
 
         if (existingTag != null) return TypedResults.Ok(existingTag.Id);
 
-        var newTag = service.Create(new Entities.Tags() { Name = createRequest.Name });
+        var newTag = service.Create(new Entities.Tags() { Name = createRequest.Name, Category = createRequest.Category });
 
         return TypedResults.Ok(newTag.Id);
     }

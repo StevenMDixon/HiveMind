@@ -12,7 +12,7 @@ public static class GetAll
     }
 
     public record Query(int Id, string Name, string Type);
-    public record GetAllQueriesResponse(List<Query> Queries);
+    public record GetAllQueriesResponse(List<Query> Queries, int CurrentPage, int PageSize, int DataCount);
 
     public record Parameters(
        string? Search,
@@ -30,6 +30,9 @@ public static class GetAll
 
         if (filters.Search != null && filters.Search != string.Empty) queries = queries.Where(x => x.Name.ToLower().Contains(filters.Search.ToLower()));
 
-        return TypedResults.Ok(new GetAllQueriesResponse(queries.Select(x => new Query(x.Id, x.Name, x.Type.ToString())).ToList()));
+        var m = (pageSize * currentPage);
+        queries = queries.Skip((pageSize * (currentPage - 1))).Take(pageSize);
+
+        return TypedResults.Ok(new GetAllQueriesResponse(queries.Select(x => new Query(x.Id, x.Name, x.Type.ToString())).ToList(), currentPage, pageSize, dataCount));
     }
 }

@@ -13,7 +13,7 @@ public class GetAll
 
     public record Transitions(int Id, string Name);
 
-    public record Response(List<Transitions> Transitions);
+    public record Response(List<Transitions> Transitions, int CurrentPage, int PageSize, int DataCount);
 
     public record Parameters(
        string? Search,
@@ -31,6 +31,6 @@ public class GetAll
 
         if (filters.Search != null && filters.Search != string.Empty) transitions = transitions.Where(x => x.Name.ToLower().Contains(filters.Search.ToLower()));
 
-        return TypedResults.Ok(new Response(transitions.Select(x => new Transitions(x.Id, x.Name)).ToList()));
+        return TypedResults.Ok(new Response(transitions.Select(x => new Transitions(x.Id, x.Name)).ToList(), currentPage, pageSize, dataCount));
     }
 }

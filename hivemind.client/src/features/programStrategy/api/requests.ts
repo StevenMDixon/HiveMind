@@ -1,5 +1,7 @@
+import type { EnumOptionsObj } from "../../../components/FormFields";
 import type PaginatedDataResponse from "../../../utilities/PaginatedData";
-import type { ProgramStrategy, Lineup } from "../types";
+import type { ProgramStrategy, Lineup, Query } from "../types";
+
 
 
 export const getProgramStrategy = async (strategyId: number): Promise<ProgramStrategy> => {
@@ -41,7 +43,7 @@ export const deleteProgramStrategy = async (strategyId: number) => {
 };
 
 export const updateProgramStrategy = async (strategy: ProgramStrategy) => {
-    console.log(strategy)
+
     const result = await fetch('/api/strategies/' + strategy.id, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -56,7 +58,6 @@ export const getLineupSelectionTypes = async () => {
 
     if (response.ok) {
         const data = await response.json();
-        console.log(data)
         return data.options;
     }
 }
@@ -72,7 +73,16 @@ export const getLineups = async (): Promise<Lineup[]> => {
     return data.lineups;
 };
 
+export const getQueries = async (): Promise<Query[]> => {
+    const response = await fetch('/api/queries');
 
+    if (!response.ok) {
+        throw new Error(`Failed to fetch queries: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.queries.reduce((acc: EnumOptionsObj, cur: Query) => { acc[cur.id] = cur.name; return acc; }, {} as Query);;
+};
 
 export const search = async (searchTerm: string, page: number, count: number): Promise<PaginatedDataResponse<ProgramStrategy>> => {
     let url = "/api/strategies";

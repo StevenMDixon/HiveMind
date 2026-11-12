@@ -10,7 +10,7 @@ public class ProgramEvent
     public int? ProgramStrategyId { get; set; }
     public ProgramStrategy? ProgramStrategy { get; set; }
     public int PromoDays { get; set; } = 1;
-    public DateTime EventDate { get; set; }
+    public DateOnly EventDate { get; set; }
     public int QueryId { get; set; }
     public Query Query { get; set; } = null!;
 }

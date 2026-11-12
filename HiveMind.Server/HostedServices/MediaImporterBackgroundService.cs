@@ -44,8 +44,6 @@ public partial class MediaImporterBackgroundService(IServiceScopeFactory scopeFa
                     if (targetLibary.Path != null && targetLibary.Path != string.Empty)
                     {
 
-                        //targetLibary.Path = mountedPath + targetLibary.Path;
-
                         _logger.LogInformation("Processing Library: {LibraryName}", targetLibary.Name);
 
                         var files = new List<string>();
@@ -64,8 +62,6 @@ public partial class MediaImporterBackgroundService(IServiceScopeFactory scopeFa
                         {
                             _logger.LogError(e, "Error while getting files from library path: {LibraryPath}", targetLibary.Path);
                         }
-
-                        //_logger.LogInformation("Found files: {Count}", files.Count);
 
                         mediaItemsToDelete = [.. currentMediaItems.ExceptBy(files, x => mountedPath + x.FilePath)];
 

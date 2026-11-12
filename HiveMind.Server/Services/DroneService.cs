@@ -7,19 +7,19 @@ public class DroneService(SqliteDBContext context) : BaseService<Drone>(context)
 {
     public List<Drone> GetAll()
     {
-        return Get().Include(x => x.Stations).IgnoreAutoIncludes().ToList();
+        return Get().IgnoreAutoIncludes().Include(x => x.Stations).ToList();
     }
 
     public Drone? GetByHostName(string hostName)
     {
-        var drone = Get().Include(x => x.Stations).FirstOrDefault(x => x.HostName == hostName);
+        var drone = Get().IgnoreAutoIncludes().Include(x => x.Stations).FirstOrDefault(x => x.HostName == hostName);
 
         return drone;
     }
 
     public Drone? GetById(int Id)
     {
-        var drone = Get().Include(x => x.Stations).FirstOrDefault(x => x.Id == Id);
+        var drone = Get().IgnoreAutoIncludes().Include(x => x.Stations).FirstOrDefault(x => x.Id == Id);
         return drone;
     }
 

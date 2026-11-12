@@ -4,8 +4,8 @@ import { useParams, useNavigate } from "react-router-dom";
 // import LineupTimeline from '../components/LineupTimeline';
 import type { Lineup } from '../types';
 
-// import CustomForm from '@/components/CustomForm';
-// import { type CustomFormField } from '@/components/FormFields';
+import CustomForm from '@/components/CustomForm';
+import { type CustomFormField } from '@/components/FormFields';
 
 import { useQuery } from '@tanstack/react-query';
 import { lineupQueryOptions } from '../api/queryOptions';
@@ -15,6 +15,7 @@ import { useLineupUpdateHook} from '../hooks/lineupHooks'
 
 
 import JsonEditor from '../components/Editor';
+import { useState } from "react";
 
 interface LineupDataWrapperProps {
     lineup: Lineup;
@@ -24,20 +25,29 @@ const LineupDataWrapper = ({ lineup }: LineupDataWrapperProps) => {
 
     const { mutate: updateLineup } = useLineupUpdateHook();
 
-    const saveLineup = async (data: string) => {
+    const [jsonData, setJsonData] = useState(lineup.jsonData ?? '');
+
+    const lineupFields = [
+        { name: 'name', display: "Name", type: "Text", initialValue: lineup.name },
+        { name: 'startTime', display: "Start Time", type: "Text", initialValue: lineup.startTime },
+    ] as CustomFormField[];
+
+    const saveLineup = async (lineup: Lineup) => {
         const newlineup = {
             name: lineup.name,
             id: lineup.id,
             channelId: lineup.channelId,
             startTime: lineup.startTime,
-            jsonData: data
+            jsonData: jsonData
         } as Lineup;
 
         updateLineup(newlineup);
     }
 
     return (
-        <JsonEditor lineupJson={lineup.jsonData} save={saveLineup} />
+        <CustomForm title="" save={saveLineup} initialValue={lineup} fields={lineupFields}>
+            <JsonEditor lineupJson={jsonData} save={setJsonData} />
+        </CustomForm>
     );
 }
 

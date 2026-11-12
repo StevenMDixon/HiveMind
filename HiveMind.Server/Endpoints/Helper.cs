@@ -1,4 +1,6 @@
-﻿namespace HiveMind.Server.Endpoints;
+﻿using static HiveMind.Server.Endpoints.Helper;
+
+namespace HiveMind.Server.Endpoints;
 
 public static class Helper
 {

@@ -6,6 +6,7 @@ export interface ProgramStrategy {
     startDate?: string;
     endDate?: string;
     programStrategyItems?: ProgramStrategyLineup[];
+    programStrategyEvents?: ProgramStrategyEvent[];
 }
 
 export interface ProgramStrategyLineup {
@@ -16,7 +17,21 @@ export interface ProgramStrategyLineup {
     selectionType: number
 }
 
+export interface ProgramStrategyEvent {
+    id: number,
+    programStrategyId: number,
+    name: string,
+    queryId: number,
+    promoDays: number,
+    eventDate: Date
+}
+
 export interface Lineup {
+    id: number;
+    name: string;
+}
+
+export interface Query {
     id: number;
     name: string;
 }

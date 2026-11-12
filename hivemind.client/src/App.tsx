@@ -26,6 +26,9 @@ import DronePage from './features/drones/pages/Drones';
 import DroneEdit from './features/drones/pages/DroneEdit';
 import TransitionPage from './features/transitions/pages/Transitions';
 import TransitionEdit from './features/transitions/pages/TransitionEdit';
+import TagPage from './features/tags/pages/Tags';
+import QueuePage from './features/queue/pages/queue';
+import MediaTagging from './features/queue/pages/media';
 
 const darkTheme = createTheme({
     palette: {
@@ -69,6 +72,9 @@ const App = () => {
                             <Route path="drones/:id" element={<DroneEdit />} />
                             <Route path="transitions" element={<TransitionPage />} />
                             <Route path="transitions/:id" element={<TransitionEdit />} />
+                            <Route path="tags" element={<TagPage />} />
+                            <Route path="queue" element={<QueuePage />} />
+                            <Route path="queue/:id" element={<MediaTagging />} />
                         </Route>
                 </Routes>
                 </HashRouter>

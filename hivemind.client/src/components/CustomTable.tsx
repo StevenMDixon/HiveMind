@@ -115,8 +115,7 @@ export const CustomTable = <T,>({ data, columns, actionColumns, isLoading, searc
             </TableContainer>
 
             <Container  sx={{ display: 'flex', width: '100%', justifyContent:'center'}}>
-            {paging?.dataTotal && <Pagination count={paging.dataTotal/ paging.pageSize} page={paging.currentPage} onChange={paging.changePage}/>}
-
+            {paging?.dataTotal && <Pagination count={Math.ceil(paging.dataTotal/ paging.pageSize)} page={paging.currentPage} onChange={paging.changePage}/>}
             </Container>
         </Container>
     );

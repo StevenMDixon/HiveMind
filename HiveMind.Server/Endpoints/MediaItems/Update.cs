@@ -28,7 +28,7 @@ public class Update
 
     public record MediaItemUpdateRequest(string? Title, IEnumerable<UpdatedTag>? Tags);
     
-    public record UpdatedTag(int Id, string Name);
+    public record UpdatedTag(int Id, string Name, TagCategory TagCategory);
 
     public static Results<Ok, NotFound<string>, ValidationProblem> Handle(MediaItemService mediaItemService, TagsService tagService, [FromRoute] int id, [FromBody] MediaItemUpdateRequest request)
     {
@@ -54,7 +54,7 @@ public class Update
 
                     var existingTag = tagService.GetByName(updatedTag.Name);
 
-                    var fixedTag = existingTag != null ? new UpdatedTag(existingTag.Id, existingTag.Name) : updatedTag;
+                    var fixedTag = existingTag != null ? new UpdatedTag(existingTag.Id, existingTag.Name, existingTag.Category) : updatedTag;
 
                     itemsToUpdate.Add((existingTag ?? new Entities.Tags(), fixedTag));
                 }

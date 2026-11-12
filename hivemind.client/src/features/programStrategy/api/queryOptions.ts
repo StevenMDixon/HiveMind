@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import { getProgramStrategy, getProgramStrategies, getLineupSelectionTypes, getLineups, search } from './requests';
+import { getProgramStrategy, getProgramStrategies, getLineupSelectionTypes, getLineups, search, getQueries } from './requests';
 import { strategyKeys } from './queryKeys';
 
 export const programStrategyQueryOptions = () => {
@@ -27,6 +27,13 @@ export const lineupsQueryOptions = () => {
     return queryOptions({
         queryKey: ['lineups'],
         queryFn: getLineups     
+    });
+}
+
+export const queriesQueryOptions = () => {
+    return queryOptions({
+        queryKey: ['queries'],
+        queryFn: getQueries     
     });
 }
 

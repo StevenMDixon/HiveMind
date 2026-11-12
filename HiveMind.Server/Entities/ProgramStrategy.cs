@@ -17,4 +17,5 @@ public class ProgramStrategy
 
     public ICollection<ProgramStrategyLineup>? Lineups { get; set; } = null;
 
+    public ICollection<ProgramEvent>? Events { get; set; }
 }

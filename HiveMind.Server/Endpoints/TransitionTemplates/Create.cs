@@ -10,7 +10,7 @@ public class Create
     public static void Map(IEndpointRouteBuilder app)
     {
         app.MapPost("/", Handle)
-            .WithName("Create");
+            .WithName("CreateTransitionTemplate");
     }
 
     public record CreateRequest(string templateName);

@@ -17,6 +17,21 @@ namespace HiveMind.Server.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.10");
 
+            modelBuilder.Entity("DroneStation", b =>
+                {
+                    b.Property<int>("DronesId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("StationsId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("DronesId", "StationsId");
+
+                    b.HasIndex("StationsId");
+
+                    b.ToTable("DroneStation");
+                });
+
             modelBuilder.Entity("HiveMind.Server.Entities.Drone", b =>
                 {
                     b.Property<int>("Id")
@@ -154,7 +169,7 @@ namespace HiveMind.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("EventDate")
+                    b.Property<DateOnly>("EventDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -431,9 +446,6 @@ namespace HiveMind.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("DroneId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Logo")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -449,8 +461,6 @@ namespace HiveMind.Server.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DroneId");
 
                     b.HasIndex("StrategyId");
 
@@ -484,6 +494,9 @@ namespace HiveMind.Server.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Category")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -632,6 +645,21 @@ namespace HiveMind.Server.Migrations
                     b.ToTable("MediaItemTags");
                 });
 
+            modelBuilder.Entity("DroneStation", b =>
+                {
+                    b.HasOne("HiveMind.Server.Entities.Drone", null)
+                        .WithMany()
+                        .HasForeignKey("DronesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HiveMind.Server.Entities.Station", null)
+                        .WithMany()
+                        .HasForeignKey("StationsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("HiveMind.Server.Entities.MediaItem", b =>
                 {
                     b.HasOne("HiveMind.Server.Entities.Library", "Library")
@@ -652,7 +680,7 @@ namespace HiveMind.Server.Migrations
             modelBuilder.Entity("HiveMind.Server.Entities.ProgramEvent", b =>
                 {
                     b.HasOne("HiveMind.Server.Entities.ProgramStrategy", "ProgramStrategy")
-                        .WithMany()
+                        .WithMany("Events")
                         .HasForeignKey("ProgramStrategyId");
 
                     b.HasOne("HiveMind.Server.Entities.Query", "Query")
@@ -712,10 +740,6 @@ namespace HiveMind.Server.Migrations
 
             modelBuilder.Entity("HiveMind.Server.Entities.Station", b =>
                 {
-                    b.HasOne("HiveMind.Server.Entities.Drone", null)
-                        .WithMany("Stations")
-                        .HasForeignKey("DroneId");
-
                     b.HasOne("HiveMind.Server.Entities.ProgramStrategy", "Strategy")
                         .WithMany()
                         .HasForeignKey("StrategyId");
@@ -747,11 +771,6 @@ namespace HiveMind.Server.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("HiveMind.Server.Entities.Drone", b =>
-                {
-                    b.Navigation("Stations");
-                });
-
             modelBuilder.Entity("HiveMind.Server.Entities.Library", b =>
                 {
                     b.Navigation("MediaItems");
@@ -759,6 +778,8 @@ namespace HiveMind.Server.Migrations
 
             modelBuilder.Entity("HiveMind.Server.Entities.ProgramStrategy", b =>
                 {
+                    b.Navigation("Events");
+
                     b.Navigation("Lineups");
                 });
 

@@ -33,9 +33,9 @@ builder.Services.AddScoped<ProgramEventService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
-//builder.Services.AddHostedService<SchedulingBackgroundService>();
-//builder.Services.AddHostedService<MediaImporterBackgroundService>();
-builder.Services.AddHostedService<ThumbnailGenerationService>();
+builder.Services.AddHostedService<SchedulingBackgroundService>();
+builder.Services.AddHostedService<MediaImporterBackgroundService>();
+//builder.Services.AddHostedService<ThumbnailGenerationService>();
 
 var app = builder.Build();
 
