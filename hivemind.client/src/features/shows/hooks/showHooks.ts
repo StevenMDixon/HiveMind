@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createShow, updateShow } from '../api/requests';
-import { useGlobalNotification } from '@/dashboard/useGlobalNotification';
+import { useGlobalNotification } from '@/Dashboard/useGlobalNotification';
 import { showKeys } from '../api/queryKeys';
 
 export const useLibraryCreateHook = () => {

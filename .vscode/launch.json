@@ -1,0 +1,29 @@
+
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+    "name": "HiveMind - Attach to Docker",
+    "type": "coreclr",
+    "request": "attach",
+    "processId": "${command:pickRemoteProcess}",
+    "justMyCode": false,
+    "requireExactSource": false,
+    "pipeTransport": {
+        "pipeCwd": "${workspaceFolder}",
+        "pipeProgram": "docker",
+        "pipeArgs": [
+            "compose",
+            "exec",
+            "-T",
+            "hivemind-server"
+        ],
+        "debuggerPath": "/vsdbg/vsdbg",
+        "quoteArgs": false
+    },
+    "sourceFileMap": {
+        "/workspace": "${workspaceFolder}"
+    }
+}
+  ]
+}

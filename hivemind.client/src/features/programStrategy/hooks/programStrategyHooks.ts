@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createProgramStrategy , deleteProgramStrategy, updateProgramStrategy } from '../api/requests';
-import { useGlobalNotification } from '@/dashboard/useGlobalNotification';
+import { useGlobalNotification } from '@/Dashboard/useGlobalNotification';
 import { strategyKeys } from '../api/queryKeys';
 
 export const useProgramStrategyCreateHook = () => {

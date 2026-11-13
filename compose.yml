@@ -1,0 +1,26 @@
+
+services:
+  hivemind-server:
+    container_name: hivemind-server
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+
+    ports:
+      - "5280:5280"
+
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:5280
+      DOTNET_USE_POLLING_FILE_WATCHER: "1"
+
+    volumes:
+      - .:/workspace
+      - nuget-cache:/root/.nuget/packages
+      - "/run/media/steven/New Volume/Test:/app/media"
+
+    working_dir: /workspace
+    init: true
+
+volumes:
+  nuget-cache:

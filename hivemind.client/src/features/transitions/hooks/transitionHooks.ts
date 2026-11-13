@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createTransitions, deleteTransitions, updateTransitions } from '../api/requests';
-import { useGlobalNotification } from '@/dashboard/useGlobalNotification';
+import { useGlobalNotification } from '@/Dashboard/useGlobalNotification';
 import { transitionKeys } from '../api/queryKeys';
 
 export const useTransitionCreateHook = () => {

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createDrone, deleteDrone, updateDrone } from '../api/requests';
-import { useGlobalNotification } from '@/dashboard/useGlobalNotification';
+import { useGlobalNotification } from '@/Dashboard/useGlobalNotification';
 import { droneKeys } from '../api/queryKeys';
 
 export const useDroneCreateHook = () => {

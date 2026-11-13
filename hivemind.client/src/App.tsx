@@ -1,12 +1,12 @@
 import { Route, Routes, HashRouter } from 'react-router';
 import './App.css';
-import DashboardLayout from './dashboard/layout';
+import DashboardLayout from './Dashboard/layout';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-import Intro from './pages/Intro';
+import Intro from './Pages/Intro';
 
 import StationPage from './features/stations/pages/Stations';
 import StationEdit from './features/stations/pages/StationEdit';

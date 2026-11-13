@@ -16,7 +16,7 @@ public class DefaultImporter : IImporter
         foreach (var file in files)
         {
             var fileName = Path.GetFileNameWithoutExtension(file);
-            var normalizedFile = file.Replace(mountedPath, String.Empty);
+            var normalizedFile = mountedPath == "/" ? file : file.Replace(mountedPath, String.Empty);
             var fileNameWithExt = Path.GetFileName(file);
 
             var tags = file.Replace(mountedPath + libraryPath, String.Empty).Split('/').ToList().Where(x => x != "" && x != fileNameWithExt).ToList();

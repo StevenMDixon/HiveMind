@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateSetting } from '../api/requests';
-import { useGlobalNotification } from '@/dashboard/useGlobalNotification';
+import { useGlobalNotification } from '@/Dashboard/useGlobalNotification';
 
 export const useSettingUpdateHook = () => {
     const queryClient = useQueryClient();

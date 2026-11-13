@@ -53,13 +53,6 @@ using (var scope = app.Services.CreateScope())
 app.UseDefaultFiles();
 app.MapStaticAssets();
 
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(
-        Path.Combine(builder.Environment.ContentRootPath, "thumbs")),
-    RequestPath = "/thumbs"
-});
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

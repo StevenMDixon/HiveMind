@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createLineup, deleteLineup, updateLineup } from '../api/requests';
-import { useGlobalNotification } from '@/dashboard/useGlobalNotification';
+import { useGlobalNotification } from '@/Dashboard/useGlobalNotification';
 import { queryKeys } from '../api/queryKeys';
 
 export const useLineupCreateHook = () => {

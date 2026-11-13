@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createLibrary, deleteLibrary, updateLibrary, reprocessLibrary } from '../api/requests';
-import { useGlobalNotification } from '@/dashboard/useGlobalNotification';
+import { useGlobalNotification } from '@/Dashboard/useGlobalNotification';
 import { libraryKeys } from '../api/queryKeys';
 
 export const useLibraryCreateHook = () => {
