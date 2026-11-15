@@ -60,7 +60,7 @@ public class Update
                 }
 
                 mediaItem.Tags = itemsToUpdate.Select(x => UpdateItem(x.Item1, x.Item2)).ToList();
-            }
+            } 
 
             mediaItemService.Update(mediaItem);
             return TypedResults.Ok();
@@ -73,7 +73,7 @@ public class Update
     {
         if (updatedTag != null)
         {
-            tag.Id = updatedTag.Id;
+            tag.Id = updatedTag.Id < 0 ? 0 : updatedTag.Id;
             tag.Name = updatedTag.Name;
         }
 

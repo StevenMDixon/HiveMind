@@ -69,7 +69,7 @@ export const updateTags = async (media: Media) => {
     return await fetch('/api/mediaitems/' + media.id, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tag: media.tags }),
+        body: JSON.stringify({ tags: media.tags }),
     });
 }
 

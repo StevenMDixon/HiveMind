@@ -27,7 +27,6 @@ public class GetAll
         int? Count
     );
 
-
     public static Results<Ok<GetAllMediaItemsResponse>, NotFound> Handle(MediaItemService mediaItemService, [AsParameters] MediaParameters filters)
     {
         var mediaItems = mediaItemService.GetAllMediaItems();
