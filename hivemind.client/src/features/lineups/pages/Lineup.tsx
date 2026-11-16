@@ -66,7 +66,7 @@ const LineupView = () => {
      } as PagingData;
 
     const fields = [
-        { name: 'lineupName', Display: "Name", type: "Text", initialValue: lineupDefault.name },
+        { name: 'name', Display: "Name", type: "Text", initialValue: lineupDefault.name },
         { name: 'startTime', display: "Start Time", type: "Text", initialValue: lineupDefault.startTime },
     ] as CustomFormField[];
 

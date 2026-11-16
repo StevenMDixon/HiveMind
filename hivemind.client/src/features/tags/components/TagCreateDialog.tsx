@@ -10,7 +10,7 @@ interface NewTagFormProps {
 }
 
 const TagCreateDialog = ({ createTag, categories }: NewTagFormProps) => {
-    const tagDefault = { id: 0, name: '', category: '0'};
+    const tagDefault = { id: 0, name: '', category: 0};
 
     const fields = [
         { name: 'name', display: "Name", type: "Text", initialValue: tagDefault.name, validator: (name: string) => name != '', required: true },

@@ -28,7 +28,7 @@ public class Update
 
     public record MediaItemUpdateRequest(string? Title, IEnumerable<UpdatedTag>? Tags);
     
-    public record UpdatedTag(int Id, string Name, TagCategory TagCategory);
+    public record UpdatedTag(int Id, string Name, TagCategory Category);
 
     public static Results<Ok, NotFound<string>, ValidationProblem> Handle(MediaItemService mediaItemService, TagsService tagService, [FromRoute] int id, [FromBody] MediaItemUpdateRequest request)
     {
@@ -75,6 +75,7 @@ public class Update
         {
             tag.Id = updatedTag.Id < 0 ? 0 : updatedTag.Id;
             tag.Name = updatedTag.Name;
+            tag.Category = updatedTag.Category;
         }
 
         return tag;
