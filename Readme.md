@@ -94,3 +94,26 @@ services:
       - /mnt/General/hive/config:/config:rw
 version: '3.8'
 ```
+
+### Truenas Deployment
+
+```
+services:
+  hivemind:
+    container_name: hivemind
+    environment:
+      - PUID=568
+      - PGID=568
+      - TZ=America/New_York
+    image: >-
+      ghcr.io/stevenmdixon/hivemind@sha256:20ce7ec09c9669d828f8dbf09fe9cc8159e83cca9ecb17ea9442fe331d9dd84a
+    ports:
+      - '8080:8900'
+      - '8081:8901'
+    restart: unless-stopped
+    user: '568:568'
+    volumes:
+      - /mnt/General/hivemind2/config:/config
+      - /mnt/General/Media/media_us:/media
+version: '3.8'
+```

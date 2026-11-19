@@ -516,6 +516,254 @@ namespace HiveMind.Server.Migrations
                         .IsUnique();
 
                     b.ToTable("Tags");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Category = 11,
+                            Name = "1980"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Category = 11,
+                            Name = "1981"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Category = 11,
+                            Name = "1982"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Category = 11,
+                            Name = "1983"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Category = 11,
+                            Name = "1984"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Category = 11,
+                            Name = "1985"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Category = 11,
+                            Name = "1986"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Category = 11,
+                            Name = "1987"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Category = 11,
+                            Name = "1988"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Category = 11,
+                            Name = "1989"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Category = 11,
+                            Name = "1990"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Category = 11,
+                            Name = "1991"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Category = 11,
+                            Name = "1992"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Category = 11,
+                            Name = "1993"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Category = 11,
+                            Name = "1994"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Category = 11,
+                            Name = "1995"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Category = 11,
+                            Name = "1996"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Category = 11,
+                            Name = "1997"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Category = 11,
+                            Name = "1998"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Category = 11,
+                            Name = "1999"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Category = 11,
+                            Name = "2000"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            Category = 11,
+                            Name = "2001"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            Category = 11,
+                            Name = "2002"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Category = 11,
+                            Name = "2003"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            Category = 11,
+                            Name = "2004"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            Category = 11,
+                            Name = "2005"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Category = 11,
+                            Name = "2006"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Category = 11,
+                            Name = "2007"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            Category = 11,
+                            Name = "2008"
+                        },
+                        new
+                        {
+                            Id = 30,
+                            Category = 11,
+                            Name = "2009"
+                        },
+                        new
+                        {
+                            Id = 31,
+                            Category = 2,
+                            Name = "Day"
+                        },
+                        new
+                        {
+                            Id = 32,
+                            Category = 2,
+                            Name = "Morning"
+                        },
+                        new
+                        {
+                            Id = 33,
+                            Category = 2,
+                            Name = "Evening"
+                        },
+                        new
+                        {
+                            Id = 34,
+                            Category = 2,
+                            Name = "Night"
+                        },
+                        new
+                        {
+                            Id = 35,
+                            Category = 2,
+                            Name = "Prime Time"
+                        },
+                        new
+                        {
+                            Id = 36,
+                            Category = 2,
+                            Name = "Over Night"
+                        },
+                        new
+                        {
+                            Id = 37,
+                            Category = 1,
+                            Name = "Cartoon Network"
+                        },
+                        new
+                        {
+                            Id = 38,
+                            Category = 1,
+                            Name = "Nickolodeon"
+                        },
+                        new
+                        {
+                            Id = 39,
+                            Category = 1,
+                            Name = "Disney"
+                        },
+                        new
+                        {
+                            Id = 40,
+                            Category = 1,
+                            Name = "SYFY"
+                        },
+                        new
+                        {
+                            Id = 41,
+                            Category = 1,
+                            Name = "Comedy Central"
+                        });
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.TransitionTemplate", b =>
