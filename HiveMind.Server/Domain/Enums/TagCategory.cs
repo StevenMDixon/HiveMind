@@ -3,7 +3,6 @@
 public enum TagCategory
 {
     Other,
-    [Required(true)]
     Network,
     [Required(true)]
     Time_Slot,

@@ -17,7 +17,8 @@ services:
     volumes:
       - .:/workspace
       - nuget-cache:/root/.nuget/packages
-      - "/run/media/steven/New Volume/Test:/app/media"
+      - "/run/media/steven/New Volume1/Test:/app/media"
+      - "/mnt/truenas:/app/test"
 
     working_dir: /workspace
     init: true

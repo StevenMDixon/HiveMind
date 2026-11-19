@@ -60,6 +60,10 @@ namespace HiveMind.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("DefaultTags")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("IsProcessed")
                         .HasColumnType("INTEGER");
 
@@ -161,6 +165,32 @@ namespace HiveMind.Server.Migrations
                     b.HasIndex("ShowId");
 
                     b.ToTable("MediaItems");
+                });
+
+            modelBuilder.Entity("HiveMind.Server.Entities.ProgramDatePart", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<TimeOnly>("EndTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("ProgramStrategyId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<TimeOnly>("StartTime")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProgramStrategyId");
+
+                    b.ToTable("ProgramDateParts");
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.ProgramEvent", b =>
@@ -465,29 +495,6 @@ namespace HiveMind.Server.Migrations
                     b.HasIndex("StrategyId");
 
                     b.ToTable("Stations");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Logo = "",
-                            Name = "Test1",
-                            Number = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Logo = "",
-                            Name = "Test2",
-                            Number = 2
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Logo = "",
-                            Name = "Test3",
-                            Number = 3
-                        });
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.Tags", b =>
@@ -677,6 +684,13 @@ namespace HiveMind.Server.Migrations
                     b.Navigation("Show");
                 });
 
+            modelBuilder.Entity("HiveMind.Server.Entities.ProgramDatePart", b =>
+                {
+                    b.HasOne("HiveMind.Server.Entities.ProgramStrategy", null)
+                        .WithMany("DateParts")
+                        .HasForeignKey("ProgramStrategyId");
+                });
+
             modelBuilder.Entity("HiveMind.Server.Entities.ProgramEvent", b =>
                 {
                     b.HasOne("HiveMind.Server.Entities.ProgramStrategy", "ProgramStrategy")
@@ -778,6 +792,8 @@ namespace HiveMind.Server.Migrations
 
             modelBuilder.Entity("HiveMind.Server.Entities.ProgramStrategy", b =>
                 {
+                    b.Navigation("DateParts");
+
                     b.Navigation("Events");
 
                     b.Navigation("Lineups");

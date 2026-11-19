@@ -7,7 +7,7 @@ namespace HiveMind.Server.Domain.Importer;
 
 public partial class ShowImporter: IImporter
 {
-    public List<VideoMeta> Generate(List<string> files, string mountedPath, string libraryPath, ShowService showService, TagsService tagService, QueryService queryService)
+    public List<VideoMeta> Generate(List<string> files, string mountedPath, string libraryPath, string defaultTags, ShowService showService, TagsService tagService, QueryService queryService)
     {
         var results = new List<VideoMeta>();
 
@@ -17,21 +17,25 @@ public partial class ShowImporter: IImporter
 
         var newQueries = new Dictionary<string, HashSet<string>>();
 
+        var prePath = Path.Join(mountedPath, libraryPath.TrimStart('/'));
+
         foreach (var file in files)
         {
+            
             var fileName = Path.GetFileNameWithoutExtension(file);
-            var normalizedFile = file.Replace(mountedPath, String.Empty);
             var fileNameWithExt = Path.GetFileName(file);
 
-            var tags = file.Replace(mountedPath + libraryPath, String.Empty).Split('/').ToList().Where(x => x != "" && x != fileNameWithExt).ToList();
+            var localFilePath = mountedPath == "/" ? file: file.Replace(mountedPath, "");
+
+            var extractedTags = MediaTagExtractor.ExtractTags(fileNameWithExt, prePath, file, string.Empty);
 
             int seasonNumber = 0;
             int? showId = null;
             int episodeNumber = 0;
 
-            if (tags.Count > 0)
+            if (extractedTags.Count > 0)
             {
-                var formattedShowName = ShowRegex().Replace(tags.First(), "").Trim();
+                var formattedShowName = ShowRegex().Replace(extractedTags.First(), "").Trim();
 
                 if (showDict.ContainsKey(formattedShowName))
                 {
@@ -50,9 +54,9 @@ public partial class ShowImporter: IImporter
                     }
                 }
 
-                if (tags.Count > 1)
+                if (extractedTags.Count > 1)
                 {
-                    var formattedSeasonNumber = SeasonNumber().Replace(tags[1], "");
+                    var formattedSeasonNumber = SeasonNumber().Replace(extractedTags.ElementAt(1), "");
                     var success = Int32.TryParse(formattedSeasonNumber, out seasonNumber);
                     if(!success) seasonNumber = 0;
 
@@ -75,7 +79,7 @@ public partial class ShowImporter: IImporter
                 results.Add(new VideoMeta
                 {
                     Name = fileName,
-                    Path = normalizedFile,
+                    Path = localFilePath,
                     FullPath = file,
                     ShowId = showId,
                     SeasonNumber = seasonNumber,

@@ -5,6 +5,7 @@ export interface Library {
     pathsToIgnore: string;
     type: number;
     isProcessed: boolean;
+    defaultTags: string;
 }
 
 export interface EnumOptionsObj {

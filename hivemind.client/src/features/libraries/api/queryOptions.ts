@@ -25,7 +25,7 @@ export const libraryTypesQueryOptions = () => {
 
 export const libraryQuerySearchOptions = (searchTerm: string, page: number, count: number) => {
     return queryOptions({
-        queryKey: ['libraryTypes', searchTerm, page, count],
+        queryKey: [...libraryKeys.all, searchTerm, page, count],
         queryFn: () => search(searchTerm, page, count)
     });
 }

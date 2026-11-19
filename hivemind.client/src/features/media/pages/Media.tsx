@@ -2,9 +2,9 @@ import Container from '@mui/material/Container';
 import { useState } from 'react';
 import Header from '@/components/Header';
 import CustomTable, { type CellData, type PagingData } from "@/components/CustomTable";
+import { useNavigate } from "react-router-dom";
 
 import type { Media, Show } from '../types';
-
 import { useQuery } from '@tanstack/react-query';
 import { mediaQuerySearchOptions } from '../api/queryOptions';
 
@@ -14,6 +14,7 @@ const MediaPage = () => {
     const [pageIndex, setPageIndex] = useState(1);
     const [pageSize] = useState(18);
         
+    const navigate = useNavigate();
 
     const { data: media, refetch: refetchMedia, isLoading } = useQuery(mediaQuerySearchOptions(search, pageIndex, pageSize));
 
@@ -48,11 +49,15 @@ const MediaPage = () => {
         { key: 'seasonNumber', name: 'Season', align: 'center' },
     ] as CellData<Media>[];
 
+    const actionItems = [
+        { key: 'a1', name: "Tags", align: 'center', action: (e) => navigate("/queue/" + e.id), icon: "Tag"  }
+    ] as CellData<Media>[];
+
     return (
         <Container disableGutters maxWidth={false}>
             <Header Title="Media">
             </Header>
-            <CustomTable data={media?.data} columns={columns} handleRetry={handleRetry} isLoading={isLoading} searchFN={Search} paging={paging}/>
+            <CustomTable data={media?.data} columns={columns} handleRetry={handleRetry} isLoading={isLoading} searchFN={Search} paging={paging} actionColumns={actionItems}/>
          </Container>
     )
 }

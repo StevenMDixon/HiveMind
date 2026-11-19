@@ -38,10 +38,9 @@ export const createQuery = async (query: Query) => {
     const response = await fetch('/api/queries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ QueryName: query.name }),
+        body: JSON.stringify(query),
     });
-
-    return response;
+    return response.json();
 };
 
 export const deleteQuery = async (queryId: number) => {

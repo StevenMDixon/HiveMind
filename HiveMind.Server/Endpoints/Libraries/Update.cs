@@ -26,7 +26,7 @@ public class Update
         }
     }
 
-    public record LibraryRequest(string Name, string Path, string PathsToIgnore, LibraryType Type);
+    public record LibraryRequest(string Name, string Path, string PathsToIgnore, LibraryType Type, string DefaultTags);
 
     public static Results<Ok, NotFound<string>, NoContent, ValidationProblem> Handle(LibraryService libraryService, [FromRoute] int id, [FromBody] LibraryRequest request)
     {
@@ -40,6 +40,7 @@ public class Update
         library.Name = request.Name;
         library.Type = request.Type;
         library.PathsToIgnore = request.PathsToIgnore;
+        library.DefaultTags = request.DefaultTags;
 
         libraryService.Update(library);
 

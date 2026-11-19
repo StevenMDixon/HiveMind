@@ -63,10 +63,8 @@ function Intro() {
                   <Paper>
                       <Typography  sx={{ m: 2 }}>
                           Commercial Enhancements
-
                       </Typography>
                       <ul>
-                          <li>Podding</li>
                           <li>Day Parting</li>
                       </ul>
                   </Paper>
@@ -76,7 +74,6 @@ function Intro() {
                       </Typography>
                       <ul>
                           <li>Events</li>
-                          <li>Campaigns</li>
                       </ul>
                   </Paper>
                   <Paper>

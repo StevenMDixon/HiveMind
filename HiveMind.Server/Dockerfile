@@ -11,7 +11,7 @@ EXPOSE 8080
 COPY --from=mwader/static-ffmpeg:6.1 /ffmpeg /usr/local/bin/ffmpeg
 COPY --from=mwader/static-ffmpeg:6.1 /ffprobe /usr/local/bin/ffprobe
 
-USER $APP_UID
+USER ${APP_UID}:${APP_GID}
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build

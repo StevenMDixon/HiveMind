@@ -25,6 +25,7 @@ const LibraryEditLayout = ({ library, libraryTypes }: LibraryEditLayoutProps) =>
         { name: 'name', display: "Name", type: "Text", initialValue: library.name },
         { name: 'path', display: "Path", type: "Text", initialValue: library.path },
         { name: 'pathsToIgnore', display: "Paths To Ignore", type: "Text", initialValue: library.pathsToIgnore },
+        { name: 'defaultTags', display: "Tags To Add to All Media Items", type: "Text", initialValue: library.defaultTags },
         { name: 'type', display: "Type", type: "Select", initialValue: library.type, options: libraryTypes },
     ] as CustomFormField[];
 

@@ -7,6 +7,8 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import SearchIcon from '@mui/icons-material/Search';
 import Pagination from '@mui/material/Pagination';
 import RoundedLoadingFiller from './RoundedLoadingFiller';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+
 
 export interface CellData<T> {
     key: string,
@@ -14,7 +16,7 @@ export interface CellData<T> {
     align?: "left" | "right" | "center";
     format?: (item: string) => string;
     action?: (item: T) => void;
-    icon?: "Edit" | "Delete";
+    icon?: "Edit" | "Delete" | "Tag";
     disabled?: (i: T) => boolean
 }
 
@@ -41,6 +43,7 @@ const CustomIcon = (iconName: string) => {
         case 'Edit': return <EditIcon />
         case 'Delete': return <DeleteIcon />
         case 'Refresh': return <RefreshIcon />
+        case 'Tag': return <LocalOfferIcon />
     }
 }
 

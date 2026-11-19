@@ -14,7 +14,8 @@ public class Get
             .WithName("Get");
     }
 
-    public record MediaItem(int Id, string Title, double Duration, int LibraryId, string? MediaType, string FilePath, int Width, int Height, string Resolution, int EpisodeNumber, int SeasonNumber, Show? Show, IEnumerable<Tag> Tags, string ThumbnailUrl);
+    public record MediaItem(int Id, string Title, double Duration, int LibraryId, string? MediaType, string FilePath,
+     int Width, int Height, string Resolution, int EpisodeNumber, int SeasonNumber, Show? Show, IEnumerable<Tag> Tags, string ThumbnailUrl, string LibraryType);
 
     public static Results<Ok<MediaItem>, NoContent, NotFound<string>> Handle(MediaItemService service, [FromRoute] int id)
     {
@@ -36,8 +37,9 @@ public class Get
                 mediaItem.SeasonNumber,
                 mediaItem.Show is not null ? new Show(mediaItem.Show.Id, mediaItem.Show.Name, mediaItem.Show.Rating.ToString()) : null,
                 mediaItem.Tags is not null ? mediaItem.Tags.Select(y => new Tag(y.Id, y.Name, y.Category)) : [],
-                mediaItem.ThumbnailPath
-                ));
+                mediaItem.ThumbnailPath,
+                mediaItem.Library?.Type.ToString() ?? "Other"
+            ));
         }
 
         return TypedResults.NotFound($"A MediaItem with the ID: {id} was not found.");

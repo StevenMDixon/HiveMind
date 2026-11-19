@@ -24,4 +24,5 @@ export interface Media {
     show: Show;
     tags: Tag[];
     thumbnailPath: string;
+    libraryType: string;
 }

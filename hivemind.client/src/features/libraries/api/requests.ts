@@ -54,7 +54,7 @@ export const updateLibrary = async (item: Library) => {
     const result = await fetch('/api/libraries/' + item.id, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ LibraryName: item.name, LibraryPath: item.path, PathsToIgnore: item.pathsToIgnore, LibraryType: item.type }),
+        body: JSON.stringify({...item}),
     });
 
     return result;

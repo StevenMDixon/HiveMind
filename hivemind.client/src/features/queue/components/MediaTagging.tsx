@@ -36,9 +36,10 @@ const formatCategoryName = (id: number, allCategories: EnumOptionsObj) => {
 const RequiredTags = ({ tags, requiredCategories, categories } : RequiredTagsProps) => {
 
     return (
-        <Stack direction="row" sx={{ justifyContent: 'space-between' }} >
-            {requiredCategories.map((x, i) => {
-                    return <Typography variant="caption" color={tags.some(y => y.category == x.category)? 'green': 'red'}>{formatCategoryName(x.category, categories)}{i !== requiredCategories.length -1 ? " |": ""}</Typography>
+        <Stack direction="row" sx={{ justifyContent: 'space-between'}} >
+            {
+            requiredCategories.map((x, i) => {
+                    return <Typography sx={{marginRight: "3px"}} variant="caption"><Box component="span" color={tags.some(y => y.category == x.category)? 'green': 'red'}>{formatCategoryName(x.category, categories)}</Box>{i !== requiredCategories.length -1 ? " | ": ""}</Typography>
                 }
             )}
         </Stack>
@@ -51,9 +52,10 @@ interface MediaTaggingProps {
     allCategories: EnumOptionsObj;
     tagCategories: CategoryItem[];
     availableTags: Tag[];
+    next: () => void;
 }
 
-const MediaTagging = ({ media, allCategories, tagCategories, availableTags }: MediaTaggingProps) => {
+const MediaTagging = ({ media, allCategories, tagCategories, availableTags, next }: MediaTaggingProps) => {
 
     const { mutate: saveTags } = useTagsUpdateHook();
 
@@ -102,6 +104,8 @@ const MediaTagging = ({ media, allCategories, tagCategories, availableTags }: Me
                 tags: tags
             }
         )
+
+        next();
     };
 
     return (
@@ -127,9 +131,8 @@ const MediaTagging = ({ media, allCategories, tagCategories, availableTags }: Me
                 <Stack direction='row' sx={{justifyContent: 'space-between', marginY: '.5em'}} >
                 <Box>
                     <Typography>
-                        Classification Requirements
+                        Tag Requirements:
                     </Typography>
-                   
                 </Box>
                     <RequiredTags tags={tags} requiredCategories={tagCategories.filter(x => x.required)} categories={allCategories} />
             </Stack>
@@ -139,12 +142,11 @@ const MediaTagging = ({ media, allCategories, tagCategories, availableTags }: Me
                 <Stack direction="row" sx={{marginTop: ".5em"}}>
                     <Select sx={{width: "60%"}} value={selectedTag} onChange={handleSelectTag}>
                         <MenuItem value={0}>Create New</MenuItem>
-                        { availableTags.filter(x => !tags.map(z => z.id).includes(x.id)).map(y => <MenuItem value={y.id}>{y.name} - {formatCategoryName(y.category, allCategories)}</MenuItem>)}
+                        { availableTags.filter(x => !tags.map(z => z.id).includes(x.id)).sort((a, b) => a.name.localeCompare(b.name)).map(y => <MenuItem value={y.id}>{y.name} - {formatCategoryName(y.category, allCategories)}</MenuItem>)}
                     </Select>
-                    <Button sx={{width: "40%",  marginLeft: '1em'}} variant="outlined" onClick={handleAddTag} > Add Tag</Button>
+                    <Button sx={{width: "40%",  marginLeft: '1em'}} variant="outlined" onClick={handleAddTag}>{selectedTag === 0 ? "Create" : "Add"} Tag</Button>
                 </Stack>
-               
-                    <Button sx={{ width: '100%', border: '1px solid green', color: "green", marginTop: '1em'}} onClick={save} >Save & Next</Button>
+                    <Button sx={{ width: '100%', border: '1px solid green', color: "green", marginTop: '1em', }} onClick={save} >Save & Next</Button>
                 <NewTagModal modalOpen={modalOpen} existingTags={availableTags} categories={allCategories} modalSave={handleCreateNewTag} modalClose={handleCloseModal}/>
             </CardContent>
       </Card>

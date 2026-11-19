@@ -30,6 +30,7 @@ const Tags = () => {
     const { data: tags, isLoading } = useQuery(tagQuerySearchOptions(search, pageIndex, pageSize));
 
     const formatCategory = (id: number) => categories ? categories[id] : id;
+
     const columns = [
         { name: 'id', display: 'Id', type: 'Text', disabled: true },
         { name: 'name', display: 'Tag', initialValue: '', type: 'Text', disabled: true},
@@ -55,7 +56,7 @@ const Tags = () => {
     }
 
     const HandleCreateTag = (tag: Tag) => {
-        createTag(tag)
+        createTag(tag);
     }
 
     const paging = {

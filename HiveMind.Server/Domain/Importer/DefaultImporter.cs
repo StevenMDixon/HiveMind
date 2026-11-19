@@ -7,23 +7,25 @@ namespace HiveMind.Server.Domain.Importer;
 
 public class DefaultImporter : IImporter
 {
-    public List<VideoMeta> Generate(List<string> files, string mountedPath, string libraryPath, ShowService showService, TagsService tagService, QueryService queryService)
+    public List<VideoMeta> Generate(List<string> files, string mountedPath, string libraryPath, string defaultTags, ShowService showService, TagsService tagService, QueryService queryService)
     {
         var results = new List<VideoMeta>();
 
         var tagDict = tagService.GetAllTags().ToDictionary(t => t.Name, t => t);
 
+        var prePath = Path.Join(mountedPath.TrimEnd('/'), libraryPath.TrimStart('/'));
+
         foreach (var file in files)
         {
-            var fileName = Path.GetFileNameWithoutExtension(file);
-            var normalizedFile = mountedPath == "/" ? file : file.Replace(mountedPath, String.Empty);
             var fileNameWithExt = Path.GetFileName(file);
 
-            var tags = file.Replace(mountedPath + libraryPath, String.Empty).Split('/').ToList().Where(x => x != "" && x != fileNameWithExt).ToList();
+            var localFilePath = mountedPath == "/" ? file: file.Replace(mountedPath, "");
+
+            var extractedTags = MediaTagExtractor.ExtractTags(fileNameWithExt, prePath, file, defaultTags);
 
             var mappedTags = new List<Tags>();
 
-            foreach (var tag in tags)
+            foreach (var tag in extractedTags)
             {
                 // Check if already in dictionary
                 if (tagDict.ContainsKey(tag))
@@ -40,8 +42,8 @@ public class DefaultImporter : IImporter
 
             results.Add(new VideoMeta
             {
-                Name = fileName,
-                Path = normalizedFile,
+                Name = Path.GetFileNameWithoutExtension(file),
+                Path = localFilePath,
                 FullPath = file,
                 Tags = mappedTags
             });

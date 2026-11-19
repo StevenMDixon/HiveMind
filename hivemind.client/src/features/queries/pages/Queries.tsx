@@ -20,7 +20,7 @@ const QueryPage = () => {
 
     const { data: queries, refetch: refectchQueries, isLoading } = useQuery(queryQuerySearchOptions(search, pageIndex, pageSize));
 
-    const { mutate: createQuery } = useQueryCreateHook();
+    const { mutateAsync: createQuery } = useQueryCreateHook();
     const { mutate: deleteQuery } = useQueryDeleteHook();
 
     const navigate = useNavigate();
@@ -28,13 +28,13 @@ const QueryPage = () => {
     const queryDefault = { name: '' } as Query;
 
     const handleCreateQuery = async (query: Query) => {
-        createQuery(query)
+        const results = await createQuery(query);
+        navigate("/queries/" + results.id);
     };
 
     const handleDeleteQuery = async (queryId: number) => {
         deleteQuery(queryId);
     };
-
 
     const columns = [
         { key: 'id', name: 'ID', align: 'left' },
@@ -54,9 +54,8 @@ const QueryPage = () => {
     const Search = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setSearch(e.target.value);
     }
-    
+
     const HandlePageIndexChange = (_: React.ChangeEvent<unknown>, value: number) => {
-        console.log(value);
         setPageIndex(value);
     }
 
@@ -65,10 +64,10 @@ const QueryPage = () => {
         dataTotal: queries?.dataCount,
         pageSize: pageSize,
         changePage: HandlePageIndexChange
-     } as PagingData;   
+     } as PagingData;
 
     const fields = [
-        { name: 'queryName', display: "Name", type: "Text", initialValue: queryDefault.name, validator: (queryName: string) => queryName != '', required: true },
+        { name: 'name', display: "Name", type: "Text", initialValue: queryDefault.name, validator: (queryName: string) => queryName != '', required: true },
     ] as CustomFormField[];
 
     return (

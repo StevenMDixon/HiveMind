@@ -30,7 +30,7 @@ const QueueCard = ({ name, done, total }: QueueCardProps) => {
             queryKey: ['Media'],
             queryFn: () => getRandomMediabyType(name),
             // Optional: specify staleTime if you want to use cached data instead of forcing a network hit
-            staleTime: 5000, 
+            staleTime: 0, 
             });
 
             navigate('/queue/' + data);
@@ -38,7 +38,6 @@ const QueueCard = ({ name, done, total }: QueueCardProps) => {
         } catch (error) {
             console.error('Fetch failed:', error);
         }
-        
     }
 
     return (

@@ -14,6 +14,8 @@ public partial class MediaImporterBackgroundService(IServiceScopeFactory scopeFa
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+       
+
         while (!stoppingToken.IsCancellationRequested)
         {
             // Create a new scope for database operations
@@ -35,7 +37,7 @@ public partial class MediaImporterBackgroundService(IServiceScopeFactory scopeFa
 
                 var settings = settingsService.GetAllSettings().ToDictionary(x => x.Name, y => y.Value);
 
-                var mountedPath = settings["Import_Location"] ?? "";
+                var mountedPath = settings["Import_Location"] ?? string.Empty;
 
                 if (targetLibary != null && !targetLibary.IsProcessed)
                 {
@@ -43,7 +45,6 @@ public partial class MediaImporterBackgroundService(IServiceScopeFactory scopeFa
 
                     if (targetLibary.Path != null && targetLibary.Path != string.Empty)
                     {
-
                         _logger.LogInformation("Processing Library: {LibraryName}", targetLibary.Name);
 
                         var files = new List<string>();
@@ -51,9 +52,10 @@ public partial class MediaImporterBackgroundService(IServiceScopeFactory scopeFa
                         try
                         {
                             var pathsToIgnore = targetLibary.PathsToIgnore == string.Empty ? [] : targetLibary.PathsToIgnore.Split(';');
+                            var properPath = Path.Join(mountedPath.TrimEnd('/'), targetLibary.Path.TrimStart('/'));
 
                             files.AddRange(
-                                Directory.GetFiles(mountedPath + targetLibary.Path, "*.*", SearchOption.AllDirectories)
+                                Directory.GetFiles(properPath, "*.*", SearchOption.AllDirectories)
                                 .Where(x => Regex.IsMatch(x, $".*[.]({fileFormats})$"))
                                 .Where(x => pathsToIgnore.Length == 0 || !pathsToIgnore.Any(path => x.Contains(path)))
                                 );
@@ -63,7 +65,7 @@ public partial class MediaImporterBackgroundService(IServiceScopeFactory scopeFa
                             _logger.LogError(e, "Error while getting files from library path: {LibraryPath}", targetLibary.Path);
                         }
 
-                        mediaItemsToDelete = [.. currentMediaItems.ExceptBy(files, x => mountedPath + x.FilePath)];
+                        mediaItemsToDelete = [..currentMediaItems.ExceptBy(files, x => mountedPath.Trim('/') + x.FilePath.TrimStart('/'))];
 
                         var importer = ImporterFactory.Resolve(targetLibary.Type);
 
@@ -71,7 +73,7 @@ public partial class MediaImporterBackgroundService(IServiceScopeFactory scopeFa
                         var showService = scope.ServiceProvider.GetRequiredService<ShowService>();
                         var queryService = scope.ServiceProvider.GetRequiredService<QueryService>();
 
-                        var importerResults = importer.Generate([.. files.Where(x => !currentMediaItems.Any(y => y.FilePath == x))], mountedPath, targetLibary.Path, showService, tagService, queryService);
+                        var importerResults = importer.Generate([.. files.Where(x => !currentMediaItems.Any(y => y.FilePath == x))], mountedPath, targetLibary.Path, targetLibary.DefaultTags, showService, tagService, queryService);
 
                         foreach (var importerResult in importerResults)
                         {
@@ -95,8 +97,6 @@ public partial class MediaImporterBackgroundService(IServiceScopeFactory scopeFa
 
                             mediaItems.Add(importerResult);
                         }
-
-                        //if (mountedPath != String.Empty) targetLibary.LibraryPath = targetLibary.LibraryPath.Replace(mountedPath, "");
                     }
 
                     mediaItemService.AddMediaItems(mediaItems.Select(x => ConvertMetaToMediaItem(x, targetLibary.Id)));    
