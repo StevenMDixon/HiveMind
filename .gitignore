@@ -4,3 +4,4 @@ obj/*
 .vs/*
 *.db-shm
 *.db-wal
+HiveMind.Server/1/*.json

@@ -1,12 +1,12 @@
-﻿using HiveMind.Server.Domain.Enums;
+using HiveMind.Server.Domain.Enums;
 
-namespace HiveMind.Server.Domain.Scheduler.Nodes;
+namespace HiveMind.Server.Domain.Scheduler.DataRetrievers;
 
-public class MediaQueryNode: INode
+public class QueryRetreiver: IDataRetriever
 {
     public SourceItem Query { get; set; } = null!;
     public RetreiverType RetrievalSetting { get; set; } = RetreiverType.Random;
-    public IEnumerable<GenerationResultItem> Generate(GenerationContext context)
+    public IEnumerable<GenerationResultItem> Retrieve(GenerationContext context)
     {
         var results = new List<GenerationResultItem>();
 

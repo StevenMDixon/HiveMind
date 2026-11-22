@@ -7,7 +7,6 @@ Under construction.
 1. Add by library filter param to media page
 2. Add category filter to tags page
 
-
 ## Singal R implementation for Hosted Services
 
 ## Remove Programming block as a required tag
@@ -32,7 +31,7 @@ and play the whole thing... I would have to figure out how to create blocks prog
 Apply lineup change to current schedules...
 
 ## Media Importer
-1. Pull metadata from files into tags
+1. Pull metadata from files into tags?
 2. Library Id Queries by default
 
 ## Program Strategy
@@ -50,6 +49,10 @@ Apply lineup change to current schedules...
 ## Integrations
 1. ErsaztTV Next (create the schedule need), add it as drone type?
 
+## Current Issues
+1. No way to reset last scheduled date on Program Strategy
+2. If our services error for any reason the stop with no restart strat...
+    Need to implement a backoff strategy that turns off what ever program strategy... and errors the db entries
 
 # Running locally
 
@@ -75,27 +78,7 @@ dotnet ef migrations add NameOfUpdate
 dotnet ef database update
 ```
 
-### Script
-```
-services:
-  hivemind:
-    container_name: hivemind
-    environment:
-      - PUID=568
-      - PGID=568
-      - TZ=America/New_York
-    image: >-
-      ghcr.io/stevenmdixon/hivemind@sha256:40db573d9c38ca0f49158a050ace5381e37727528dabb85f94e74dc459f84870
-    ports:
-      - '8080:8080'
-      - '8081:8081'
-    restart: unless-stopped
-    volumes:
-      - /mnt/General/hive/config:/config:rw
-version: '3.8'
-```
-
-### Truenas Deployment
+### Truenas Deployment Yaml
 
 ```
 services:
@@ -106,10 +89,10 @@ services:
       - PGID=568
       - TZ=America/New_York
     image: >-
-      ghcr.io/stevenmdixon/hivemind@sha256:20ce7ec09c9669d828f8dbf09fe9cc8159e83cca9ecb17ea9442fe331d9dd84a
+      ghcr.io/stevenmdixon/hivemind@sha256:42b24d0fac554aba311445b5abb9d8fb2b3b5535119be4fde8ea347714c6b394
     ports:
-      - '8080:8900'
-      - '8081:8901'
+      - '8900:8080'
+      - '8901:8081'
     restart: unless-stopped
     user: '568:568'
     volumes:

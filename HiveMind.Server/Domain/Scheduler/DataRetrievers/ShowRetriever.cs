@@ -1,8 +1,8 @@
-﻿using HiveMind.Server.Domain.Enums;
+using HiveMind.Server.Domain.Enums;
 
-namespace HiveMind.Server.Domain.Scheduler.Nodes;
+namespace HiveMind.Server.Domain.Scheduler.DataRetrievers;
 
-public class MediaShowNode: INode
+public class ShowRetreiver: IDataRetriever
 {
     public string ShowName { get; set; } = null!;
 
@@ -11,8 +11,7 @@ public class MediaShowNode: INode
     public int? Episode { get; set; }
 
     public RetreiverType RetrievalSetting { get; set; } = RetreiverType.Random;
-
-    public IEnumerable<GenerationResultItem> Generate(GenerationContext context)
+    public IEnumerable<GenerationResultItem> Retrieve(GenerationContext context)
     {
         var results = new List<GenerationResultItem>();
         var queries = new List<String>();

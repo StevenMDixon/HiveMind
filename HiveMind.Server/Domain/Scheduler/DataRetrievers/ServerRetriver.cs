@@ -1,13 +1,14 @@
-﻿namespace HiveMind.Server.Domain.Scheduler.Nodes;
-
+using HiveMind.Server.Domain.Enums;
 using HiveMind.Server.Domain.Scheduler;
 using HiveMind.Server.Entities;
 
-public class MediaServerNode: INode
+namespace HiveMind.Server.Domain.Scheduler.DataRetrievers;
+
+public class ServerRetreiver: IDataRetriever
 {
     public string URL { get; set; } = null!;
     public int Duration { get; set; } = 0;
-    public IEnumerable<GenerationResultItem> Generate(GenerationContext context)
+    public IEnumerable<GenerationResultItem> Retrieve(GenerationContext context)
     {
         var mediaItem = new MediaItem()
         {

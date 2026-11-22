@@ -97,11 +97,7 @@ public class Scheduler
         {
             var node = scheduleNodes[i];
 
-            var blockContext = new BlockContext();
-
-            generationContext.BlockContext.Add(blockContext);
-
-            results.InsertRange(0, node.Generate(generationContext));
+            results.InsertRange(0, node.Generate(generationContext, null));
         }
 
         var outPutLocation = generationContext.Settings["Export_Location"];

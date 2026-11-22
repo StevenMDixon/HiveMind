@@ -7,14 +7,13 @@ public class GenerationContext()
 {
     public MediaItemRetriever Retriever { get; set; } = null!;
     public IServiceProvider ServiceProvider { get; set; } = null!;
-    public List<BlockContext> BlockContext { get; set; } = [];
+    // public List<BlockContext> BlockContext { get; set; } = [];
     public List<SourceItem> PromoQueries { get; set; } = [];
     public Dictionary<string, string> Settings { get; set; } = [];
 }
 
 public class BlockContext
 {
-    public List<String> Shows { get; set; } = [];
     public string Name { get; set; } = string.Empty;
     public string Logo { get; set; } = string.Empty;
     public Dictionary<TransitionSlot, SourceItem> Sources { get; set; } = [];
