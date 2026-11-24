@@ -14,11 +14,11 @@ public class Delete
 
     public static Results<Ok, NotFound<string>> Handle(LineupService lineupService, [FromRoute] int id)
     {
-        var lineup = lineupService.GetLineupByID(id);
+        var lineup = lineupService.GetById(id);
 
         if (lineup is not null)
         {
-            lineupService.DeleteLineup(id);
+            lineupService.Delete(lineup);
             return TypedResults.Ok();
         }
 

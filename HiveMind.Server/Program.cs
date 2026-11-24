@@ -1,12 +1,13 @@
 using System.Text.Json.Serialization;
 using FluentValidation;
 using HiveMind.Server;
+using HiveMind.Server.Domain.Scheduler.DataProvider;
 using HiveMind.Server.Endpoints;
 using HiveMind.Server.HostedServices;
 using HiveMind.Server.Hubs;
 using HiveMind.Server.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.FileProviders;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,11 +34,12 @@ builder.Services.AddScoped<ScheduleService>();
 builder.Services.AddScoped<DroneService>();
 builder.Services.AddScoped<ProgramEventService>();
 
+builder.Services.AddScoped<ScheduleDataProvider>();
+
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 builder.Services.AddHostedService<SchedulingBackgroundService>();
 builder.Services.AddHostedService<MediaImporterBackgroundService>();
-//builder.Services.AddHostedService<ThumbnailGenerationService>();
 
 builder.Services.AddSingleton<ImportStatusService>();
 builder.Services.AddSignalR().AddJsonProtocol(options =>

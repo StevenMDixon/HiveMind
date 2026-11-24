@@ -21,7 +21,7 @@ public static class GetAll
 
     public static Results<Ok<GetAllLineupsResponse>, NotFound> Handle(LineupService lineupService, [AsParameters] Parameters filters)
     {
-        var lineups = lineupService.GetAllLineups();
+        var lineups = lineupService.Get();
 
         var pageSize = filters.Count ?? 100;
         var currentPage = filters.Page ?? 1;

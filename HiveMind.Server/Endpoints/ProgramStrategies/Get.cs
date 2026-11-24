@@ -20,7 +20,7 @@ public class Get
 
     public static Results<Ok<ProgramStrategy>, NotFound<string>> Handle(ProgramStrategyService programStrategyService, [FromRoute] int id)
     {
-        var strategy = programStrategyService.GetProgramStrategyById(id);
+        var strategy = programStrategyService.GetById(id);
 
         if (strategy is not null)
         {

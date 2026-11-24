@@ -11,7 +11,7 @@ public class DefaultImporter : IImporter
     {
         var results = new List<VideoMeta>();
 
-        var tagDict = tagService.GetAllTags().ToDictionary(t => t.Name, t => t);
+        var tagDict = tagService.Get().ToDictionary(t => t.Name, t => t);
 
         var prePath = Path.Join(mountedPath.TrimEnd('/'), libraryPath.TrimStart('/'));
 

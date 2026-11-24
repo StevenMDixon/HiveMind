@@ -27,7 +27,7 @@ public class Create
             DefaultTags = request.DefaultTags
         };
 
-        libraryService.AddLibrary(newLibrary);
+        libraryService.Create(newLibrary);
 
         return TypedResults.NoContent();
     }

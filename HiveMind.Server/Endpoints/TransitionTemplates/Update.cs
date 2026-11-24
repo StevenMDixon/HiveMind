@@ -20,7 +20,7 @@ public class Update
 
     public static Results<Ok, NoContent, ValidationProblem> Handle(TransitionTemplateService transitionTemplateService, [FromBody] UpdateRequest updateRequest)
     {
-        var template = transitionTemplateService.GetTransitionTemplateByID(updateRequest.id);
+        var template = transitionTemplateService.GetById(updateRequest.id);
 
         if (template == null)
         {
@@ -53,7 +53,7 @@ public class Update
 
         template!.Slots = Helper.Resolve(itemsToUpdate, UpdateItem);
 
-        transitionTemplateService.UpdateTransitionTemplate(template);
+        transitionTemplateService.Update(template);
 
         return TypedResults.Ok();
     }

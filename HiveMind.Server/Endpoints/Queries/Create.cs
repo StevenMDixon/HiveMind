@@ -33,7 +33,7 @@ public class Create
             Name = request.Name
         };
 
-        newQuery = queryService.AddQuery(newQuery);
+        newQuery = queryService.Create(newQuery);
 
         return TypedResults.Ok(new Response(newQuery.Id));
     }

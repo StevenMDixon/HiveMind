@@ -34,7 +34,7 @@ public class Update
 
     public static Results<Ok, NotFound<string>, ValidationProblem> Handle(ProgramStrategyService programStrategyService, [FromRoute] int id, [FromBody] ProgramStrategyRequest request)
     {
-        var strategy = programStrategyService.GetProgramStrategyById(id);
+        var strategy = programStrategyService.GetById(id);
 
         if (strategy != null)
         {

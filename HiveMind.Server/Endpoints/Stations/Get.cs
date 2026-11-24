@@ -17,7 +17,7 @@ public class Get
 
     public static Results<Ok<GetStationsResponse>, NotFound<string>> Handle(StationService stationService, [FromRoute] int id)
     {
-        var station = stationService.GetStationByID(id);
+        var station = stationService.GetById(id);
         if (station == null) return TypedResults.NotFound($"A station with the ID: {id} was not found.");
 
         return TypedResults.Ok(new GetStationsResponse(new Station(station.Id, station.Name, station.Number, station.Logo, station.StrategyId)));

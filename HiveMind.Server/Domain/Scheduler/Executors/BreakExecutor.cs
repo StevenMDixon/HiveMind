@@ -1,6 +1,7 @@
 using HiveMind.Server.Domain.Scheduler.SlotStrategy;
 using HiveMind.Server.Entities;
 using HiveMind.Server.Domain.Enums;
+using HiveMind.Server.Domain.Scheduler.Sources;
 
 namespace HiveMind.Server.Domain.Scheduler.Executors;
 
@@ -12,9 +13,9 @@ public class BreakExecutor: IExecutor
         
         var nodeResults = data;
 
-        context.usedDuration += nodeResults.Sum(x => x.EndTime - x.StartTime);
+        context.UsedDuration += nodeResults.Sum(x => x.EndTime - x.StartTime);
 
-        var breakBudget = ((context.Duration ?? 0) - context.usedDuration) / (nodeResults.Count() > 0 ? nodeResults.Count() : 1);
+        var breakBudget = ((context.Duration ?? 0) - context.UsedDuration) / (nodeResults.Count() > 0 ? nodeResults.Count() : 1);
 
         for (var i = 0; i < nodeResults.Count(); i++)
         {
@@ -30,7 +31,7 @@ public class BreakExecutor: IExecutor
         return results;
     }
 
-    private static List<GenerationResultItem> ResolveSlots(GenerationContext genContext, NodeContext context, int fillDuration, TransitionType type, Dictionary<TransitionSlot, SourceItem> sources, Dictionary<TransitionType, List<TransitionTemplateSlot>> slots)
+    private static List<GenerationResultItem> ResolveSlots(GenerationContext genContext, NodeContext context, int fillDuration, TransitionType type, Dictionary<TransitionSlot, IDataSource> sources, Dictionary<TransitionType, List<TransitionTemplateSlot>> slots)
     {
         var results = new List<GenerationResultItem>();
 
@@ -41,7 +42,7 @@ public class BreakExecutor: IExecutor
             sources[TransitionSlot.Promo] = genContext.PromoQueries[random];
         }
 
-        var breakSlots = slots.ContainsKey(type) ? slots[type] : [];
+        var breakSlots = slots.ContainsKey(type) ? slots[type] : new List<TransitionTemplateSlot>();
 
         if (breakSlots.Count != 0)
         {
@@ -49,15 +50,15 @@ public class BreakExecutor: IExecutor
         }
         else
         {
-            var fillerMedia = new Dictionary<TransitionSlot, SourceItem> { { TransitionSlot.Filler, sources.ContainsKey(TransitionSlot.Filler) ? sources[TransitionSlot.Filler] : new() } };
+            var fillerMedia = new Dictionary<TransitionSlot, IDataSource> { { TransitionSlot.Filler, sources.ContainsKey(TransitionSlot.Filler) ? sources[TransitionSlot.Filler] : new CustomDataSource(){ Queries = new List<string>()}} };
 
-            results.AddRange(GenerateBreak(genContext, context, fillDuration, [new() { Slot = TransitionSlot.Filler }], fillerMedia));
+            results.AddRange(GenerateBreak(genContext, context, fillDuration, new List<TransitionTemplateSlot> { new TransitionTemplateSlot() { Slot = TransitionSlot.Filler } }, fillerMedia));
         }
 
         return results;
     }
 
-    private static List<GenerationResultItem> GenerateBreak(GenerationContext genContext, NodeContext context, int fillDuration, List<TransitionTemplateSlot> slots, Dictionary<TransitionSlot, SourceItem> slotMedia)
+    private static List<GenerationResultItem> GenerateBreak(GenerationContext genContext, NodeContext context, int fillDuration, List<TransitionTemplateSlot> slots, Dictionary<TransitionSlot, IDataSource> slotMedia)
     {
         var results = new List<GenerationResultItem>();
 
@@ -95,7 +96,7 @@ public class BreakExecutor: IExecutor
             // figure out how to get Coming up next promos
             var slotStrategy = SlotStrategyResolver.Resolve(slot.Slot);
 
-            var nodeEvents = slotStrategy.Generate(genContext, slotMedia[mappedSlot], searchTags, remainingDuration, RetreiverType.Random);
+            var nodeEvents = slotStrategy.Generate(genContext, slotMedia[mappedSlot], searchTags, remainingDuration);
 
             if (nodeEvents.Count != 0)
             {
@@ -145,7 +146,7 @@ public class BreakExecutor: IExecutor
 
                 var fillerStrategy = i == fillerLocation.Count - 1 ? SlotStrategyResolver.Resolve(TransitionSlot.CutFiller) : SlotStrategyResolver.Resolve(TransitionSlot.Filler);
 
-                var filled = fillerStrategy.Generate(genContext, slotMedia[TransitionSlot.Filler], searchTags, remainingFillDuration + refundedTime, RetreiverType.Random);
+                var filled = fillerStrategy.Generate(genContext, slotMedia[TransitionSlot.Filler], searchTags, remainingFillDuration + refundedTime);
 
                 // Unused time is refunded on normal filler blocks so that there are no odd cuts in the middle of a filler block.  CutFiller blocks do not refund time as they are the last filler block and should be filled to the end of the break.
                 refundedTime = remainingFillDuration - filled.Sum(x => x.EndTime - x.StartTime);

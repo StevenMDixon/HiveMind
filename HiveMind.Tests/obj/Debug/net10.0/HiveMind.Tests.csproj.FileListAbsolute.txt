@@ -345,3 +345,6 @@ C:/Users/Helreizer55/Documents/GitHub/HiveMind/HiveMind.Tests/obj/Debug/net10.0/
 /home/steven/Documents/Repos/HiveMind/HiveMind.Tests/obj/Debug/net10.0/HiveMind.Tests.pdb
 /home/steven/Documents/Repos/HiveMind/HiveMind.Tests/obj/Debug/net10.0/HiveMind.Tests.genruntimeconfig.cache
 /home/steven/Documents/Repos/HiveMind/HiveMind.Tests/obj/Debug/net10.0/ref/HiveMind.Tests.dll
+/home/steven/Documents/Repos/HiveMind/HiveMind.Tests/bin/Debug/net10.0/Castle.Core.dll
+/home/steven/Documents/Repos/HiveMind/HiveMind.Tests/bin/Debug/net10.0/NSubstitute.dll
+/home/steven/Documents/Repos/HiveMind/HiveMind.Tests/bin/Debug/net10.0/runtimes/win/lib/net6.0/System.Diagnostics.EventLog.Messages.dll

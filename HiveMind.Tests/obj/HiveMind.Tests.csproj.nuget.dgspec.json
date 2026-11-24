@@ -582,6 +582,10 @@
               "target": "Package",
               "version": "[2.7.5, )"
             },
+            "NSubstitute": {
+              "target": "Package",
+              "version": "[6.2.0, )"
+            },
             "SQLitePCLRaw.bundle_e_sqlite3": {
               "target": "Package",
               "version": "[3.0.4, )"

@@ -12,13 +12,13 @@ public class Delete
     }
     public static async Task<Results<Ok, NotFound>> Handle(LibraryService libraryService, [FromRoute] int id)
     {
-        var library = libraryService.GetLibraryByID(id);
+        var library = libraryService.GetById(id);
         if (library is null)
         {
             return TypedResults.NotFound();
         }
         
-        libraryService.Delete(id);
+        libraryService.Delete(library);
 
         return TypedResults.Ok();
     }

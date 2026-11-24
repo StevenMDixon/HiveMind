@@ -14,11 +14,11 @@ public class Delete
 
     public static Results<Ok, NotFound<string>> Handle(ProgramStrategyService programStrategyService, [FromRoute] int id)
     {
-        var strategy = programStrategyService.GetProgramStrategyById(id);
+        var strategy = programStrategyService.GetById(id);
 
         if (strategy is not null)
         {
-            programStrategyService.Delete(id);
+            programStrategyService.Delete(strategy);
             return TypedResults.Ok();
         }
 

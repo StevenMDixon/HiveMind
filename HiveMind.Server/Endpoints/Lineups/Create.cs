@@ -33,7 +33,7 @@ public class Create
             StartTime = request.StartTime
         };
 
-        lineupService.AddLineup(newLineup);
+        lineupService.Create(newLineup);
         return TypedResults.NoContent();
     }
 }

@@ -35,7 +35,7 @@ public class Create
             Active = request.Active ?? false
         };
 
-        programStrategyService.AddProgramStrategy(newProgramStrategy);
+        programStrategyService.Create(newProgramStrategy);
         return TypedResults.NoContent();
     }
 }

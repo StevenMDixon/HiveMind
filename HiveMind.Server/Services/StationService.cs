@@ -2,39 +2,15 @@
 
 namespace HiveMind.Server.Services;
 
-public class StationService(SqliteDBContext context) : BaseService<Station>(context)
+public class StationService(SqliteDBContext context) : BaseService<Station>(context), IStationService
 {
-    public IEnumerable<Station> GetAllStations()
-    {
-        return _context.Stations;
-    }
-
-    public IEnumerable<Station> GetStationsByIds(ICollection<int> ids)
+    public IEnumerable<Station> GetByIds(ICollection<int> ids)
     {
         return _context.Stations.Where(x => ids.Contains(x.Id));
     }
 
-    public Station AddStation(Station station)
-    {
-        return Create(station);
-    }
-
-    public Station? GetStationByID(int id)
+    public Station? GetById(int id)
     {
         return Get().FirstOrDefault(s => s.Id == id);
-    }
-
-    public Station UpdateStation(Station station)
-    {
-        return Update(station);
-    }
-
-    public void Delete(int id)
-    {
-        var station = Get().FirstOrDefault(s => s.Id == id);
-        if (station != null)
-        {
-            Delete(station);
-        }
     }
 }

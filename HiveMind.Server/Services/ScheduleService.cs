@@ -2,7 +2,7 @@
 
 namespace HiveMind.Server.Services;
 
-public class ScheduleService(SqliteDBContext context) : BaseService<SchedulingResult>(context)
+public class ScheduleService(SqliteDBContext context) : BaseService<SchedulingResult>(context), ISchedulingService
 {
     public void DeleteSchedulingResult(int schedulingResultId)
     {

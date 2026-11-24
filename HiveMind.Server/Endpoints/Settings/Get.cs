@@ -16,7 +16,7 @@ public class Get
 
     public static Results<Ok<SettingsResponse>, NotFound> Handle(SettingsService settingsService)
     {
-        var settings = settingsService.GetAllSettings();
+        var settings = settingsService.Get();
 
         return TypedResults.Ok(new SettingsResponse(settings.Select(setting => new Setting(setting.Id, setting.Name, setting.Value)).ToList()));
     }

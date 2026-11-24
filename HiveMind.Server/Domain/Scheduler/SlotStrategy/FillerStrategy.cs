@@ -1,4 +1,5 @@
 ﻿using HiveMind.Server.Domain.Enums;
+using HiveMind.Server.Domain.Scheduler.Sources;
 using HiveMind.Server.Entities;
 using static HiveMind.Server.Domain.Enums.QueryEnums;
 
@@ -7,10 +8,8 @@ namespace HiveMind.Server.Domain.Scheduler.SlotStrategy;
 
 public class FillerStrategy : ISlotStrategy
 {
-    public List<GenerationResultItem> Generate(GenerationContext context, SourceItem source, List<string> tags, int duration, RetreiverType retreiverType)
+    public List<GenerationResultItem> Generate(GenerationContext context, IDataSource source, List<string> tags, int duration)
     {
-        var retriever = context.Retriever;
-
         var remainingDuration = duration;
 
         var results = new List<GenerationResultItem>();
@@ -22,7 +21,7 @@ public class FillerStrategy : ISlotStrategy
                 (QueryAllowedFields.Duration.ToString(), QueryAllowedOperators.LessThanEquals.ToString(), duration.ToString()),
             };
 
-            var mediaItems = retriever.GetMedia(source, retreiverType, 1, customFilter);
+            var mediaItems = MediaItemRetriever.GetMedia(context, source, 1, customFilter);
 
             if(mediaItems.Count != 0)
             {

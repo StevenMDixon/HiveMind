@@ -11,9 +11,9 @@ public partial class ShowImporter: IImporter
     {
         var results = new List<VideoMeta>();
 
-        var showDict = showService.GetAllShows().ToDictionary(t => t.Name, t => t);
+        var showDict = showService.Get().ToDictionary(t => t.Name, t => t);
 
-        var queryDict = queryService.GetAllQueries().ToDictionary(t => t.Name, t => t);
+        var queryDict = queryService.Get().ToDictionary(t => t.Name, t => t);
 
         var newQueries = new Dictionary<string, HashSet<string>>();
 
@@ -44,7 +44,7 @@ public partial class ShowImporter: IImporter
                 else
                 {
                     var newShow = new Entities.Show { Name = formattedShowName };
-                    showId = showService.AddShow(newShow).Id;
+                    showId = showService.Create(newShow).Id;
                     showDict[formattedShowName] = newShow;
 
                     // do we need to create a query for the show?

@@ -29,7 +29,7 @@ public class Update
 
         if(updateRequest.Stations != null)
         {
-            var stations = stationService.GetStationsByIds(updateRequest.Stations);
+            var stations = stationService.GetByIds(updateRequest.Stations);
 
             drone.Stations = stations.ToList();
         }

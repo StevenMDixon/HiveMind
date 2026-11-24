@@ -16,7 +16,7 @@ public class Get
 
     public static Results<Ok<Library>, NotFound<string>> Handle(LibraryService libraryService, [FromRoute] int id)
     {
-        var library = libraryService.GetLibraryByID(id);
+        var library = libraryService.GetById(id);
         if (library is not null)
         {
             return TypedResults.Ok(new Library(library.Id, library.Name, library.Path, library.PathsToIgnore, library.Type, library.DefaultTags));

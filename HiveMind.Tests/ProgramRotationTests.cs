@@ -1,4 +1,5 @@
 using HiveMind.Server.Domain.Enums;
+using HiveMind.Server.Domain.Scheduler;
 using HiveMind.Server.Endpoints.Base;
 using HiveMind.Server.Entities;
 using HiveMind.Server.QueryEngine;
@@ -115,6 +116,6 @@ public class ProgramRotationTests : IDisposable
         };
     }
 
-    
 
+    
 }

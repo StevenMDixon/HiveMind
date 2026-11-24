@@ -18,7 +18,7 @@ public class Delete
 
         if (query is not null)
         {
-            queryService.Delete(id);
+            queryService.Delete(query);
             return TypedResults.Ok();
         }
 

@@ -6,26 +6,22 @@ Under construction.
 ## Front end
 1. Add by library filter param to media page
 2. Add category filter to tags page
+3. Add 
 
 ## Singal R implementation for Hosted Services
 1. Scheduler should display a notification when scheduling?
 
 ## Scheduler
-1. Shuffle Play
-    - play all items from a query non-duplicative, before playing randlomly
-    - Needs to be per schedule? (program strat)
-2. Iterative play (Reruns, Season Schedules)
-    - Should be date based... so that if a schedule is regenerated it does not skip to the next one...
-3. Fix Generic Bumps as fallback...
-4. Figure out how Up Next should work...
+1. Fix Generic Bumps as fallback...
+2. Figure out how Up Next should work...
+3. Regenerate a schedule from a specific date (Technically can be done from program last scheduled day)
 
-eventually pull a random schedule from http://cnas.fandom.com/wiki/January_2,_2000
+eventually pull a random schedule from http://cnas.fandom.com/wiki/January_2,_2000 ?
 and play the whole thing... I would have to figure out how to create blocks programmatically...
 
 ## Lineups
 1. Visual Editor
 2. JSON validation
-3. Example Lineup or a library of nodes
 
 Apply lineup change to current schedules...?
 
@@ -45,6 +41,10 @@ Apply lineup change to current schedules...?
     Need to implement a backoff strategy that turns off what ever program strategy... and errors the db entries
 2. Form Validiation is lacking multiple spots
 3. Testing for Schedule Retrieval
+    - Query Composition
+    - Data Retrievers
+    - Slots
+    - 
 
 
 

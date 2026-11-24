@@ -22,7 +22,7 @@ public class GetAll
 
     public static Results<Ok<GetAllLibrariesResponse>, NotFound> Handle(LibraryService libraryService, [AsParameters] Parameters filters)
     {
-        var libraries = libraryService.GetAllLibraries();
+        var libraries = libraryService.Get();
 
         var pageSize = filters.Count ?? 100;
         var currentPage = filters.Page ?? 1;

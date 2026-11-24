@@ -1,4 +1,5 @@
 ﻿using HiveMind.Server.Domain.Enums;
+using HiveMind.Server.Domain.Scheduler.Sources;
 using HiveMind.Server.Entities;
 using static HiveMind.Server.Domain.Enums.QueryEnums;
 
@@ -6,10 +7,8 @@ namespace HiveMind.Server.Domain.Scheduler.SlotStrategy;
 
 public class BumpStrategy : ISlotStrategy
 {
-    public List<GenerationResultItem> Generate(GenerationContext context, SourceItem source, List<string> tags, int duration, RetreiverType retreiverType)
+    public List<GenerationResultItem> Generate(GenerationContext context, IDataSource source, List<string> tags, int duration)
     {
-        var retriever = context.Retriever;
-
         var customFilter = new List<(string, string, string)>()
         {
             (QueryAllowedFields.Duration.ToString(), QueryAllowedOperators.LessThanEquals.ToString(), duration.ToString())
@@ -17,7 +16,7 @@ public class BumpStrategy : ISlotStrategy
 
         if(tags.Count > 0) customFilter.AddRange(tags.Select(x => (QueryAllowedFields.Tag.ToString(), QueryAllowedOperators.Contains.ToString(), x)));
 
-        var mediaItems = retriever.GetMedia(source, retreiverType, 1, customFilter);
+        var mediaItems = MediaItemRetriever.GetMedia(context, source, 1, customFilter);
 
         return [.. mediaItems.Select(x => new GenerationResultItem() { MediaItem = x , Type = TransitionSlot.Bump, StartTime = 0, EndTime = x.Duration })];
     }

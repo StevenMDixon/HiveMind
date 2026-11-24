@@ -2,13 +2,8 @@
 
 namespace HiveMind.Server.Services;
 
-public class TagsService(SqliteDBContext context) : BaseService<Tags>(context)  
+public class TagsService(SqliteDBContext context) : BaseService<Tags>(context), ITagService
 {
-    public IEnumerable<Tags> GetAllTags()
-    {
-        return _context.Tags;      
-    }
-
     public Tags? GetByName(string name)
     {
         return Get().Where(x => x.Name == name).FirstOrDefault();

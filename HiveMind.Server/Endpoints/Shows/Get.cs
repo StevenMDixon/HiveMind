@@ -20,7 +20,7 @@ public class Get
 
     public static Results<Ok<ShowsResponse>, NotFound<string>> Handle(ShowService showService, [FromRoute] int id)
     {
-        var show = showService.GetShowByID(id);
+        var show = showService.GetById(id);
         
         if (show is not null)
         {

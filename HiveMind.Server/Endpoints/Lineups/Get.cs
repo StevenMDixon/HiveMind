@@ -15,7 +15,7 @@ public static class Get
 
     public static Results<Ok<Lineup>, NotFound<string>> Handle(LineupService lineupService, [FromRoute] int id)
     {
-        var lineup = lineupService.GetLineupByID(id);
+        var lineup = lineupService.GetById(id);
 
         if (lineup is not null)
         {

@@ -22,7 +22,7 @@ public static class GetAll
 
     public static Results<Ok<GetAllStationsResponse>, NotFound> Handle(StationService stationService, [AsParameters] Parameters filters)
     {
-        var stations = stationService.GetAllStations();
+        var stations = stationService.Get();
 
         var pageSize = filters.Count ?? 100;
         var currentPage = filters.Page ?? 1;

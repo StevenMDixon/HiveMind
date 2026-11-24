@@ -1,19 +1,24 @@
 using HiveMind.Server.Domain.Enums;
+using HiveMind.Server.Domain.Scheduler.Sources;
 
 namespace HiveMind.Server.Domain.Scheduler.DataRetrievers;
 
 public class QueryRetreiver: IDataRetriever
 {
-    public SourceItem Query { get; set; } = null!;
-    public RetreiverType RetrievalSetting { get; set; } = RetreiverType.Random;
+    public IDataSource Query { get; set; } = null!;
     public IEnumerable<GenerationResultItem> Retrieve(GenerationContext context)
     {
-        var results = new List<GenerationResultItem>();
+        var query = Query.GetQuery(context.ScheduleDataProvider.Queries);
 
-        var media = context.Retriever.GetMedia(Query, RetrievalSetting).FirstOrDefault();
+        if(query != null)
+        {
+            var possibleMedia = context.ScheduleDataProvider.Queries.GetMediaItemsByQuery(query);
+            
+            var media = possibleMedia.OrderBy(r => Guid.NewGuid()).FirstOrDefault();
 
-        if (media != null) results.Add(new GenerationResultItem { MediaItem = media, StartTime = 0, EndTime = media.Duration });
-
-        return results;
+            if(media != null) return [new GenerationResultItem { MediaItem = media, StartTime = 0, EndTime = media.Duration }];
+        }
+        
+        return [];
     }
 }

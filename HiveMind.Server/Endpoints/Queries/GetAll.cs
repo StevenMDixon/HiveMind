@@ -22,7 +22,7 @@ public static class GetAll
 
     public static Results<Ok<GetAllQueriesResponse>, NotFound> Handle(QueryService queryService, [AsParameters] Parameters filters)
     {
-        var queries = queryService.GetAllQueries();
+        var queries = queryService.Get();
 
         var pageSize = filters.Count ?? 100;
         var currentPage = filters.Page ?? 1;

@@ -14,11 +14,11 @@ namespace HiveMind.Server.Endpoints.Stations
 
         public static Results<Ok, NotFound<string>> Handle(StationService stationService, [FromRoute] int id)
         {
-            var station = stationService.GetStationByID(id);
+            var station = stationService.GetById(id);
 
             if (station is not null)
             {
-                stationService.Delete(id);
+                stationService.Delete(station);
                 return TypedResults.Ok();
             }
 

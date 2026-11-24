@@ -1,4 +1,5 @@
 ﻿using HiveMind.Server.Domain.Enums;
+using HiveMind.Server.Domain.Scheduler.Sources;
 using HiveMind.Server.Entities;
 
 
@@ -6,17 +7,15 @@ namespace HiveMind.Server.Domain.Scheduler.SlotStrategy;
 
 public class CutFillerStrategy : ISlotStrategy
 {
-    public List<GenerationResultItem> Generate(GenerationContext context, SourceItem source, List<string> tags, int duration, RetreiverType retreiverType)
+    public List<GenerationResultItem> Generate(GenerationContext context, IDataSource source, List<string> tags, int duration)
     {
-        var retriever = context.Retriever;
-
         var remainingDuration = duration;
 
         var results = new List<GenerationResultItem>();
 
         while(remainingDuration > 0)
         {
-            var mediaItems = retriever.GetMedia(source, retreiverType, 1);
+            var mediaItems = MediaItemRetriever.GetMedia(context, source, 1);
 
             if(mediaItems.Count != 0)
             {

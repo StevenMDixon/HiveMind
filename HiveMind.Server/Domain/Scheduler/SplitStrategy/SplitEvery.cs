@@ -10,11 +10,11 @@ public class SplitEvery: ISplitStrategy
 
         var intervalMS = interval * 60 * 1000;
 
-        var current = intervalMS;
+        var current = 0;
 
         while (current < duration)
         {
-            results.Add(new GenerationResultItem() { MediaItem = node.MediaItem, StartTime = intervalMS, EndTime = current + intervalMS });
+            results.Add(new GenerationResultItem() { MediaItem = node.MediaItem, StartTime = current, EndTime = current + intervalMS });
             current += intervalMS;
         }
 

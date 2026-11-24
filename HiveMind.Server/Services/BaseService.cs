@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace HiveMind.Server.Services;
 
-public abstract class BaseService<T>(SqliteDBContext context) : IService
+public abstract class BaseService<T>(SqliteDBContext context) : IService, IBaseService<T>
     where T : class
 {
     protected readonly SqliteDBContext _context = context;
@@ -27,7 +27,7 @@ public abstract class BaseService<T>(SqliteDBContext context) : IService
         return entity;
     }
 
-    public void Create(List<T> entities)
+    public void Create(IEnumerable<T> entities)
     {
         _context.Set<T>().AddRange(entities);
         _context.SaveChanges();
@@ -40,13 +40,19 @@ public abstract class BaseService<T>(SqliteDBContext context) : IService
         return entity;
     }
 
+    public void Update(IEnumerable<T> entities)
+    {
+        _context.UpdateRange(entities);
+        _context.SaveChanges();
+    }
+
     public void Delete(T entity)
     {
         _context.Set<T>().Remove(entity);
         _context.SaveChanges();
     }
 
-    public void Delete(List<T> entities)
+    public void Delete(IEnumerable<T> entities)
     {
         _context.Set<T>().RemoveRange(entities);
         _context.SaveChanges();

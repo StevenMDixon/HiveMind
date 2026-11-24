@@ -6,11 +6,6 @@ namespace HiveMind.Server.Services;
 
 public class BatchService(SqliteDBContext context) : BaseService<ScheduleBatch>(context)
 {
-    public IEnumerable<ScheduleBatch> GetAllBatches()
-    {
-        return _context.ScheduleBatches;
-    }
-
     public IEnumerable<ScheduleBatch> GetUnprocessedBatches()
     {
         return Get().Where(b => b.Status == BatchStatus.New).Include(x => x.ScheduleBatchItems).Include(y => y.ProgramStrategy);
@@ -19,11 +14,6 @@ public class BatchService(SqliteDBContext context) : BaseService<ScheduleBatch>(
     public IEnumerable<ScheduleBatch> GetBatchesBeforeDate(DateOnly date)
     {
         return Get().Where(b => b.StartDate <= date).Include(x => x.ScheduleBatchItems).Include(y => y.ScheduleBatchItems);
-    }
-
-    public void AddBatch(ScheduleBatch batch)
-    {
-        Create(batch);
     }
 
     public void CompleteBatch(ScheduleBatch batch)
@@ -35,11 +25,6 @@ public class BatchService(SqliteDBContext context) : BaseService<ScheduleBatch>(
     public void CancelBatch(ScheduleBatch batch)
     {
         batch.Status = BatchStatus.Canceled;
-        Update(batch);
-    }
-
-    public void UpdateBatch(ScheduleBatch batch)
-    {
         Update(batch);
     }
 

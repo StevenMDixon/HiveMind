@@ -1,12 +1,12 @@
 ﻿using HiveMind.Server.Domain.Enums;
-using HiveMind.Server.Entities;
+using HiveMind.Server.Domain.Scheduler.Sources;
 using static HiveMind.Server.Domain.Enums.QueryEnums;
 
 namespace HiveMind.Server.Domain.Scheduler.SlotStrategy;
 
 public class PromoStrategy : ISlotStrategy
 {
-    public List<GenerationResultItem> Generate(GenerationContext context, SourceItem source, List<string> tags, int duration, RetreiverType retreiverType)
+    public List<GenerationResultItem> Generate(GenerationContext context, IDataSource source, List<string> tags, int duration)
     {
         if(context.PromoQueries.Count != 0)
         {
@@ -19,7 +19,7 @@ public class PromoStrategy : ISlotStrategy
                 (QueryAllowedFields.Duration.ToString(), QueryAllowedOperators.LessThanEquals.ToString(), duration.ToString()),
             };
 
-            var promo = context.Retriever.GetMedia(selectedQuery, retreiverType, 1, customFilter).FirstOrDefault();
+            var promo = MediaItemRetriever.GetMedia(context, selectedQuery, 1, customFilter).FirstOrDefault();
 
             return promo != null ? [new GenerationResultItem() { MediaItem = promo, StartTime = 0, EndTime = promo.Duration, Type = TransitionSlot.Promo }] : [.. new List<GenerationResultItem>()];
         }

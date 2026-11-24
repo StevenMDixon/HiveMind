@@ -29,15 +29,6 @@ public class DroneService(SqliteDBContext context) : BaseService<Drone>(context)
         _context.SaveChanges();
     }
 
-    public void Delete(int Id)
-    {
-        var drone = Get().FirstOrDefault(x => x.Id == Id);
-        if (drone != null)
-        {
-            Delete(drone);
-        }
-    }
-
     public List<(string, string)> GetDroneSchedule(int droneId, DateOnly date)
     {
         var drone = Get().Include(x => x.Stations!).ThenInclude(x => x.Strategy).Where(x => x.Id == droneId).FirstOrDefault();

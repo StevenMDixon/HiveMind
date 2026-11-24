@@ -17,7 +17,7 @@ public class Create
 
     public static Results<Ok, NoContent, ValidationProblem> Handle(TransitionTemplateService transitionTemplateService, [FromBody] CreateRequest createRequest)
     {
-        transitionTemplateService.CreateTransitionTemplate(new TransitionTemplate() { Name = createRequest.templateName });
+        transitionTemplateService.Create(new TransitionTemplate() { Name = createRequest.templateName });
         return TypedResults.Ok();
     }
 }

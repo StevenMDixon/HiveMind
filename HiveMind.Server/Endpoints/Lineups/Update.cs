@@ -27,7 +27,7 @@ public class Update
     public record LineupRequest(string? Name, TimeOnly? StartTime, string? JsonData);
     public static Results<Ok, NotFound<string>, ValidationProblem> Handle(LineupService lineupService, [FromRoute] int id, [FromBody] LineupRequest request)
     {
-        var lineup = lineupService.GetLineupByID(id);
+        var lineup = lineupService.GetById(id);
 
         if (lineup is not null)
         {

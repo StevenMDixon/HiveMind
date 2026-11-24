@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HiveMind.Server.Services
 {
-    public class ProgramStrategyService(SqliteDBContext context) : BaseService<ProgramStrategy>(context)
+    public class ProgramStrategyService(SqliteDBContext context) : BaseService<ProgramStrategy>(context), IProgramStrategyService
     {
 
         public IEnumerable<ProgramStrategy> GetAllProgramStrategies()
@@ -18,23 +18,9 @@ namespace HiveMind.Server.Services
             return Get().Include(x => x.Lineups).Where(ps => ps.Active == true && (ps.LastScheduleDate <= currentDate || ps.LastScheduleDate == null));
         }
 
-        public ProgramStrategy AddProgramStrategy(ProgramStrategy programStrategy)
-        {
-            return Create(programStrategy);
-        }
-
-        public ProgramStrategy? GetProgramStrategyById(int Id)
+        public ProgramStrategy? GetById(int Id)
         {
             return Get().Include(x => x.Lineups).Include(x => x.Events).FirstOrDefault(x => x.Id == Id);
-        }
-
-        public void Delete(int Id)
-        {
-            var programStrategy = Get().FirstOrDefault(x => x.Id == Id);
-            if (programStrategy != null)
-            {
-                Delete(programStrategy);
-            }
         }
     }
 }

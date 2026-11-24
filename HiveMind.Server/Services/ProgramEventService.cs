@@ -5,13 +5,6 @@ namespace HiveMind.Server.Services;
 
 public class ProgramEventService(SqliteDBContext context) : BaseService<ProgramEvent>(context)
 {
-
-    public IEnumerable<ProgramEvent> GetAllProgramEvents()
-    {
-        return Get().Include(pe => pe.ProgramStrategy).Include(pe => pe.Query);
-    }
-
-
     public IEnumerable<ProgramEvent> GetUpComingEvents(int programStrategyID, DateTime currentDate)
     {
         var today = DateOnly.FromDateTime(currentDate);
@@ -29,19 +22,6 @@ public class ProgramEventService(SqliteDBContext context) : BaseService<ProgramE
         return results;
     }
 
-    public void AddProgramEvent(ProgramEvent programEvent)
-    {
-        Create(programEvent);
-    }
-
-    public void AddProgramEvent(IEnumerable<ProgramEvent> programEvents)
-    {
-        foreach (var programEvent in programEvents)
-        {
-            Create(programEvent);
-        }
-    }
-
     public ProgramEvent? GetProgramEventByID(int Id)
     {
         return Get().FirstOrDefault(x => x.Id == Id);
@@ -50,19 +30,5 @@ public class ProgramEventService(SqliteDBContext context) : BaseService<ProgramE
     public IEnumerable<ProgramEvent> GetProgramEventByProgramId(int Id)
     {
         return Get().Where(x => x.ProgramStrategyId == Id);
-    }
-
-    public void Delete(int Id)
-    {
-        var programEvent = Get().FirstOrDefault(x => x.Id == Id);
-        if (programEvent != null)
-        {
-            Delete(programEvent);
-        }
-    }
-
-    public void DeleteMany(IEnumerable<ProgramEvent> programEvents)
-    {
-        Delete(programEvents.ToList());
     }
 }

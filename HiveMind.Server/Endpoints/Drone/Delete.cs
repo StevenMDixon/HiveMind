@@ -20,7 +20,7 @@ public class Delete
             return TypedResults.NoContent();
         }
 
-        droneService.Delete(id);
+        droneService.Delete(drone);
         return TypedResults.Ok();
     }
 }

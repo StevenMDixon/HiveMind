@@ -22,7 +22,7 @@ public class Create
             Number = request.Number
         };
 
-        stationService.AddStation(newStation);
+        stationService.Create(newStation);
 
         return TypedResults.NoContent();
     }

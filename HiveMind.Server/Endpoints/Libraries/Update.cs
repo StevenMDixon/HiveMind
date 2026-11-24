@@ -30,7 +30,7 @@ public class Update
 
     public static Results<Ok, NotFound<string>, NoContent, ValidationProblem> Handle(LibraryService libraryService, [FromRoute] int id, [FromBody] LibraryRequest request)
     {
-       var library = libraryService.GetLibraryByID(id);
+       var library = libraryService.GetById(id);
 
         if(library == null) return TypedResults.NotFound($"A query with the ID: {id} was not found.");
 

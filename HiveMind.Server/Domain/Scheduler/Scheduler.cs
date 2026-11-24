@@ -1,4 +1,6 @@
-﻿using HiveMind.Server.Domain.Scheduler.Nodes;
+﻿using HiveMind.Server.Domain.Scheduler.DataProvider;
+using HiveMind.Server.Domain.Scheduler.Nodes;
+using HiveMind.Server.Domain.Scheduler.Sources;
 using HiveMind.Server.Entities;
 using HiveMind.Server.Services;
 using System.Globalization;
@@ -7,22 +9,14 @@ using System.Text.Json.Serialization;
 
 namespace HiveMind.Server.Domain.Scheduler;
 
-public class Scheduler
+public class Scheduler(IServiceProvider serviceProvider, ScheduleDataProvider schedulerDataProvider)
 {
-    private readonly IServiceProvider _serviceProvider;
-
-    private readonly MediaItemRetriever _retriever;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
 
     private readonly JsonSerializerOptions options = new()
     {
         PropertyNameCaseInsensitive = true
     };
-
-    public Scheduler(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-        _retriever = new MediaItemRetriever(_serviceProvider.GetRequiredService<QueryService>());
-    }
 
     public async Task<GenerationResult> GenerateTestSchedule(string jsonData)
     {
@@ -43,7 +37,7 @@ public class Scheduler
         
         var lineupService = _serviceProvider.GetRequiredService<LineupService>();
          
-        var lineup = lineupService.GetLineupByID(lineUpId);
+        var lineup = lineupService.GetById(lineUpId);
 
         var scheduleNodes = new List<INode>();
 
@@ -86,9 +80,8 @@ public class Scheduler
         var generationContext = new GenerationContext
         {
             SchedulingDate = scheduleData.Date,
-            Retriever = _retriever,
-            ServiceProvider = _serviceProvider,
-            Settings = settingService.GetAllSettings().ToDictionary(x => x.Name, x => x.Value),
+            ScheduleDataProvider = schedulerDataProvider,
+            Settings = settingService.Get().ToDictionary(x => x.Name, x => x.Value),
             PromoQueries = GetUpComingEventPromos(scheduleData.ProgramId)
         };
 
@@ -108,14 +101,14 @@ public class Scheduler
         return generationResult;
     }
 
-    private List<SourceItem> GetUpComingEventPromos(int programStrategyID)
+    private List<IDataSource> GetUpComingEventPromos(int programStrategyID)
     {
         var currentDate = DateTime.Today;
 
         var programEventService = _serviceProvider.GetRequiredService<ProgramEventService>();
         var upcomingEvents = programEventService.GetUpComingEvents(programStrategyID, currentDate);
 
-        return [.. upcomingEvents.Select(e => new SourceItem() {Type = SourceType.Id, Value = e.QueryId.ToString()})];
+        return [.. upcomingEvents.Select(e => new QueryIdDataSource() {Id = e.QueryId})];
     }
 
     public string WriteOutSchedule(string fileName, string path, string programFolder, string json)

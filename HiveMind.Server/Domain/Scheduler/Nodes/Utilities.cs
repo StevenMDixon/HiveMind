@@ -1,14 +1,13 @@
 using HiveMind.Server.Domain.Enums;
-using HiveMind.Server.Domain.Scheduler;
+using HiveMind.Server.Domain.Scheduler.Sources;
 using HiveMind.Server.Entities;
-using HiveMind.Server.Services;
 
 namespace HiveMind.Server.Domain.Scheduler.Nodes;
 public static class Utilities
 {
     public static Dictionary<TransitionType, List<TransitionTemplateSlot>> RetrieveTransitionSlots(GenerationContext context, Dictionary<TransitionType, int> transitions)
     {
-        var transitionTemplateService = context.ServiceProvider.GetRequiredService<TransitionTemplateService>();
+        var transitionTemplateService = context.ScheduleDataProvider.TransitionTemplates;
 
         var slots = new Dictionary<TransitionType, List<TransitionTemplateSlot>>();
 
@@ -18,7 +17,7 @@ public static class Utilities
 
             var transistionType = key;
 
-            var template = transitionTemplateService.GetTransitionTemplateByID(transitionTemplate);
+            var template = transitionTemplateService.GetById(transitionTemplate);
 
             if (template != null && template.Slots.Count != 0)
             {
@@ -29,9 +28,9 @@ public static class Utilities
         return slots;
     }
 
-    public static Dictionary<TransitionSlot, SourceItem> ResolveSources(Dictionary<TransitionSlot, SourceItem>? baseSources, Dictionary<TransitionSlot, SourceItem>? applyingSources)
+    public static Dictionary<TransitionSlot, IDataSource> ResolveSources(Dictionary<TransitionSlot, IDataSource>? baseSources, Dictionary<TransitionSlot, IDataSource>? applyingSources)
     {
-        var newSources = new Dictionary<TransitionSlot, SourceItem>();
+        var newSources = new Dictionary<TransitionSlot, IDataSource>();
 
         if(baseSources != null) baseSources.Keys.ToList().ForEach(x =>  newSources.Add(x, baseSources[x]));
 

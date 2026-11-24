@@ -5,18 +5,8 @@ namespace HiveMind.Server.Services;
 using HiveMind.Server.Domain.Enums;
 using HiveMind.Server.QueryEngine;
 
-public class QueryService(SqliteDBContext context) : BaseService<Query>(context)
+public class QueryService(SqliteDBContext context) : BaseService<Query>(context), IQueryService
 {
-    public IEnumerable<Query> GetAllQueries()
-    {
-        return Get();
-    }
-
-    public Query AddQuery(Query query)
-    {
-        return Create(query);
-    }
-
     public Query? GetQueryByID(int id)
     {
         return Get().Include(x => x.Filters).FirstOrDefault(x => x.Id == id);
@@ -27,14 +17,19 @@ public class QueryService(SqliteDBContext context) : BaseService<Query>(context)
         return Get().FirstOrDefault(x => x.Name == name);
     }
 
-    public void Delete(int id)
+    public ICollection<MediaItem> GetMediaItemsByQuery(Query query)
     {
-        var query = Get().FirstOrDefault(x => x.Id == id);
-        if (query != null)
+        var queryRequest = new QueryRequest
         {
-            Delete(query);
-        }
+            Filters = query.Filters != null ? [.. query.Filters.Select(f => new FilterRule(f.Field, f.Operator, f.Value))] : []
+        };
+
+        var mediaItemsQuery = _context.MediaItems.AsQueryable();
+        mediaItemsQuery = MediaQueryBuilder.Apply(mediaItemsQuery, queryRequest);
+
+        return [.. mediaItemsQuery];
     }
+
 
     public ICollection<MediaItem> GetMediaItemsByQueryId(int queryId, List<(string, string, string)>? customFilters = null)
     {
@@ -96,11 +91,5 @@ public class QueryService(SqliteDBContext context) : BaseService<Query>(context)
         var mediaItemsQuery = MediaQueryBuilder.ApplyWithUnion(_context.MediaItems, queryUnionRequest);
 
         return [.. mediaItemsQuery];
-    }
-
-    public void Create(List<Query> queries)
-    {
-        _context.Queries.AddRange(queries);
-        _context.SaveChanges();
     }
 }

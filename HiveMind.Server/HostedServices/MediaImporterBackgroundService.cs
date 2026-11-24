@@ -45,7 +45,7 @@ public partial class MediaImporterBackgroundService(
                 var mediaItems = new List<VideoMeta>();
                 var mediaItemsToDelete = new List<Entities.MediaItem>();
 
-                var settings = settingsService.GetAllSettings().ToDictionary(x => x.Name, y => y.Value);
+                var settings = settingsService.Get().ToDictionary(x => x.Name, y => y.Value);
 
                 var mountedPath = settings["Import_Location"] ?? string.Empty;
 
@@ -125,11 +125,11 @@ public partial class MediaImporterBackgroundService(
                         }
                     }
 
-                    mediaItemService.AddMediaItems(mediaItems.Select(x => ConvertMetaToMediaItem(x, targetLibary.Id)));    
+                    mediaItemService.Create(mediaItems.Select(x => ConvertMetaToMediaItem(x, targetLibary.Id)));    
 
                     if(mediaItemsToDelete.Count != 0)
                     {
-                        mediaItemService.DeleteMany(mediaItemsToDelete);
+                        mediaItemService.Delete(mediaItemsToDelete);
                     }
 
                     libraryService.MarkLibraryAsProcessed(targetLibary);

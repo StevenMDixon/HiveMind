@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using HiveMind.Server.Domain.Scheduler.DataProvider;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
@@ -16,10 +17,9 @@ public class GetLineupResults
 
     public record Response();
 
-    public static Results<Ok, NoContent, ValidationProblem> Handle(IServiceProvider services, [FromBody] Request request)
+    public static Results<Ok, NoContent, ValidationProblem> Handle(IServiceProvider services, ScheduleDataProvider scheduleDataProvider, [FromBody] Request request)
     {
-
-        var scheduler = new HiveMind.Server.Domain.Scheduler.Scheduler(services);
+        var scheduler = new HiveMind.Server.Domain.Scheduler.Scheduler(services, scheduleDataProvider);
 
         var results = scheduler.GenerateTestSchedule(request.Nodes.GetRawText()).Result;
 

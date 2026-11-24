@@ -19,7 +19,7 @@ public class Get
 
     public static Results<Ok<TransitionTemplate>, NotFound> Handle(TransitionTemplateService transitionTemplateService, [FromRoute] int Id)
     {
-        var transitionTemplate = transitionTemplateService.GetTransitionTemplateByID(Id);
+        var transitionTemplate = transitionTemplateService.GetById(Id);
 
         if (transitionTemplate == null)
         {

@@ -1,5 +1,6 @@
 ﻿using HiveMind.Server.Domain.Enums;
 using HiveMind.Server.Domain.Scheduler;
+using HiveMind.Server.Domain.Scheduler.DataProvider;
 using HiveMind.Server.Entities;
 using HiveMind.Server.Services;
 
@@ -119,7 +120,7 @@ public class SchedulingBackgroundService(IServiceScopeFactory scopeFactory, ILog
                 EndDate = endDate
             };
 
-            batchService.AddBatch(batch);
+            batchService.Create(batch);
 
             program.LastScheduleDate = endDate;
 
@@ -150,7 +151,7 @@ public class SchedulingBackgroundService(IServiceScopeFactory scopeFactory, ILog
         if (batchItemsToProcess == null || !batchItemsToProcess.Any())
         {
             batch.Status = BatchStatus.Completed;
-            batchService.UpdateBatch(batch);
+            batchService.Update(batch);
             _logger.LogWarning("Batch {BatchId} has no items to process.", batch.Id);
             return;
         }
@@ -174,7 +175,11 @@ public class SchedulingBackgroundService(IServiceScopeFactory scopeFactory, ILog
 
             var lineup = programScheduleLineupService.GetProgramStrategyLineupById(batchItem.ProgramStrategyLineupId ?? 0);
 
-            var scheduler = new Scheduler(scope.ServiceProvider);
+
+            var schedulerDataProvider = scope.ServiceProvider
+                .GetRequiredService<ScheduleDataProvider>();
+
+            var scheduler = new Scheduler(scope.ServiceProvider, schedulerDataProvider);
 
             await scheduler.GenerateSchedule(lineup?.LineupId ?? 0, batch.ProgramStrategyId ?? 0, batchItem.ScheduleDate);
 

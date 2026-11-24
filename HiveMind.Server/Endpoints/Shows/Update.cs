@@ -17,7 +17,7 @@ public class Update
 
     public static Results<Ok, NotFound<string>, ValidationProblem> Handle(ShowService showService, [FromRoute] int id, [FromBody] ShowRequest request)
     {
-        var show = showService.GetShowByID(id);
+        var show = showService.GetById(id);
 
         if (show is not null)
         {

@@ -1,96 +1,31 @@
-﻿using HiveMind.Server.Domain.Enums;
+﻿using HiveMind.Server.Domain.Scheduler.Sources;
 using HiveMind.Server.Entities;
-using HiveMind.Server.Services;
+using static HiveMind.Server.Domain.Enums.QueryEnums;
 
 namespace HiveMind.Server.Domain.Scheduler;
 
-public class MediaItemRetriever(QueryService queryService)
+public static class MediaItemRetriever
 {
-    private readonly QueryService _QueryService = queryService;
-
-    public List<MediaItem> GetMedia(int queryId, RetreiverType retrieverType, int count = 1, List<(string, string, string)>? customFilters = null)
+    public static List<MediaItem> GetMedia(GenerationContext context, IDataSource dataSource, int? count = 1, List<(string, string, string)>? customFilters = null)
     {
-        switch (retrieverType)
-        {
-            case RetreiverType.Random:
-            var query = _QueryService.GetMediaItemsByQueryId(queryId, customFilters);
-            return [.. query.OrderBy(r => Guid.NewGuid()).Take(count)];
-            case RetreiverType.Sequential:
-                return [.. _QueryService.GetMediaItemsByQueryId(queryId, customFilters).Take(count)];
-            case RetreiverType.Shuffle:
-                return [.. _QueryService.GetMediaItemsByQueryId(queryId, customFilters).Take(count)];   
-            default:
-            return [];
-        }
-    }
-
-    public List<MediaItem> GetMedia(string queryName, RetreiverType retrieverType, int count = 1, List<(string, string, string)>? customFilters = null)
-    {
-        var queryId = _QueryService.GetQueryByName(queryName)?.Id;
-
-        if (queryId == null)
-        {
-            return [];
-        }
-
-        switch (retrieverType)
-        {
-            case RetreiverType.Random:
-                var query = _QueryService.GetMediaItemsByQueryId(queryId.Value, customFilters);
-                return [.. query.OrderBy(r => Guid.NewGuid()).Take(count)];
-            case RetreiverType.Sequential:
-                return [.. _QueryService.GetMediaItemsByQueryId(queryId.Value, customFilters).Take(count)];
-            case RetreiverType.Shuffle:
-                return [.. _QueryService.GetMediaItemsByQueryId(queryId.Value, customFilters).Take(count)];
-            default:
-                return [];
-        }
-    }
-
-    public List<MediaItem> GetMedia(string[] queries, RetreiverType retrieverType, int count = 1, List<(string, string, string)>? customFilters = null)
-    {
-        var query = new List<(string, string, string)>();
-    
-        foreach(var q in queries)
-        {
-            var splitQ = q.Split(", ");
-            query.Add((splitQ[0], splitQ[1], splitQ[2]));
-        }
+        var query = dataSource.GetQuery(context.ScheduleDataProvider.Queries);
+        
+        if(query == null) return [];
 
         if(customFilters != null)
         {
-            query.AddRange(customFilters);
+            var filters = new List<QueryFilters>();
+
+            filters.AddRange(query.Filters?.Select(x => x).ToList() ?? [] );
+
+            filters.AddRange(customFilters.Select(x => new QueryFilters(){Field = Enum.Parse<QueryAllowedFields>(x.Item1), Operator = Enum.Parse<QueryAllowedOperators>(x.Item2), Value=x.Item3} ));
+
+            query.Filters = filters;
         }
 
-        switch (retrieverType)
-        {
-            case RetreiverType.Random:
-                var results = _QueryService.GetMediaItemsByQueries(query);
-                return [.. results.OrderBy(r => Guid.NewGuid()).Take(count)];
-            case RetreiverType.Sequential:
-                return [.. _QueryService.GetMediaItemsByQueries(query).Take(count)];
-            case RetreiverType.Shuffle:
-                return [.. _QueryService.GetMediaItemsByQueries(query).Take(count)];
-            default:
-                return [];
-        }
-    }
 
-    public List<MediaItem> GetMedia(SourceItem source, RetreiverType retrieverType, int count = 1, List<(string, string, string)>? customFilters = null)
-    {
-        var type = source.Type;
+        var possibleItems = context.ScheduleDataProvider.Queries.GetMediaItemsByQuery(query);
 
-        switch(type)
-        {
-            case SourceType.Id:
-                return GetMedia(int.Parse(source.Value), retrieverType, count, customFilters);
-            case SourceType.Name:
-                return GetMedia(source.Value, retrieverType, count, customFilters);
-            case SourceType.Custom:
-                var queryParts = source.Value.Split("| ");
-                return GetMedia(queryParts, retrieverType, count, customFilters);
-            default:
-                return [];
-        }
+        return possibleItems.OrderBy(r => Guid.NewGuid()).Take(count ?? 1).ToList();
     }
 }

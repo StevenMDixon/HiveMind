@@ -1,15 +1,14 @@
 ﻿using HiveMind.Server.Domain.Enums;
+using HiveMind.Server.Domain.Scheduler.Sources;
 using HiveMind.Server.Entities;
 
 namespace HiveMind.Server.Domain.Scheduler.SlotStrategy;
 
 public class OutBumpStrategy: ISlotStrategy
 {
-    public List<GenerationResultItem> Generate(GenerationContext context, SourceItem source, List<string> tags, int duration, RetreiverType retreiverType)
+    public List<GenerationResultItem> Generate(GenerationContext context, IDataSource source, List<string> tags, int duration)
     {
         var results = new List<MediaItem>();
-
-        var retriever = context.Retriever;
 
         var bumpOutFilter = new List<(string, string, string)>
         {
@@ -19,13 +18,13 @@ public class OutBumpStrategy: ISlotStrategy
 
         if(tags.Count > 0) bumpOutFilter.AddRange(tags.Select(x => ("Tag", "Contains", x)));
 
-        var bumpOut = retriever.GetMedia(source, retreiverType, 1, bumpOutFilter).FirstOrDefault();
+        var bumpOut = MediaItemRetriever.GetMedia(context, source, 1, bumpOutFilter).FirstOrDefault();
 
         if (bumpOut == null)
         {
             bumpOutFilter[2] = ("Tag", "Equals", context.Settings["Bump Generic Tag"] ?? "Generic");
 
-            bumpOut = retriever.GetMedia(source, retreiverType, 1, bumpOutFilter).FirstOrDefault();
+            bumpOut = MediaItemRetriever.GetMedia(context, source, 1, bumpOutFilter).FirstOrDefault();
 
             return bumpOut == null ? [] : [new GenerationResultItem() { MediaItem = bumpOut, Type = TransitionSlot.OutBump, StartTime = 0, EndTime = bumpOut.Duration }];
         }
@@ -43,7 +42,7 @@ public class OutBumpStrategy: ISlotStrategy
 
         if(tags.Count > 0) bumpInFilter.AddRange(tags.Select(x => ("Tag", "Contains", x)));
 
-        var bumpIn = retriever.GetMedia(source, retreiverType, 1, bumpInFilter).FirstOrDefault();
+        var bumpIn = MediaItemRetriever.GetMedia(context, source, 1, bumpInFilter).FirstOrDefault();
 
         if (bumpIn != null) results.Add(bumpIn);
 

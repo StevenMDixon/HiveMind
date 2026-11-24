@@ -23,7 +23,7 @@ public class Update
         if (setting is not null)
         {
             setting.Value = request.Value;
-            settingService.UpdateSetting(setting);
+            settingService.Update(setting);
             return TypedResults.Ok();
         }
 

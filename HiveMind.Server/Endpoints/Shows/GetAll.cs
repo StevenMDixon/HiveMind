@@ -23,7 +23,7 @@ public class GetAll
 
     public static Results<Ok<ShowsResponse>, NotFound> Handle(ShowService showService, [AsParameters] Parameters filters)
     {
-        var shows = showService.GetAllShows();
+        var shows = showService.Get();
 
         var pageSize = filters.Count ?? 100;
         var currentPage = filters.Page ?? 1;

@@ -23,7 +23,7 @@ public class GetAll
 
     public static Results<Ok<Response>, NoContent, ValidationProblem> Handle(TransitionTemplateService service, [AsParameters] Parameters filters)
     {
-        var transitions = service.GetAllTransitionTemplates();
+        var transitions = service.Get();
 
         var pageSize = filters.Count ?? 100;
         var currentPage = filters.Page ?? 1;

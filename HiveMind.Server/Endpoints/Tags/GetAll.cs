@@ -24,7 +24,7 @@ public class GetAll
 
     public static Results<Ok<Response>, NoContent, ValidationProblem> Handle(TagsService service, [AsParameters] Parameters filters)
     {
-        var tags = service.GetAllTags();
+        var tags = service.Get();
 
         var pageSize = filters.Count ?? 100;
         var currentPage = filters.Page ?? 1;
