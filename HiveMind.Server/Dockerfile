@@ -11,6 +11,9 @@ EXPOSE 8080
 COPY --from=mwader/static-ffmpeg:6.1 /ffmpeg /usr/local/bin/ffmpeg
 COPY --from=mwader/static-ffmpeg:6.1 /ffprobe /usr/local/bin/ffprobe
 
+ARG APP_UID=1000
+ARG APP_GID=1000
+
 USER ${APP_UID}:${APP_GID}
 
 # This stage is used to build the service project
