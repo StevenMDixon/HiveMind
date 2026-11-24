@@ -29,7 +29,7 @@ const LineupDataWrapper = ({ lineup }: LineupDataWrapperProps) => {
 
     const lineupFields = [
         { name: 'name', display: "Name", type: "Text", initialValue: lineup.name },
-        { name: 'startTime', display: "Start Time", type: "Text", initialValue: lineup.startTime },
+        { name: 'startTime', display: "Start Time", type: "Time", initialValue: lineup.startTime },
     ] as CustomFormField[];
 
     const saveLineup = async (lineup: Lineup) => {

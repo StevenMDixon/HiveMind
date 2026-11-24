@@ -23,6 +23,7 @@ public static partial class MediaTagExtractor
         return results;
     }
 
-    [GeneratedRegex(@"[0-9,X]{4}")]
+    [GeneratedRegex(@"(?:20|19)[0-9]{2}")]
     private static partial Regex YearRegex();
+    
 }

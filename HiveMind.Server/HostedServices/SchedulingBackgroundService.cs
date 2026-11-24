@@ -88,7 +88,6 @@ public class SchedulingBackgroundService(IServiceScopeFactory scopeFactory, ILog
             //_logger.LogInformation("No Programs to Process");
             return;
         }
-        // create batches for each program strategy that needs to be processed
         foreach (var program in programToProcess)
         {
             var batchItems = new List<ScheduleBatchItem>();
@@ -99,8 +98,6 @@ public class SchedulingBackgroundService(IServiceScopeFactory scopeFactory, ILog
             if (program.LastScheduleDate != null)
             {
                 startDate = program.LastScheduleDate.Value.AddDays(1);
-                // Probably want to do this so that if a schedule gets out of sync we still schedule those days
-                // For Sequential items...?
             }
 
             for (var date = startDate; date <= endDate; date = date.AddDays(1))

@@ -83,3 +83,12 @@ export const search = async (searchTerm: string, page: number, count: number): P
     const data = await response.json();
     return {data: data.libraries, dataCount: data.dataCount} as PaginatedDataResponse<Library>;
 };
+
+export const getImportStatus = async () => {
+    const response = await fetch('/api/import-status');
+    if (response.ok) {
+        const data = await response.json();
+        return data
+    }
+    return null;
+}

@@ -11,6 +11,7 @@ public class TestDbContext : DbContext
     public DbSet<MediaItem> MediaItems { get; set; } = null!;
     public DbSet<Tags> Tags { get; set; } = null!;
     public DbSet<Show> Shows { get; set; } = null!;
+    public DbSet<ProgramRotation> Rotations {get; set;}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

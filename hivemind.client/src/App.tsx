@@ -3,8 +3,8 @@ import './App.css';
 import DashboardLayout from './Dashboard/layout';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ImportHubProvider } from './providers/SignalRProvider';
 
 import Intro from './Pages/Intro';
 
@@ -46,39 +46,41 @@ const App = () => {
     const queryClient = new QueryClient();
     return (
         <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={darkTheme}>
-            <CssBaseline />
-                <HashRouter>
-                <Routes>
-                    <Route path="/" element={<DashboardLayout />}>
-                        <Route index element={<Intro />} />
-                            <Route path="stations" element={<StationPage />} />
-                            <Route path="stations/:id/" element={<StationEdit />} />
-                            <Route path="lineups" element={<LineupView />} />
-                            <Route path="lineups/:id" element={<LineupEdit />} />
-                            {/* <Route path="lineups/:id/items/:itemId" element={<LineupItemEdit />} /> */}
-                            <Route path="queries" element={<QueryPage />} />
-                            <Route path="queries/:id" element={<QueryDetail />} />
-                            <Route path="libraries" element={<LibaryPage />} />
-                            <Route path="libraries/:id" element={<LibraryEdit />} />
-                            <Route path="media" element={<MediaPage />} />
-                            {/*<Route path="media/manage/:id" element={<p>Hello!</p>} />*/}
-                            <Route path="shows" element={<ShowsPage />} />
-                            <Route path="shows/:id" element={<ShowsEdit />} />
-                            <Route path="system-settings" element={<SettingsPage />} />
-                            <Route path="programstrategy/" element={<ProgramStrategyPage />} />
-                            <Route path="programstrategy/:id" element={<ProgramStrategyDetail />} />
-                            <Route path="drones" element={<DronePage />} />
-                            <Route path="drones/:id" element={<DroneEdit />} />
-                            <Route path="transitions" element={<TransitionPage />} />
-                            <Route path="transitions/:id" element={<TransitionEdit />} />
-                            <Route path="tags" element={<TagPage />} />
-                            <Route path="queue" element={<QueuePage />} />
-                            <Route path="queue/:id" element={<MediaTagging />} />
-                        </Route>
-                </Routes>
-                </HashRouter>
-            </ThemeProvider>
+            <ImportHubProvider>
+                <ThemeProvider theme={darkTheme}>
+                    <CssBaseline />
+                    <HashRouter>
+                        <Routes>
+                            <Route path="/" element={<DashboardLayout />}>
+                                <Route index element={<Intro />} />
+                                    <Route path="stations" element={<StationPage />} />
+                                    <Route path="stations/:id/" element={<StationEdit />} />
+                                    <Route path="lineups" element={<LineupView />} />
+                                    <Route path="lineups/:id" element={<LineupEdit />} />
+                                    {/* <Route path="lineups/:id/items/:itemId" element={<LineupItemEdit />} /> */}
+                                    <Route path="queries" element={<QueryPage />} />
+                                    <Route path="queries/:id" element={<QueryDetail />} />
+                                    <Route path="libraries" element={<LibaryPage />} />
+                                    <Route path="libraries/:id" element={<LibraryEdit />} />
+                                    <Route path="media" element={<MediaPage />} />
+                                    {/*<Route path="media/manage/:id" element={<p>Hello!</p>} />*/}
+                                    <Route path="shows" element={<ShowsPage />} />
+                                    <Route path="shows/:id" element={<ShowsEdit />} />
+                                    <Route path="system-settings" element={<SettingsPage />} />
+                                    <Route path="programstrategy/" element={<ProgramStrategyPage />} />
+                                    <Route path="programstrategy/:id" element={<ProgramStrategyDetail />} />
+                                    <Route path="drones" element={<DronePage />} />
+                                    <Route path="drones/:id" element={<DroneEdit />} />
+                                    <Route path="transitions" element={<TransitionPage />} />
+                                    <Route path="transitions/:id" element={<TransitionEdit />} />
+                                    <Route path="tags" element={<TagPage />} />
+                                    <Route path="queue" element={<QueuePage />} />
+                                    <Route path="queue/:id" element={<MediaTagging />} />
+                                </Route>
+                        </Routes>
+                    </HashRouter>
+                </ThemeProvider>
+            </ImportHubProvider>
         </QueryClientProvider>
     )
 }

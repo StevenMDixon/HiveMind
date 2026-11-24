@@ -15,6 +15,8 @@ public static class LineUpSelectionMapper
         public int Month { get; } = date.Month;
         public int Year { get; } = date.Year;
         public string MonthAndDay => $"{date.Month}/{date.Day}";
+        public bool Weekday = IsWeekday(date.DayOfWeek);
+        public bool Weekend = !IsWeekday(date.DayOfWeek);
     }
 
     private record PrioritizedLineUp(ProgramStrategyLineup Lineup, int Priority);
@@ -23,6 +25,11 @@ public static class LineUpSelectionMapper
     {
         var member = typeof(LineupSelectionType).GetMember(selectionType.ToString()).FirstOrDefault();
         return member?.GetCustomAttribute<Priority>()?._Priority ?? 0;
+    }
+
+    private static bool IsWeekday(DayOfWeek day)
+    {
+        return (int)day >=1 && (int)day <= 5;
     }
 
     // used to map 
@@ -38,6 +45,8 @@ public static class LineUpSelectionMapper
 
         var matches = new List<PrioritizedLineUp>();
 
+        var t = dateMeta.Date.ToString("yyyy-MM-dd") == "2026-11-23";
+
         matches.AddRange(programStrategy.Lineups.Select(lineup =>
         {
             int priority = lineup.SelectionType switch
@@ -46,6 +55,8 @@ public static class LineUpSelectionMapper
                 LineupSelectionType.Month => lineup.SelectionOption == dateMeta.Month.ToString() ? GetSelectionTypePriority(LineupSelectionType.Month) : 0,
                 LineupSelectionType.DayOfWeek => lineup.SelectionOption == dateMeta.DayOfWeek.ToString() ? GetSelectionTypePriority(LineupSelectionType.DayOfWeek) : 0,
                 LineupSelectionType.MonthAndDay => lineup.SelectionOption == dateMeta.MonthAndDay ? GetSelectionTypePriority(LineupSelectionType.MonthAndDay) : 0,
+                LineupSelectionType.Weekday => dateMeta.Weekday ? GetSelectionTypePriority(LineupSelectionType.Weekday) : 0,
+                LineupSelectionType.Weekend => dateMeta.Weekend ? GetSelectionTypePriority(LineupSelectionType.Weekend) : 0,
                 LineupSelectionType.Any => GetSelectionTypePriority(LineupSelectionType.Any),
                 _ => 0
             };

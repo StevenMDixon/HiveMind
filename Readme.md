@@ -8,17 +8,16 @@ Under construction.
 2. Add category filter to tags page
 
 ## Singal R implementation for Hosted Services
-
-## Remove Programming block as a required tag
+1. Scheduler should display a notification when scheduling?
 
 ## Scheduler
 1. Shuffle Play
     - play all items from a query non-duplicative, before playing randlomly
-    - Needs to be per schedule? (program strat + lineup?)
+    - Needs to be per schedule? (program strat)
 2. Iterative play (Reruns, Season Schedules)
     - Should be date based... so that if a schedule is regenerated it does not skip to the next one...
-3. EPG Generation
-4. Fix Generic Bumps?
+3. Fix Generic Bumps as fallback...
+4. Figure out how Up Next should work...
 
 eventually pull a random schedule from http://cnas.fandom.com/wiki/January_2,_2000
 and play the whole thing... I would have to figure out how to create blocks programmatically...
@@ -26,33 +25,28 @@ and play the whole thing... I would have to figure out how to create blocks prog
 ## Lineups
 1. Visual Editor
 2. JSON validation
-3. Example Lineup or a library of node types
+3. Example Lineup or a library of nodes
 
-Apply lineup change to current schedules...
-
-## Media Importer
-1. Pull metadata from files into tags?
-2. Library Id Queries by default
-
-## Program Strategy
-1. Weekday & Weekend types for schedule
+Apply lineup change to current schedules...?
 
 ## Commerical Podding
-1. Define and use pods as queries for filler... or is this just a set of tags...
+1. Define and use pods as queries for filler... or is this just a set of tags?...
 
 ## Daypart management
 1. Need to define day part timings.
     - morning, afternoon, primetime, overnight
     - is this per station? probably...
 
-
 ## Integrations
-1. ErsaztTV Next (create the schedule need), add it as drone type?
+1. ErsaztTV Next (create the schedule need), add it as drone type?, Need to create an EPG generator for this
 
-## Current Issues
-1. No way to reset last scheduled date on Program Strategy
-2. If our services error for any reason the stop with no restart strat...
+## Current Issues & Needed Upgrades
+1. If our services error for any reason the stop with no restart strat...
     Need to implement a backoff strategy that turns off what ever program strategy... and errors the db entries
+2. Form Validiation is lacking multiple spots
+3. Testing for Schedule Retrieval
+
+
 
 # Running locally
 

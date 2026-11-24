@@ -30,7 +30,8 @@ const ProgramStrategyPage = () => {
         { key: 'id', name: 'ID', align: 'left' },
         { key: 'name', name: 'Name', align: 'left' },
         { key: 'advancedDays', name: 'Advanced Days', align: 'left' },
-        { key: 'active', name: 'Active', align: 'left' },
+        { key: 'active', name: 'Active', align: 'left', format: (i) => i + ''},
+        { key: 'lastScheduledDate', name: 'Last Schedule Date', align: 'left'}
     ] as CellData<ProgramStrategy>[];
 
     const actionColumns = [

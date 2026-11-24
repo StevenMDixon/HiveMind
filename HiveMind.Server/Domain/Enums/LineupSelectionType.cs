@@ -2,21 +2,20 @@
 
 public enum LineupSelectionType
 {
-    [Priority(int.MaxValue)]
-    Any = 0,
-    [Priority(3)]
-    DayOfWeek,
-    [Priority(2)]
-    Month,
     [Priority(1)]
-    MonthAndDay,
-    [Priority(0)]
-    Date,
-    NthWeekday,
-    DateRange, 
-    MonthDayRange,
-    MonthRange,
-    DayOfWeekRange,
+    Any = 0,
+    [Priority(2)]
+    Weekday,
+    [Priority(3)]
+    Weekend, 
+    [Priority(4)]
+    DayOfWeek, // mon, tues
+    [Priority(5)]
+    Month, // 10
+    [Priority(6)]
+    MonthAndDay, // 10/04 
+    [Priority(7)]
+    Date // 10/04/25
 }
 
 [AttributeUsage(AttributeTargets.Field)]

@@ -1,7 +1,9 @@
+using System.Text.Json.Serialization;
 using FluentValidation;
 using HiveMind.Server;
 using HiveMind.Server.Endpoints;
 using HiveMind.Server.HostedServices;
+using HiveMind.Server.Hubs;
 using HiveMind.Server.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -37,6 +39,14 @@ builder.Services.AddHostedService<SchedulingBackgroundService>();
 builder.Services.AddHostedService<MediaImporterBackgroundService>();
 //builder.Services.AddHostedService<ThumbnailGenerationService>();
 
+builder.Services.AddSingleton<ImportStatusService>();
+builder.Services.AddSignalR().AddJsonProtocol(options =>
+    {
+        options.PayloadSerializerOptions.Converters.Add(
+            new JsonStringEnumConverter()
+        );
+    });
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -52,6 +62,8 @@ using (var scope = app.Services.CreateScope())
 
 app.UseDefaultFiles();
 app.MapStaticAssets();
+
+app.MapHub<ImportHub>("/hubs/import");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

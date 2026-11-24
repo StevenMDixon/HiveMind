@@ -1,11 +1,19 @@
 import FormControl from '@mui/material/FormControl';
-import TextField, { type TextFieldVariants } from '@mui/material/TextField';
+import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
-import type { SelectChangeEvent } from '@mui/material/Select';
+// import type { SelectChangeEvent } from '@mui/material/Select';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+
 import { FormLabel, RadioGroup, FormControlLabel, Radio, Switch, Checkbox } from '@mui/material';
 import type { JSX } from 'react';
+
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider, TimeField } from '@mui/x-date-pickers';
+import dayjs, { Dayjs } from 'dayjs';
+
 
 export interface EnumOptionsObj {
     [key: number]: string | number | boolean; // Keys are numbers, values are strings
@@ -40,25 +48,19 @@ interface CreateFieldsProps {
     disableLabels: boolean;
     variant: string;
     fullWidth: boolean;
-    handle: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string> | SelectChangeEvent<number> | SelectChangeEvent<boolean>) => void;
+    handle: (event: ChangeEvent) => void;
 }
 
-const CreateFields = ({ field, index, disableLabels, variant, fullWidth, handle }: CreateFieldsProps)   => {
+const CreateFields = ({ field, index, disableLabels, fullWidth, handle }: CreateFieldsProps)   => {
     switch (field.type) {
-        case 'Time': return (
-            <FormControl key={index} >
-
-            </FormControl>
-        )
         case 'Text': return (
             <TextField sx={{ m: 0, p: 0 }} key={index}
                 error={!field.valid}
                 label={!disableLabels ? field.display ? field.display : field.name : ""}
                 required={field.required}
-                variant={variant as TextFieldVariants}
                 name={field.name}
                 value={field.initialValue}
-                onChange={handle}
+                onChange={(e) => handle({name: e.target.name, type: e.target.type, value: e.target.value})}
                 fullWidth={fullWidth}
                 disabled={ field.disabled }
                 />
@@ -68,24 +70,23 @@ const CreateFields = ({ field, index, disableLabels, variant, fullWidth, handle 
                     error={!field.valid}
                     required={field.required}
                     type="number"
-                    variant={variant as TextFieldVariants}
                     name={field.name}
                 label={!disableLabels ? field.display ? field.display : field.name : ""}
                 value={field.initialValue}
-                    onChange={handle}
+                    onChange={(e) => handle({name: e.target.name, type: e.target.type, value: e.target.value})}
                     fullWidth={fullWidth}
                     disabled={field.disabled}
                 />
         )
         case 'Switch': return (
             <FormControlLabel control={
-                <Switch  onChange={handle} checked={field.initialValue as boolean} name={field.name} />
+                <Switch  onChange={(e) => handle({name: e.target.name, type: e.target.type, value: e.target.value})} checked={field.initialValue as boolean} name={field.name} />
             }
                 label={field.display ? field.display : field.name}  />
         )
         case 'Checkbox': return (
             <FormControlLabel control={
-                <Checkbox onChange={handle} checked={field.initialValue as boolean} name={field.name} />
+                <Checkbox onChange={(e) => handle({name: e.target.name, type: e.target.type, value: e.target.value})} checked={field.initialValue as boolean} name={field.name} />
             }
             label={field.display ? field.display : field.name} />
         )
@@ -94,10 +95,10 @@ const CreateFields = ({ field, index, disableLabels, variant, fullWidth, handle 
                 {!disableLabels && <FormLabel>{field.display ? field.display : field.name}</FormLabel>}
                 <Select
                     required={field.required}
-                    variant={variant as TextFieldVariants}
+                   
                     name={field.name}
                     value={field.initialValue}
-                    onChange={handle}
+                    onChange={(e) => handle({name: e.target.name, type: "MultiSelect", value: e.target.value})}
                     disabled={field.disabled}
                     multiple
                 >
@@ -110,10 +111,10 @@ const CreateFields = ({ field, index, disableLabels, variant, fullWidth, handle 
                 {!disableLabels && <FormLabel>{field.display ? field.display : field.name}</FormLabel>}
                 <Select
                     required={field.required}
-                    variant={variant as TextFieldVariants}
+                   
                     name={field.name}
                     value={field.initialValue}
-                    onChange={handle}
+                    onChange={(e) => handle({name: e.target.name, type: "Select", value: e.target.value})}
                     disabled={field.disabled}
                 >
                     {field.options && createSelectOptions(field.options)}
@@ -127,13 +128,38 @@ const CreateFields = ({ field, index, disableLabels, variant, fullWidth, handle 
                     aria-labelledby="demo-radio-buttons-group-label"
                     value={field.initialValue}
                     name={field.name}
-                    onChange={handle}
+                    onChange={(e) => handle({name: e.target.name, type: e.target.type, value: e.target.value})}
                     row
                 >
                     {field.options && Object.keys(field.options).map((key: string) => <FormControlLabel key={Number(key)} value={field.options && field.options[Number(key)]} control={<Radio />} label={field.options && field.options[Number(key)]} />) }
                 </RadioGroup>
 
                 <InputLabel></InputLabel>
+            </FormControl>
+        )
+        case 'Date': return (
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker 
+                    sx={{width: '100%'}}
+                    label={field.display}
+                    value={dayjs(field.initialValue + '')}
+                    name={field.name}
+                    onChange={(e: Dayjs | null) => handle({name: field.name, type: 'Date', value: e?.toString() ?? "" })}
+                />
+            </LocalizationProvider>
+        )
+        case 'Time': return (
+            <FormControl key={index} >
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <TimePicker 
+                    sx={{width: '100%'}}
+                    ampm={false}
+                    label={field.display}
+                    value={dayjs(field.initialValue + '', "HH:mm:ss")}
+                    name={field.name}
+                    onChange={(e: Dayjs | null) => handle({name: field.name, type: 'Time', value: e?.format("HH:mm:ss") ?? "" })}
+                />
+                </LocalizationProvider>
             </FormControl>
         )
         default: return (<p>{field.name}</p>)
@@ -157,19 +183,29 @@ interface FormFieldsProps {
     disabled?: boolean
 }
 
+interface ChangeEvent {
+    name: string,
+    type: string,
+    value: string | boolean | number
+}
+
 const CustomFormFields = ({ fields, handleInputChanges, wrapper, disableLabels, variant, fullWidth }: FormFieldsProps) => {
 
     const handleFieldChanges = (
-        event: React.ChangeEvent<HTMLInputElement> 
+        event: ChangeEvent
     ) => {
-        const name = event.target.name;
+        const name = event.name;
         let value;
+        
+        
 
-        if (['switch', 'checkbox'].includes(event.target.type)) {
-            value = event.target.checked;
+        if (['switch', 'checkbox'].includes(event.type)) {
+            value = event.value;
         } else {
-            value = event.target.value;
+            value = event.value;
         }
+
+        console.log(value)
 
         handleInputChanges({ name, value });
     };

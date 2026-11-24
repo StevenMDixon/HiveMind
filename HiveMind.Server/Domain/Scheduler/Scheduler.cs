@@ -85,6 +85,7 @@ public class Scheduler
 
         var generationContext = new GenerationContext
         {
+            SchedulingDate = scheduleData.Date,
             Retriever = _retriever,
             ServiceProvider = _serviceProvider,
             Settings = settingService.GetAllSettings().ToDictionary(x => x.Name, x => x.Value),

@@ -3,13 +3,13 @@
 public enum TagCategory
 {
     Other,
+    [Required(true)]
     Network,
     [Required(true)]
     Time_Slot,
     Genre,
     Audience,
     Era,
-    [Required(true)]
     Programming_Block,
     Content_Rating,
     Holiday,

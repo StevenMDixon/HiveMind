@@ -1,12 +1,17 @@
 ﻿using FFMpegCore;
 using HiveMind.Server.Domain.Importer;
+using HiveMind.Server.Hubs;
 using HiveMind.Server.Services;
+using Microsoft.AspNetCore.SignalR;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace HiveMind.Server.HostedServices;
 
-public partial class MediaImporterBackgroundService(IServiceScopeFactory scopeFactory, ILogger<MediaImporterBackgroundService> logger) : BackgroundService
+public partial class MediaImporterBackgroundService(
+    IServiceScopeFactory scopeFactory, 
+    ILogger<MediaImporterBackgroundService> logger,
+    ImportStatusService importStatusService) : BackgroundService
 {
     private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
     private readonly ILogger<MediaImporterBackgroundService> _logger = logger;
@@ -14,7 +19,12 @@ public partial class MediaImporterBackgroundService(IServiceScopeFactory scopeFa
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-       
+        await importStatusService.UpdateStatusAsync(
+            new ImportStatusDto(
+                ImportState.Running,
+                "Looking for Items"
+            )
+        );
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -41,6 +51,8 @@ public partial class MediaImporterBackgroundService(IServiceScopeFactory scopeFa
 
                 if (targetLibary != null && !targetLibary.IsProcessed)
                 {
+
+
                     var currentMediaItems = mediaItemService.GetMediaItemLibraryID(targetLibary.Id);
 
                     if (targetLibary.Path != null && targetLibary.Path != string.Empty)
@@ -65,6 +77,13 @@ public partial class MediaImporterBackgroundService(IServiceScopeFactory scopeFa
                             _logger.LogError(e, "Error while getting files from library path: {LibraryPath}", targetLibary.Path);
                         }
 
+                        await importStatusService.UpdateStatusAsync(
+                            new ImportStatusDto(
+                                ImportState.Processing,
+                                $"Library Id: {targetLibary.Id}, found {files.Count} files..."
+                            )
+                        );
+
                         mediaItemsToDelete = [..currentMediaItems.ExceptBy(files, x => mountedPath.Trim('/') + x.FilePath.TrimStart('/'))];
 
                         var importer = ImporterFactory.Resolve(targetLibary.Type);
@@ -74,6 +93,13 @@ public partial class MediaImporterBackgroundService(IServiceScopeFactory scopeFa
                         var queryService = scope.ServiceProvider.GetRequiredService<QueryService>();
 
                         var importerResults = importer.Generate([.. files.Where(x => !currentMediaItems.Any(y => y.FilePath == x))], mountedPath, targetLibary.Path, targetLibary.DefaultTags, showService, tagService, queryService);
+
+                        await importStatusService.UpdateStatusAsync(
+                            new ImportStatusDto(
+                                ImportState.Processing,
+                                $"Library Id: {targetLibary.Id} Using FFMpeg to get Media Info"
+                            )
+                        );
 
                         foreach (var importerResult in importerResults)
                         {
@@ -108,8 +134,16 @@ public partial class MediaImporterBackgroundService(IServiceScopeFactory scopeFa
 
                     libraryService.MarkLibraryAsProcessed(targetLibary);
                     _logger.LogInformation("Finished processing Library: {LibraryName}", targetLibary.Name);
+
+                    await importStatusService.UpdateStatusAsync(
+                            new ImportStatusDto(
+                                ImportState.Completed,
+                                $"Library Id: {targetLibary.Id} Finished Processing Import"
+                            )
+                        );
                 }
             }
+
 
             await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken); // Example delay
         }

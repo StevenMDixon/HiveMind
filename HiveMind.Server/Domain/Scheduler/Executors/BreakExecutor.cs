@@ -14,7 +14,7 @@ public class BreakExecutor: IExecutor
 
         context.usedDuration += nodeResults.Sum(x => x.EndTime - x.StartTime);
 
-        var breakBudget = ((context.Duration ?? 0) - context.usedDuration) / (nodeResults.Count());
+        var breakBudget = ((context.Duration ?? 0) - context.usedDuration) / (nodeResults.Count() > 0 ? nodeResults.Count() : 1);
 
         for (var i = 0; i < nodeResults.Count(); i++)
         {
@@ -135,7 +135,7 @@ public class BreakExecutor: IExecutor
         // fill in the filler :-)
         if (fillerLocation.Count != 0)
         {
-            var remainingFillDuration = remainingDuration / fillerLocation.Count;
+            var remainingFillDuration = fillerLocation.Count > 0 ? remainingDuration / fillerLocation.Count : 0;
 
             var refundedTime = 0;
 

@@ -25,6 +25,7 @@ public class SqliteDBContext(DbContextOptions<SqliteDBContext> options) : DbCont
     public DbSet<Drone> Drones { get; set; }
     public DbSet<ProgramEvent> ProgramEvents { get; set; }
     public DbSet<ProgramDatePart> ProgramDateParts { get; set; }
+    public DbSet<ProgramRotation> ProgramRotations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

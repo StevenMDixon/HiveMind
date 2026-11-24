@@ -184,14 +184,6 @@ public class MediaQueryBuilderTests : IDisposable
         Assert.Equal("Show Episode 1", result[0].Title);
     }
 
-    // This test is no longer relevant - invalid fields are now caught at compile time due to enum usage
-    // [Fact]
-    // public void Apply_WithInvalidField_ThrowsInvalidOperationException()
-
-    // This test is no longer relevant - invalid operators are now caught at compile time due to enum usage  
-    // [Fact]
-    // public void Apply_WithInvalidOperator_ThrowsNotSupportedException()
-
     [Fact]
     public void Apply_WithNullValue_HandlesGracefully()
     {

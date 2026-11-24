@@ -26,7 +26,7 @@ public class Update
         }
     }
 
-    public record ProgramStrategyRequest(string? Name, int? AdvancedDays, bool? Active, DateOnly? StartDate, DateOnly? EndDate, ICollection<ProgramStrategyItem> ProgramStrategyItems, ICollection<ProgramStrategyEvent> ProgramStrategyEvents);
+    public record ProgramStrategyRequest(string? Name, int? AdvancedDays, bool? Active, DateOnly? LastScheduledDate, ICollection<ProgramStrategyItem> ProgramStrategyItems, ICollection<ProgramStrategyEvent> ProgramStrategyEvents);
 
     public record ProgramStrategyItem(int Id, int? ProgramStrategyId, int? LineUpId, LineupSelectionType SelectionType, String SelectionOption);
 
@@ -44,6 +44,8 @@ public class Update
 
             strategy.Lineups = request.ProgramStrategyItems.Select(x => ConvertAndUpdateLineup(strategy.Id, x, strategy.Lineups)).ToList();
             strategy.Events = request.ProgramStrategyEvents.Select(x => ConvertAndUpdateEvent(strategy.Id, x, strategy.Events)).ToList();
+
+            strategy.LastScheduleDate = request.LastScheduledDate ?? strategy.LastScheduleDate;
 
             programStrategyService.Update(strategy);
             return TypedResults.Ok();

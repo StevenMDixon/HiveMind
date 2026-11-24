@@ -3,8 +3,7 @@ export interface ProgramStrategy {
     name: string;
     advancedDays: number;
     active: boolean;
-    startDate?: string;
-    endDate?: string;
+    lastScheduleDate: string;
     programStrategyItems?: ProgramStrategyLineup[];
     programStrategyEvents?: ProgramStrategyEvent[];
 }

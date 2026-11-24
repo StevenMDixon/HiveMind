@@ -1,4 +1,5 @@
-﻿using HiveMind.Server.Migrations;
+﻿using HiveMind.Server.HostedServices;
+using HiveMind.Server.Migrations;
 
 namespace HiveMind.Server.Endpoints;
 
@@ -21,5 +22,7 @@ public static class EndPointMapper
         Tags.EndPoints.Map(api);
         Scheduler.EndPoints.Map(api);
         TaggingQueue.EndPoints.Map(api);
+
+        ImportStatus.Map(api);
     }
 }

@@ -11,8 +11,16 @@ import { useQuery } from '@tanstack/react-query';
 
 import LibraryCreateDialog from '../components/LibraryCreateDialog';
 import { useLibraryCreateHook, useLibraryDeleteHook, useLibraryRefreshHook } from '../hooks/libraryHooks';
+import { importKeys } from '@/providers/importKeys';
+import { getImportStatus } from '../api/requests';
+import { Box, Typography } from '@mui/material';
 
 const LibraryPage = () => {
+    const { data } = useQuery({
+        queryKey: importKeys.status,
+        queryFn: getImportStatus,
+    });
+
     const [search, setSearch] = useState('');
     const [pageIndex, setPageIndex] = useState(1);
     const [pageSize] = useState(18);
@@ -77,6 +85,9 @@ const LibraryPage = () => {
             <Header Title="Libraries">
                 {libraryTypes && <LibraryCreateDialog createLibrary={handleCreateLibrary} libraryTypes={libraryTypes} />}
             </Header>
+            <Box sx={{width: '100%', border: 1, borderColor: 'secondary.main', color: 'secondary.main', padding: '5px;', textAlign: 'center'}}>
+                <Typography>Importer Status: {data?.message ?? "No import activity"}</Typography>
+            </Box>
             <CustomTable data={libraries?.data} columns={columns} actionColumns={actionColumns} handleRetry={handleRetry} isLoading={isLoading} searchFN={Search} paging={paging}></CustomTable>
         </Container>
     )

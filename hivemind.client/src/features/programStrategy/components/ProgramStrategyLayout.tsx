@@ -49,23 +49,19 @@ const ProgramStrategyLayout = ({ strategy }: ProgramStrategyLayoutProps) => {
         { name: 'active', display: "Active", type: "Switch", initialValue: strategy.active },
         { name: 'name', display: "Name", type: "Text", initialValue: strategy.name },
         { name: 'advancedDays', display: "Days to Schedule", type: "Number", initialValue: strategy.advancedDays },
-        { name: 'startDate', display: "Start Date", type: "Text", initialValue: strategy.startDate },
-        { name: 'endDate', display: "End Date", type: "Text", initialValue: strategy.endDate }
-
+        { name: 'lastScheduleDate', display: "Last Scheduled Date", type: "Date", initialValue: strategy.lastScheduleDate }
     ] as CustomFormField[];
 
     const saveProgramStrategy = (e: ProgramStrategy) => {
         const newData = {
             id: e.id,
             name: e.name,
-            startDate: e.startDate,
-            endDate: e.endDate,
+            lastScheduleDate: e.lastScheduleDate,
             active: e.active,
             advancedDays: e.advancedDays,
             programStrategyItems: lineups,
             programStrategyEvents: events
         } as ProgramStrategy
-
 
         saveStrategy(newData);
     }
@@ -106,7 +102,7 @@ const ProgramStrategyLayout = ({ strategy }: ProgramStrategyLayoutProps) => {
     const eventGridColumns = [
         { name: 'name', display: 'Name', initialValue: '', type: 'Text' },
         { name: 'promoDays', display: 'Promo Days', initialValue: 0, type: 'Number' },
-        { name: 'eventDate', display: 'Date', initialValue: '1/1/1900', type: 'Text' },
+        { name: 'eventDate', display: 'Date', initialValue: '1/1/1900', type: 'Date' },
         { name: 'queryId', display: 'Query', initialValue: '0', type: 'Select', options: availableQueries, format: formatQueries }
     ] as EditingGridColumns<ProgramStrategyEvent>[]
 

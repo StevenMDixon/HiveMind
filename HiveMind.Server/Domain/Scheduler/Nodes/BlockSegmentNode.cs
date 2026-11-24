@@ -1,4 +1,5 @@
-﻿using HiveMind.Server.Domain.Enums;
+﻿using System.Diagnostics;
+using HiveMind.Server.Domain.Enums;
 using HiveMind.Server.Domain.Scheduler.DataRetrievers;
 using HiveMind.Server.Domain.Scheduler.Executors;
 using HiveMind.Server.Entities;
@@ -34,6 +35,7 @@ public class BlockSegmentNode: INode
         var customFilters = new List<(string, string, string)>
         {
             ("Tag", "Equals", $"{Name}")
+
         };
 
         if (UseParentName) customFilters.Add(("Tag", "Contains", $"{nodeContext!.Name}"));
@@ -52,6 +54,8 @@ public class BlockSegmentNode: INode
         sContext.usedDuration += (sContext.Intro?.Duration ?? 0) + (sContext.Outro?.Duration ?? 0); 
         
         if (sContext.Intro != null) result.Add(new GenerationResultItem() { MediaItem = sContext.Intro, StartTime = 0, EndTime = sContext.Intro.Duration, Type = TransitionSlot.ShowIntro });
+
+        Debugger.Break();
 
         var selectedItems = Retriever.Retrieve(context);
 

@@ -224,6 +224,42 @@ namespace HiveMind.Server.Migrations
                     b.ToTable("ProgramEvents");
                 });
 
+            modelBuilder.Entity("HiveMind.Server.Entities.ProgramRotation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Interval")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("ProgramStrategyId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Recurrence")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("Season")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Show")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProgramStrategyId");
+
+                    b.ToTable("ProgramRotations");
+                });
+
             modelBuilder.Entity("HiveMind.Server.Entities.ProgramStrategy", b =>
                 {
                     b.Property<int>("Id")
@@ -956,6 +992,15 @@ namespace HiveMind.Server.Migrations
                     b.Navigation("Query");
                 });
 
+            modelBuilder.Entity("HiveMind.Server.Entities.ProgramRotation", b =>
+                {
+                    b.HasOne("HiveMind.Server.Entities.ProgramStrategy", "programStrategy")
+                        .WithMany("Rotations")
+                        .HasForeignKey("ProgramStrategyId");
+
+                    b.Navigation("programStrategy");
+                });
+
             modelBuilder.Entity("HiveMind.Server.Entities.ProgramStrategyLineup", b =>
                 {
                     b.HasOne("HiveMind.Server.Entities.Lineup", "Lineup")
@@ -1045,6 +1090,8 @@ namespace HiveMind.Server.Migrations
                     b.Navigation("Events");
 
                     b.Navigation("Lineups");
+
+                    b.Navigation("Rotations");
                 });
 
             modelBuilder.Entity("HiveMind.Server.Entities.Query", b =>
