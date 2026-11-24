@@ -49,7 +49,7 @@ export function ImportHubProvider({ children }: Props) {
             );
 
 
-            if (status.state === "Completed") {
+            if (status.state.toString() === "Completed") {
               queryClient.invalidateQueries({
                   queryKey: libraryKeys.lists(),
               });
